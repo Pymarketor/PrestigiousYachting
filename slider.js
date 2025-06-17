@@ -19,6 +19,18 @@ document.addEventListener("DOMContentLoaded", () => {
     let index = 0;
     let interval;
 
+    // Setup scroll behavior
+    track.style.scrollBehavior = "smooth";
+    track.style.overflowX = "scroll";
+    track.style.overflowY = "hidden";
+    track.style.scrollbarWidth = "none";
+    track.style.msOverflowStyle = "none";
+
+    // Hide Webkit scrollbars
+    const style = document.createElement("style");
+    style.textContent = `[data-slider-track]::-webkit-scrollbar { display: none !important; }`;
+    document.head.appendChild(style);
+
     const scrollToIndex = (i) => {
       const slide = slides[i];
       if (slide) {
@@ -33,13 +45,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const scrollLeft = track.scrollLeft;
       const maxScroll = track.scrollWidth - track.clientWidth;
 
-      if (prevBtn) {
-        prevBtn.style.display = scrollLeft <= 0 ? "none" : "flex";
-      }
-
-      if (nextBtn) {
-        nextBtn.style.display = scrollLeft >= maxScroll - 1 ? "none" : "flex";
-      }
+      if (prevBtn) prevBtn.style.display = scrollLeft <= 0 ? "none" : "flex";
+      if (nextBtn) nextBtn.style.display = scrollLeft >= maxScroll - 1 ? "none" : "flex";
     };
 
     const scrollNext = () => {
@@ -47,9 +54,8 @@ document.addEventListener("DOMContentLoaded", () => {
         index++;
       } else if (loop) {
         index = 0;
-      } else {
-        return;
-      }
+      } else return;
+
       scrollToIndex(index);
     };
 
@@ -58,16 +64,13 @@ document.addEventListener("DOMContentLoaded", () => {
         index--;
       } else if (loop) {
         index = slides.length - 1;
-      } else {
-        return;
-      }
+      } else return;
+
       scrollToIndex(index);
     };
 
     const startAutoplay = () => {
-      if (autoplay) {
-        interval = setInterval(scrollNext, delay);
-      }
+      if (autoplay) interval = setInterval(scrollNext, delay);
     };
 
     const stopAutoplay = () => {
@@ -77,72 +80,48 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     };
 
-    if (prevBtn) prevBtn.addEventListener("click", () => {
-      scrollPrev();
-    });
-
-    if (nextBtn) nextBtn.addEventListener("click", () => {
-      scrollNext();
-    });
-
+    // Scroll observer (pour snap auto quand on scroll à 10%)
     track.addEventListener("scroll", () => {
       updateArrows();
 
-      let newIndex = index;
       slides.forEach((slide, i) => {
         const slideLeft = slide.offsetLeft;
-        const slideRight = slideLeft + slide.offsetWidth;
-        const trackLeft = track.scrollLeft;
-        const trackRight = trackLeft + track.offsetWidth;
+        const visibleLeft = track.scrollLeft;
+        const visibleRight = visibleLeft + track.clientWidth;
 
-        const visibleWidth = Math.min(slideRight, trackRight) - Math.max(slideLeft, trackLeft);
-        const visibility = visibleWidth / slide.offsetWidth;
+        const visibleWidth = Math.min(slideLeft + slide.offsetWidth, visibleRight) - Math.max(slideLeft, visibleLeft);
+        const visibilityRatio = visibleWidth / slide.offsetWidth;
 
-        if (visibility >= 1 - snapThreshold) {
-          newIndex = i;
+        if (visibilityRatio > 1 - snapThreshold) {
+          index = i;
         }
       });
-
-      index = newIndex;
     });
 
+    // Arrows
+    if (prevBtn) prevBtn.addEventListener("click", scrollPrev);
+    if (nextBtn) nextBtn.addEventListener("click", scrollNext);
+
+    // Hover only arrows
     if (hoverOnly) {
-      slider.addEventListener("mouseenter", () => {
-        if (prevBtn) prevBtn.style.opacity = "1";
-        if (nextBtn) nextBtn.style.opacity = "1";
-      });
-      slider.addEventListener("mouseleave", () => {
+      const hide = () => {
         if (prevBtn) prevBtn.style.opacity = "0";
         if (nextBtn) nextBtn.style.opacity = "0";
-      });
+      };
+      const show = () => {
+        if (prevBtn) prevBtn.style.opacity = "1";
+        if (nextBtn) nextBtn.style.opacity = "1";
+      };
 
+      hide();
       if (prevBtn) prevBtn.style.transition = "opacity 0.3s";
       if (nextBtn) nextBtn.style.transition = "opacity 0.3s";
 
-      if (prevBtn) prevBtn.style.opacity = "0";
-      if (nextBtn) nextBtn.style.opacity = "0";
+      slider.addEventListener("mouseenter", show);
+      slider.addEventListener("mouseleave", hide);
     }
 
     startAutoplay();
     updateArrows();
-
-    // Masquer les barres de scroll
-    track.style.scrollbarWidth = "none";
-    track.style.msOverflowStyle = "none";
-    track.style.overflow = "auto";
-    track.style.scrollBehavior = "smooth";
-    track.style.transition = `scroll-left ${duration}ms ${animation}`;
-    track.style.overflowX = "scroll";
-    track.style.overflowY = "hidden";
-    track.style.webkitOverflowScrolling = "touch";
-
-    // Supprimer les scrollbars visuelles
-    const style = document.createElement("style");
-    style.textContent = `
-      [data-slider-track]::-webkit-scrollbar {
-        display: none;
-      }
-    `;
-    document.head.appendChild(style);
   });
 });
