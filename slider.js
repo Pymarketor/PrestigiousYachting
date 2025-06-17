@@ -1,56 +1,90 @@
-// == Scroll Slider - Full Attribute Driven with Instance == //
-
-// On DOM Ready
-window.addEventListener("DOMContentLoaded", () => {
+// === SLIDER SCRIPT (Instance + Attribut Driven) ===
+document.addEventListener("DOMContentLoaded", () => {
   const sliders = document.querySelectorAll('[data-slider="true"]');
 
-  sliders.forEach((sliderEl) => {
-    const instance = sliderEl.getAttribute("instance");
-    const track = document.querySelector(`[data-slider-track][instance="${instance}"]`);
-    const slides = track?.querySelectorAll(`[data-slider-slide][instance="${instance}"]`) || [];
-    const prevBtn = document.querySelector(`[data-slider-prev][instance="${instance}"]`);
-    const nextBtn = document.querySelector(`[data-slider-next][instance="${instance}"]`);
+  sliders.forEach((slider) => {
+    const instance = slider.getAttribute("slider-instance");
+    const track = document.querySelector(`[instance="${instance}"][data-slider-track]`);
+    const slides = document.querySelectorAll(`[instance="${instance}"][data-slider-slide]`);
+    const prevBtn = document.querySelector(`[instance="${instance}"][data-slider-prev]`);
+    const nextBtn = document.querySelector(`[instance="${instance}"][data-slider-next]`);
 
-    // Configs
-    const autoplay = sliderEl.getAttribute("slider-autoplay") === "true";
-    const delay = parseInt(sliderEl.getAttribute("slider-delay") || "4000", 10);
-    const loop = sliderEl.getAttribute("slider-loop") === "true";
-    const scrollAmount = track?.clientWidth || 300;
+    const autoplay = slider.getAttribute("slider-autoplay") === "true";
+    const delay = parseInt(slider.getAttribute("slider-delay")) || 5000;
+    const loop = slider.getAttribute("slider-loop") === "true";
+    const hoverArrows = slider.getAttribute("slider-hover-arrows") === "true";
 
     let autoplayInterval;
 
-    // Scroll functions
-    const scrollNext = () => {
+    function scrollToNext() {
       if (!track) return;
+      const scrollAmount = track.clientWidth;
       track.scrollBy({ left: scrollAmount, behavior: "smooth" });
-    };
-
-    const scrollPrev = () => {
-      if (!track) return;
-      track.scrollBy({ left: -scrollAmount, behavior: "smooth" });
-    };
-
-    // Button events
-    if (nextBtn) nextBtn.addEventListener("click", scrollNext);
-    if (prevBtn) prevBtn.addEventListener("click", scrollPrev);
-
-    // Autoplay
-    if (autoplay) {
-      autoplayInterval = setInterval(() => {
-        if (!document.hidden) scrollNext();
-      }, delay);
-
-      // Pause on hover
-      sliderEl.addEventListener("mouseenter", () => clearInterval(autoplayInterval));
-      sliderEl.addEventListener("mouseleave", () => {
-        autoplayInterval = setInterval(scrollNext, delay);
-      });
     }
 
-    // Optional: snap to slide
-    track?.setAttribute("style", `scroll-snap-type: x mandatory; overflow-x: auto; display: flex; gap: 1rem; scroll-behavior: smooth;`);
-    slides.forEach((slide) => {
-      slide.setAttribute("style", "scroll-snap-align: start; flex-shrink: 0; width: 100%;");
-    });
+    function scrollToPrev() {
+      if (!track) return;
+      const scrollAmount = track.clientWidth;
+      track.scrollBy({ left: -scrollAmount, behavior: "smooth" });
+    }
+
+    function updateArrowVisibility() {
+      if (!track) return;
+
+      const maxScrollLeft = track.scrollWidth - track.clientWidth;
+      const currentScroll = track.scrollLeft;
+      const showLeft = currentScroll > 10;
+      const showRight = currentScroll < maxScrollLeft - 10;
+      const displayLeft = showLeft ? "flex" : "none";
+      const displayRight = showRight ? "flex" : "none";
+
+      if (hoverArrows) {
+        slider.addEventListener("mouseenter", () => {
+          if (prevBtn) prevBtn.style.display = displayLeft;
+          if (nextBtn) nextBtn.style.display = displayRight;
+        });
+        slider.addEventListener("mouseleave", () => {
+          if (prevBtn) prevBtn.style.display = "none";
+          if (nextBtn) nextBtn.style.display = "none";
+        });
+        if (prevBtn) prevBtn.style.display = "none";
+        if (nextBtn) nextBtn.style.display = "none";
+      } else {
+        if (prevBtn) prevBtn.style.display = displayLeft;
+        if (nextBtn) nextBtn.style.display = displayRight;
+      }
+    }
+
+    if (prevBtn) prevBtn.addEventListener("click", scrollToPrev);
+    if (nextBtn) nextBtn.addEventListener("click", scrollToNext);
+    if (track) track.addEventListener("scroll", updateArrowVisibility);
+
+    updateArrowVisibility();
+
+    if (autoplay) {
+      autoplayInterval = setInterval(() => {
+        scrollToNext();
+        const maxScrollLeft = track.scrollWidth - track.clientWidth;
+        if (loop && track.scrollLeft >= maxScrollLeft - 10) {
+          track.scrollTo({ left: 0, behavior: "smooth" });
+        }
+      }, delay);
+
+      slider.addEventListener("mouseenter", () => clearInterval(autoplayInterval));
+      slider.addEventListener("mouseleave", () => {
+        autoplayInterval = setInterval(() => {
+          scrollToNext();
+          const maxScrollLeft = track.scrollWidth - track.clientWidth;
+          if (loop && track.scrollLeft >= maxScrollLeft - 10) {
+            track.scrollTo({ left: 0, behavior: "smooth" });
+          }
+        }, delay);
+      });
+    }
   });
 });
+
+// Masquer les barres de scroll globalement
+document.documentElement.style.scrollbarWidth = "none";
+document.documentElement.style.msOverflowStyle = "none";
+document.documentElement.style.overflowX = "hidden";
