@@ -19,31 +19,22 @@ document.addEventListener("DOMContentLoaded", () => {
     let index = 0;
     const total = slides.length;
 
+    const scrollToSlide = (i) => {
+      if (!track || !slides[i]) return;
+      track.scrollTo({
+        left: slides[i].offsetLeft,
+        behavior: "smooth",
+      });
+      index = i;
+      updateArrows();
+    };
+
     const updateArrows = () => {
       if (!loop) {
         if (prevBtn) prevBtn.style.display = index === 0 ? "none" : "flex";
         if (nextBtn) nextBtn.style.display = index >= total - 1 ? "none" : "flex";
       }
     };
-
-    const scrollToSlide = (i) => {
-      const slide = slides[i];
-      if (slide && track) {
-        track.scrollTo({
-          left: slide.offsetLeft,
-          behavior: "smooth",
-        });
-        index = i;
-        updateArrows();
-      }
-    };
-
-    if (nextBtn) {
-      nextBtn.addEventListener("click", () => {
-        if (index < total - 1) scrollToSlide(index + 1);
-        else if (loop) scrollToSlide(0);
-      });
-    }
 
     if (prevBtn) {
       prevBtn.addEventListener("click", () => {
@@ -52,20 +43,25 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
-    if (showArrowsOnHover) {
-      [prevBtn, nextBtn].forEach((arrow) => {
-        if (arrow) arrow.style.opacity = "0";
+    if (nextBtn) {
+      nextBtn.addEventListener("click", () => {
+        if (index < total - 1) scrollToSlide(index + 1);
+        else if (loop) scrollToSlide(0);
       });
+    }
 
+    if (showArrowsOnHover) {
+      [prevBtn, nextBtn].forEach((btn) => {
+        if (btn) btn.style.opacity = "0";
+      });
       slider.addEventListener("mouseenter", () => {
-        [prevBtn, nextBtn].forEach((arrow) => {
-          if (arrow) arrow.style.opacity = "1";
+        [prevBtn, nextBtn].forEach((btn) => {
+          if (btn) btn.style.opacity = "1";
         });
       });
-
       slider.addEventListener("mouseleave", () => {
-        [prevBtn, nextBtn].forEach((arrow) => {
-          if (arrow) arrow.style.opacity = "0";
+        [prevBtn, nextBtn].forEach((btn) => {
+          if (btn) btn.style.opacity = "0";
         });
       });
     }
@@ -78,86 +74,51 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (track) {
-      let isScrolling;
-      track.addEventListener("scroll", () => {
-        window.clearTimeout(isScrolling);
-        isScrolling = setTimeout(() => {
-          const trackScrollLeft = track.scrollLeft;
-          let closest = 0;
-          let closestDiff = Infinity;
+      let isMouseDown = false;
+      let startX = 0;
+      let scrollLeft = 0;
 
-          slides.forEach((slide, i) => {
-            const diff = Math.abs(slide.offsetLeft - trackScrollLeft);
-            if (diff < closestDiff) {
-              closestDiff = diff;
-              closest = i;
-            }
-          });
-
-          const slideWidth = slides[0]?.offsetWidth || 1;
-          const scrollDiff = trackScrollLeft - slides[index].offsetLeft;
-          const scrollPercent = Math.abs(scrollDiff) / slideWidth;
-
-          if (scrollPercent >= snapThreshold) {
-            scrollToSlide(closest);
-          } else {
-            scrollToSlide(index);
-          }
-        }, 100);
-      });
-    }
-
-    function setupSliderSnap(slider, track, slides, config) {
-      let isDown = false;
-      let startX;
-      let scrollLeft;
-      let snapThreshold = parseFloat(config.snapThreshold) || 0.1;
-
-      track.addEventListener('mousedown', (e) => {
-        isDown = true;
-        startX = e.pageX - track.offsetLeft;
+      track.addEventListener("mousedown", (e) => {
+        isMouseDown = true;
+        startX = e.pageX;
         scrollLeft = track.scrollLeft;
       });
 
-      track.addEventListener('mouseleave', () => {
-        if (isDown) snapToNearest();
-        isDown = false;
-      });
-
-      track.addEventListener('mouseup', () => {
-        if (isDown) snapToNearest();
-        isDown = false;
-      });
-
-      track.addEventListener('mousemove', (e) => {
-        if (!isDown) return;
-        e.preventDefault();
-        const x = e.pageX - track.offsetLeft;
-        const walk = x - startX;
-        track.scrollLeft = scrollLeft - walk;
-      });
-
-      function snapToNearest() {
-        const scrollLeft = track.scrollLeft;
+      track.addEventListener("mouseup", () => {
+        if (!isMouseDown) return;
+        isMouseDown = false;
         const slideWidth = slides[0].offsetWidth;
-        const index = Math.floor(scrollLeft / slideWidth);
-        const offset = scrollLeft - index * slideWidth;
+        const scrolled = track.scrollLeft;
+        const targetIndex = Math.round(scrolled / slideWidth);
 
-        if (offset > slideWidth * snapThreshold) {
-          track.scrollTo({ left: (index + 1) * slideWidth, behavior: 'smooth' });
-        } else {
-          track.scrollTo({ left: index * slideWidth, behavior: 'smooth' });
-        }
-      }
+        const visibleSlideIndex = Math.max(0, Math.min(targetIndex, total - 1));
+        scrollToSlide(visibleSlideIndex);
+      });
+
+      track.addEventListener("mouseleave", () => {
+        if (!isMouseDown) return;
+        isMouseDown = false;
+        const slideWidth = slides[0].offsetWidth;
+        const scrolled = track.scrollLeft;
+        const targetIndex = Math.round(scrolled / slideWidth);
+
+        const visibleSlideIndex = Math.max(0, Math.min(targetIndex, total - 1));
+        scrollToSlide(visibleSlideIndex);
+      });
+
+      track.addEventListener("touchend", () => {
+        const slideWidth = slides[0].offsetWidth;
+        const scrolled = track.scrollLeft;
+        const targetIndex = Math.round(scrolled / slideWidth);
+
+        const visibleSlideIndex = Math.max(0, Math.min(targetIndex, total - 1));
+        scrollToSlide(visibleSlideIndex);
+      });
+
+      track.style.scrollBehavior = "smooth";
+      track.style.scrollSnapType = "x mandatory";
     }
 
-    track.style.scrollBehavior = "smooth";
-    track.style.scrollSnapType = "x mandatory";
-    track.style.transition = `scroll-left ${duration}ms ${animation}`;
     updateArrows();
-
-    if (slider.hasAttribute("slider-snap-threshold")) {
-      setupSliderSnap(slider, track, slides, { snapThreshold });
-    }
   });
 });
