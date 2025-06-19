@@ -77,7 +77,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }, delay);
     }
 
-    // --- Scroll Snap Handling
     if (track) {
       let isScrolling;
       track.addEventListener("scroll", () => {
@@ -95,7 +94,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
           });
 
-          // Snap if we've scrolled more than threshold
           const slideWidth = slides[0]?.offsetWidth || 1;
           const scrollDiff = trackScrollLeft - slides[index].offsetLeft;
           const scrollPercent = Math.abs(scrollDiff) / slideWidth;
@@ -109,10 +107,57 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
-    // Initial
+    function setupSliderSnap(slider, track, slides, config) {
+      let isDown = false;
+      let startX;
+      let scrollLeft;
+      let snapThreshold = parseFloat(config.snapThreshold) || 0.1;
+
+      track.addEventListener('mousedown', (e) => {
+        isDown = true;
+        startX = e.pageX - track.offsetLeft;
+        scrollLeft = track.scrollLeft;
+      });
+
+      track.addEventListener('mouseleave', () => {
+        if (isDown) snapToNearest();
+        isDown = false;
+      });
+
+      track.addEventListener('mouseup', () => {
+        if (isDown) snapToNearest();
+        isDown = false;
+      });
+
+      track.addEventListener('mousemove', (e) => {
+        if (!isDown) return;
+        e.preventDefault();
+        const x = e.pageX - track.offsetLeft;
+        const walk = x - startX;
+        track.scrollLeft = scrollLeft - walk;
+      });
+
+      function snapToNearest() {
+        const scrollLeft = track.scrollLeft;
+        const slideWidth = slides[0].offsetWidth;
+        const index = Math.floor(scrollLeft / slideWidth);
+        const offset = scrollLeft - index * slideWidth;
+
+        if (offset > slideWidth * snapThreshold) {
+          track.scrollTo({ left: (index + 1) * slideWidth, behavior: 'smooth' });
+        } else {
+          track.scrollTo({ left: index * slideWidth, behavior: 'smooth' });
+        }
+      }
+    }
+
     track.style.scrollBehavior = "smooth";
     track.style.scrollSnapType = "x mandatory";
     track.style.transition = `scroll-left ${duration}ms ${animation}`;
     updateArrows();
+
+    if (slider.hasAttribute("slider-snap-threshold")) {
+      setupSliderSnap(slider, track, slides, { snapThreshold });
+    }
   });
 });
