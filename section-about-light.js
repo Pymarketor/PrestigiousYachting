@@ -1,15 +1,15 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const section = document.getElementById("SectionAboutUs");
-  if (!section) return;
-  section.addEventListener("mousemove", (e) => {
-    const rect = section.getBoundingClientRect();
+  const lightsection = document.getElementById("SectionAboutUs");
+  if (!lightsection) return;
+  lightsection.addEventListener("mousemove", (e) => {
+    const rect = lightsection.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-    section.style.setProperty("--x", `${x}px`);
-    section.style.setProperty("--y", `${y}px`);
-    section.style.setProperty("background", `radial-gradient(circle at ${x}px ${y}px, rgba(255,255,255,0.10), transparent 40px)`);
+    lightsection.style.setProperty("--x", `${x}px`);
+    lightsection.style.setProperty("--y", `${y}px`);
+    lightsection.style.setProperty("background", `radial-gradient(circle at ${x}px ${y}px, rgba(255,255,255,0.10), transparent 40px)`);
   });
-  section.addEventListener("mouseleave", () => {
-    section.style.removeProperty("background");
+  lightsection.addEventListener("mouseleave", () => {
+    lightsection.style.removeProperty("background");
   });
 });
