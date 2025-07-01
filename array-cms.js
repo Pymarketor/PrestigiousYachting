@@ -27,12 +27,12 @@ function processArrayFields() {
 
 document.addEventListener("DOMContentLoaded", () => {
   processArrayFields();
-});
 
-document.querySelectorAll('[load="more"]').forEach(btn => {
-  btn.addEventListener("click", () => {
-    setTimeout(() => {
-      processArrayFields();
-    }, 200); // petit délai si du contenu est injecté dynamiquement
+  document.querySelectorAll('[load="more"]').forEach(link => {
+    link.addEventListener("click", () => {
+      setTimeout(() => {
+        processArrayFields();
+      }, 200);
+    });
   });
 });
