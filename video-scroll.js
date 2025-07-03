@@ -7,18 +7,26 @@ document.addEventListener("DOMContentLoaded", () => {
   const controlsWrapper = document.querySelector('.video-controls');
 
   const initialWidth = 100;
-  const finalWidth = 85;
+  const finalWidth = 87.5;
+  const finalRadius = 44;
   let videoUsable = false;
+  let hasExitedOnce = false;
+
+  function applyFinalStyles() {
+    container.style.clipPath = `inset(0 round ${finalRadius}px)`;
+    container.style.width = `${finalWidth}svw`;
+  }
 
   function updateStyles() {
-    if (!container) return;
+    if (!container || hasExitedOnce) return;
+
     const rect = container.getBoundingClientRect();
     const viewportHeight = window.innerHeight;
     const start = viewportHeight;
     const end = viewportHeight * 0.25;
 
     const progress = Math.min(Math.max((start - rect.bottom) / (start - end), 0), 1);
-    const radius = 1 + (42 * progress);
+    const radius = 2 + ((finalRadius - 2) * progress);
     const width = initialWidth - ((initialWidth - finalWidth) * progress);
 
     container.style.clipPath = `inset(0 round ${radius}px)`;
@@ -28,6 +36,14 @@ document.addEventListener("DOMContentLoaded", () => {
       controlsWrapper.style.opacity = 1;
     } else {
       controlsWrapper.style.opacity = 0;
+    }
+
+    // 🎯 Détection de sortie réelle : section hors de l'écran vers le haut ou le bas
+    if (rect.bottom < 0 || rect.top > viewportHeight) {
+      hasExitedOnce = true;
+      applyFinalStyles();
+      window.removeEventListener('scroll', updateStyles);
+      window.removeEventListener('resize', updateStyles);
     }
   }
 
@@ -65,8 +81,9 @@ document.addEventListener("DOMContentLoaded", () => {
       (entries) => {
         entries.forEach(entry => {
           if (!videoUsable) return;
+
           if (entry.isIntersecting) {
-            if (playToggleBtn.getAttribute("aria-label") === "Pause animation") {
+            if (!hasExitedOnce && playToggleBtn.getAttribute("aria-label") === "Pause animation") {
               video.play().catch(() => {});
             }
           } else {
@@ -74,8 +91,9 @@ document.addEventListener("DOMContentLoaded", () => {
           }
         });
       },
-      { threshold: 0.1 }
+      { threshold: 0.25 }
     );
+
     if (container) observer.observe(container);
 
     playToggleBtn?.addEventListener('click', () => {
