@@ -1,5 +1,4 @@
 function processArrayFields() {
-  // Tous les éléments [Array] non encore traités
   document.querySelectorAll("[Array]:not([data-array-processed='true'])").forEach(arrayField => {
     const arrayKey = arrayField.getAttribute("Array");
     const rawValue = arrayField.textContent || "";
@@ -17,27 +16,34 @@ function processArrayFields() {
       clone.style.display = "block";
 
       const textTarget = clone.querySelector("[data-array-text]");
-      if (textTarget) textTarget.textContent = value;
+      if (textTarget) {
+        textTarget.textContent = value;
+
+        // ➕ Si besoin, on peut aussi ajouter fs-list-field + fs-list-value ici
+        // textTarget.setAttribute("fs-list-field", "subtopic");
+        // textTarget.setAttribute("fs-list-value", value);
+      }
 
       parent.appendChild(clone);
     });
 
-    // Cache le template pour le réutiliser plus tard
     template.style.display = "none";
-
-    // ✅ Marque comme traité
     arrayField.setAttribute("data-array-processed", "true");
   });
+
+  // ✅ Recharge Finsweet list-filter à chaque appel
+  if (window.fsAttributes && window.fsAttributes.push) {
+    window.fsAttributes.push(["list-filter"]);
+  }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  processArrayFields(); // 🔁 au chargement
+  processArrayFields();
 
-  // Réécoute des clics sur tous les [load="more"]
   document.querySelectorAll('[load="more"]').forEach(link => {
     link.addEventListener("click", () => {
       setTimeout(() => {
-        processArrayFields(); // 🔁 traite seulement les nouveaux
+        processArrayFields();
       }, 200);
     });
   });
