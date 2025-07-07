@@ -4,7 +4,10 @@ document.addEventListener("DOMContentLoaded", () => {
   sliders.forEach(slider => {
     const instance = slider.getAttribute("slider-instance") || "default";
     const track = slider.querySelector(`[data-slider-track][instance="${instance}"]`);
-    const slides = [...slider.querySelectorAll(`[data-slider-slide][instance="${instance}"]`)];
+
+    // Exclut le .slider-padding-start des slides à naviguer
+    const slides = [...slider.querySelectorAll(`[data-slider-slide][instance="${instance}"]:not(.slider-padding-start)`)];
+    
     const prevBtn = slider.querySelector(`[data-slider-prev][instance="${instance}"]`);
     const nextBtn = slider.querySelector(`[data-slider-next][instance="${instance}"]`);
 
@@ -42,30 +45,25 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     };
 
-    const updateArrowVisibility = () => {
-      if (!prevBtn || !nextBtn) return;
+const updateArrowVisibility = () => {
+  if (!prevBtn || !nextBtn) return;
 
-      const scrollLeft = track.scrollLeft;
-      const maxScrollLeft = track.scrollWidth - track.clientWidth;
-      const tolerance = 5;
+  const scrollLeft = track.scrollLeft;
+  const maxScrollLeft = track.scrollWidth - track.clientWidth;
+  const tolerance = 5;
 
-      const canScrollPrev = scrollLeft > tolerance;
-      const canScrollNext = scrollLeft < maxScrollLeft - tolerance;
+  const paddingStart = track.querySelector(".slider-padding-start");
+  const paddingOffset = paddingStart?.offsetWidth || 0;
 
-      if (alwaysShowArrows) {
-        prevBtn.style.opacity = canScrollPrev ? "1" : "0";
-        nextBtn.style.opacity = canScrollNext ? "1" : "0";
+  const canScrollPrev = scrollLeft > paddingOffset + tolerance;
+  const canScrollNext = scrollLeft < maxScrollLeft - tolerance;
 
-        prevBtn.style.pointerEvents = canScrollPrev ? "auto" : "none";
-        nextBtn.style.pointerEvents = canScrollNext ? "auto" : "none";
-      } else {
-        prevBtn.style.opacity = canScrollPrev ? "1" : "0";
-        nextBtn.style.opacity = canScrollNext ? "1" : "0";
+  prevBtn.style.opacity = canScrollPrev ? "1" : "0";
+  nextBtn.style.opacity = canScrollNext ? "1" : "0";
 
-        prevBtn.style.pointerEvents = canScrollPrev ? "auto" : "none";
-        nextBtn.style.pointerEvents = canScrollNext ? "auto" : "none";
-      }
-    };
+  prevBtn.style.pointerEvents = canScrollPrev ? "auto" : "none";
+  nextBtn.style.pointerEvents = canScrollNext ? "auto" : "none";
+};
 
     if (nextBtn) {
       nextBtn.addEventListener("click", () => {
