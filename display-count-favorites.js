@@ -1,5 +1,6 @@
-  document.addEventListener("DOMContentLoaded", () => {
-    const updateFavoriteCounts = () => {
+document.addEventListener("DOMContentLoaded", () => {
+  const updateFavoriteCounts = () => {
+    setTimeout(() => {
       const stored = localStorage.getItem("favorites");
       let favorites = {};
 
@@ -16,12 +17,11 @@
         const count = items.length;
 
         el.textContent = count;
-
-        // Affiche ou cache l'élément selon le nombre
         el.style.display = count > 0 ? 'flex' : 'none';
       });
-    };
+    }, 100); // petit délai pour laisser le temps au localStorage d’être à jour
+  };
 
-    updateFavoriteCounts();
-    document.addEventListener("favorite", updateFavoriteCounts);
-  });
+  updateFavoriteCounts();
+  document.addEventListener("favorite", updateFavoriteCounts);
+});
