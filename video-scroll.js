@@ -6,66 +6,87 @@ document.addEventListener("DOMContentLoaded", () => {
   const playToggleBtn = document.querySelector('.video-play-toggle');
   const controlsWrapper = document.querySelector('.video-controls');
 
+  if (!container) return;
+
   const initialWidth = 100;
   const finalWidth = 87.5;
   const finalRadius = 44;
+
   let videoUsable = false;
+  let hasEnteredViewport = false; // ✅ ne “sort” qu’après être entré au moins une fois
   let hasExitedOnce = false;
+
+  const useSVW = typeof CSS !== "undefined" && CSS.supports?.('width','1svw');
+  const setWidth = (v) => { container.style.width = useSVW ? `${v}svw` : `${v}vw`; };
 
   function applyFinalStyles() {
     container.style.clipPath = `inset(0 round ${finalRadius}px)`;
-    container.style.width = `${finalWidth}svw`;
+    setWidth(finalWidth);
   }
 
+  function clamp(n, min, max) { return Math.min(Math.max(n, min), max); }
+
   function updateStyles() {
-    if (!container || hasExitedOnce) return;
+    if (hasExitedOnce) return;
 
     const rect = container.getBoundingClientRect();
-    const viewportHeight = window.innerHeight;
+    const vh = window.innerHeight || document.documentElement.clientHeight;
 
-    // 🎯 Progression basée sur le TOP du container
-    const start = viewportHeight;          // début = container entre dans l’écran
-    const end = viewportHeight * 0.25;     // fin = son top atteint 25% du viewport
-
-    const progress = Math.min(Math.max((start - rect.top) / (start - end), 0), 1);
+    // ✅ Basé sur le TOP du container : 0 quand le top est en bas du viewport, 1 à 25% du viewport
+    const start = vh;
+    const end = vh * 0.25;
+    const progress = clamp((start - rect.top) / (start - end), 0, 1);
 
     const radius = 2 + ((finalRadius - 2) * progress);
     const width = initialWidth - ((initialWidth - finalWidth) * progress);
 
     container.style.clipPath = `inset(0 round ${radius}px)`;
-    container.style.width = `${width}svw`;
+    setWidth(width);
 
-    if (videoUsable && rect.top < viewportHeight && rect.bottom > end) {
-      controlsWrapper.style.opacity = 1;
-    } else {
-      controlsWrapper.style.opacity = 0;
+    // Affichage des contrôles seulement quand la zone est bien dans l’écran
+    if (controlsWrapper) {
+      if (videoUsable && rect.top < vh && rect.bottom > end) {
+        controlsWrapper.style.opacity = 1;
+      } else {
+        controlsWrapper.style.opacity = 0;
+      }
     }
 
-    // 🎯 Détection sortie totale haut ou bas
-    if (rect.bottom < 0 || rect.top > viewportHeight) {
+    // ✅ Marque “vu” si la section est dans le viewport
+    if (rect.bottom > 0 && rect.top < vh) {
+      hasEnteredViewport = true;
+    }
+
+    // ✅ Ne fige qu’après être entré au moins une fois
+    if (hasEnteredViewport && (rect.bottom < 0 || rect.top > vh)) {
       hasExitedOnce = true;
       applyFinalStyles();
-      window.removeEventListener('scroll', updateStyles);
-      window.removeEventListener('resize', updateStyles);
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onResize);
     }
   }
+
+  function onScroll() { updateStyles(); }
+  function onResize() { updateStyles(); }
 
   function markVideoAsInvalid() {
     videoUsable = false;
     if (controlsWrapper) controlsWrapper.style.display = 'none';
     if (playToggleBtn) playToggleBtn.style.display = 'none';
     if (video) video.style.display = 'none';
-    if (fallback) fallback.style.zIndex = 3;
+    if (fallback) {
+      fallback.style.zIndex = 3;
+      fallback.style.opacity = 1;
+      fallback.style.display = 'block';
+    }
   }
 
-  function isValidVideo(videoElement) {
-    if (!videoElement) return false;
-    const sources = videoElement.querySelectorAll('source');
-    for (let source of sources) {
-      const src = source.getAttribute('src');
-      if (src && src.trim() !== '') {
-        return true;
-      }
+  function isValidVideo(el) {
+    if (!el) return false;
+    const sources = el.querySelectorAll('source');
+    for (const s of sources) {
+      const src = s.getAttribute('src');
+      if (src && src.trim() !== '') return true;
     }
     return false;
   }
@@ -78,47 +99,47 @@ document.addEventListener("DOMContentLoaded", () => {
 
     videoUsable = true;
     if (video) video.style.display = 'block';
-    if (fallback) fallback.style.zIndex = 0;
+    if (fallback) { fallback.style.zIndex = 0; fallback.style.opacity = 0; }
 
     const observer = new IntersectionObserver(
       (entries) => {
-        entries.forEach(entry => {
+        for (const entry of entries) {
           if (!videoUsable) return;
-
           if (entry.isIntersecting) {
             if (!hasExitedOnce && playToggleBtn?.getAttribute("aria-label") === "Pause animation") {
-              video.play().catch(() => {});
+              video?.play().catch(() => {});
             }
           } else {
-            video.pause();
+            video?.pause();
           }
-        });
+        }
       },
       { threshold: 0.25 }
     );
 
-    if (container) observer.observe(container);
+    observer.observe(container);
 
     playToggleBtn?.addEventListener('click', () => {
       if (!videoUsable) return;
       const isPlaying = playToggleBtn?.getAttribute("aria-label") === "Pause animation";
       if (isPlaying) {
-        video.pause();
+        video?.pause();
         playToggleBtn?.setAttribute("aria-label", "Play animation");
+        playToggleBtn?.setAttribute("aria-pressed", "false");
       } else {
-        video.play().catch(() => {});
+        video?.play().catch(() => {});
         playToggleBtn?.setAttribute("aria-label", "Pause animation");
+        playToggleBtn?.setAttribute("aria-pressed", "true");
       }
     });
 
-    video.addEventListener("error", markVideoAsInvalid);
+    video?.addEventListener("error", markVideoAsInvalid);
   }
 
-  setTimeout(() => {
-    initializeVideoLogic();
-    updateStyles();
-  }, 100);
+  // Init propre
+  initializeVideoLogic();
+  requestAnimationFrame(updateStyles);
 
-  window.addEventListener('scroll', updateStyles);
-  window.addEventListener('resize', updateStyles);
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onResize);
 });
