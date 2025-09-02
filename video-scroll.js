@@ -22,10 +22,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const rect = container.getBoundingClientRect();
     const viewportHeight = window.innerHeight;
-    const start = viewportHeight;
-    const end = viewportHeight * 0.25;
 
-    const progress = Math.min(Math.max((start - rect.bottom) / (start - end), 0), 1);
+    // 🎯 Progression basée sur le TOP du container
+    const start = viewportHeight;          // début = container entre dans l’écran
+    const end = viewportHeight * 0.25;     // fin = son top atteint 25% du viewport
+
+    const progress = Math.min(Math.max((start - rect.top) / (start - end), 0), 1);
+
     const radius = 2 + ((finalRadius - 2) * progress);
     const width = initialWidth - ((initialWidth - finalWidth) * progress);
 
@@ -38,7 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
       controlsWrapper.style.opacity = 0;
     }
 
-    // 🎯 Détection de sortie réelle : section hors de l'écran vers le haut ou le bas
+    // 🎯 Détection sortie totale haut ou bas
     if (rect.bottom < 0 || rect.top > viewportHeight) {
       hasExitedOnce = true;
       applyFinalStyles();
@@ -83,7 +86,7 @@ document.addEventListener("DOMContentLoaded", () => {
           if (!videoUsable) return;
 
           if (entry.isIntersecting) {
-            if (!hasExitedOnce && playToggleBtn.getAttribute("aria-label") === "Pause animation") {
+            if (!hasExitedOnce && playToggleBtn?.getAttribute("aria-label") === "Pause animation") {
               video.play().catch(() => {});
             }
           } else {
@@ -98,13 +101,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     playToggleBtn?.addEventListener('click', () => {
       if (!videoUsable) return;
-      const isPlaying = playToggleBtn.getAttribute("aria-label") === "Pause animation";
+      const isPlaying = playToggleBtn?.getAttribute("aria-label") === "Pause animation";
       if (isPlaying) {
         video.pause();
-        playToggleBtn.setAttribute("aria-label", "Play animation");
+        playToggleBtn?.setAttribute("aria-label", "Play animation");
       } else {
         video.play().catch(() => {});
-        playToggleBtn.setAttribute("aria-label", "Pause animation");
+        playToggleBtn?.setAttribute("aria-label", "Pause animation");
       }
     });
 
