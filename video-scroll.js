@@ -32,9 +32,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const rect = container.getBoundingClientRect();
     const vh = window.innerHeight || document.documentElement.clientHeight;
 
-    // ✅ Basé sur le TOP du container : 0 quand le top est en bas du viewport, 1 à 25% du viewport
+    // ✅ Basé sur le TOP du container : 0 quand le top est en bas du viewport, 1 à 75% du viewport
     const start = vh;
-    const end = vh * 0.25;
+    const end = vh * 0.75;
     const progress = clamp((start - rect.top) / (start - end), 0, 1);
 
     const radius = 2 + ((finalRadius - 2) * progress);
@@ -114,7 +114,7 @@ document.addEventListener("DOMContentLoaded", () => {
           }
         }
       },
-      { threshold: 0.25 }
+      { threshold: 0.75 }
     );
 
     observer.observe(container);
