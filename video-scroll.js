@@ -12,62 +12,47 @@ document.addEventListener("DOMContentLoaded", () => {
   const finalWidth = 87.5;
   const finalRadius = 44;
 
+  // Calcule la position réelle du container par rapport au haut du document
+  const containerOffsetTop = container.getBoundingClientRect().top + window.scrollY;
+  const animationStart = containerOffsetTop + 50; // décale légèrement l'animation
+  const animationEnd = animationStart + 400;
+
   let videoUsable = false;
-  let hasEnteredViewport = false; // ✅ ne “sort” qu’après être entré au moins une fois
   let hasExitedOnce = false;
 
-  const useSVW = typeof CSS !== "undefined" && CSS.supports?.('width','1svw');
-  const setWidth = (v) => { container.style.width = useSVW ? `${v}svw` : `${v}vw`; };
+  const useSVW = typeof CSS !== "undefined" && CSS.supports?.('width', '1svw');
+  const setWidth = (v) => {
+    container.style.width = useSVW ? `${v}svw` : `${v}vw`;
+  };
+
+  function clamp(n, min, max) {
+    return Math.min(Math.max(n, min), max);
+  }
 
   function applyFinalStyles() {
     container.style.clipPath = `inset(0 round ${finalRadius}px)`;
     setWidth(finalWidth);
   }
 
-  function clamp(n, min, max) { return Math.min(Math.max(n, min), max); }
-
   function updateStyles() {
     if (hasExitedOnce) return;
 
-    const rect = container.getBoundingClientRect();
-    const vh = window.innerHeight || document.documentElement.clientHeight;
+    const scrollY = window.scrollY || window.pageYOffset;
+    const progress = clamp((scrollY - animationStart) / (animationEnd - animationStart), 0, 1);
 
-    // ✅ Basé sur le TOP du container : 0 quand le top est en bas du viewport, 1 à 75% du viewport
-    const start = vh;
-    const end = vh * 0.75;
-    const progress = clamp((start - rect.top) / (start - end), 0, 1);
-
-    const radius = 2 + ((finalRadius - 2) * progress);
-    const width = initialWidth - ((initialWidth - finalWidth) * progress);
+    const radius = 2 + (finalRadius - 2) * progress;
+    const width = initialWidth - (initialWidth - finalWidth) * progress;
 
     container.style.clipPath = `inset(0 round ${radius}px)`;
     setWidth(width);
 
-    // Affichage des contrôles seulement quand la zone est bien dans l’écran
-    if (controlsWrapper) {
-      if (videoUsable && rect.top < vh && rect.bottom > end) {
-        controlsWrapper.style.opacity = 1;
-      } else {
-        controlsWrapper.style.opacity = 0;
-      }
-    }
-
-    // ✅ Marque “vu” si la section est dans le viewport
-    if (rect.bottom > 0 && rect.top < vh) {
-      hasEnteredViewport = true;
-    }
-
-    // ✅ Ne fige qu’après être entré au moins une fois
-    if (hasEnteredViewport && (rect.bottom < 0 || rect.top > vh)) {
+    if (progress >= 1) {
       hasExitedOnce = true;
       applyFinalStyles();
-      window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', onResize);
+      window.removeEventListener('scroll', updateStyles);
+      window.removeEventListener('resize', updateStyles);
     }
   }
-
-  function onScroll() { updateStyles(); }
-  function onResize() { updateStyles(); }
 
   function markVideoAsInvalid() {
     videoUsable = false;
@@ -79,6 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
       fallback.style.opacity = 1;
       fallback.style.display = 'block';
     }
+    updateToggleBtnState(false);
   }
 
   function isValidVideo(el) {
@@ -91,6 +77,17 @@ document.addEventListener("DOMContentLoaded", () => {
     return false;
   }
 
+  function updateToggleBtnState(isPlaying) {
+    if (!playToggleBtn) return;
+    if (isPlaying) {
+      playToggleBtn.setAttribute("aria-label", "Pause animation");
+      playToggleBtn.setAttribute("aria-pressed", "true");
+    } else {
+      playToggleBtn.setAttribute("aria-label", "Play animation");
+      playToggleBtn.setAttribute("aria-pressed", "false");
+    }
+  }
+
   function initializeVideoLogic() {
     if (!isValidVideo(video)) {
       markVideoAsInvalid();
@@ -99,47 +96,52 @@ document.addEventListener("DOMContentLoaded", () => {
 
     videoUsable = true;
     if (video) video.style.display = 'block';
-    if (fallback) { fallback.style.zIndex = 0; fallback.style.opacity = 0; }
+    if (fallback) {
+      fallback.style.zIndex = 0;
+      fallback.style.opacity = 0;
+    }
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (!videoUsable) return;
-          if (entry.isIntersecting) {
-            if (!hasExitedOnce && playToggleBtn?.getAttribute("aria-label") === "Pause animation") {
-              video?.play().catch(() => {});
-            }
-          } else {
-            video?.pause();
+    const observer = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (!videoUsable) return;
+        if (entry.isIntersecting) {
+          if (!hasExitedOnce && playToggleBtn?.getAttribute("aria-label") === "Pause animation") {
+            video?.play().then(() => {
+              updateToggleBtnState(true);
+            }).catch(() => {
+              updateToggleBtnState(false);
+            });
           }
+        } else {
+          video?.pause();
+          updateToggleBtnState(false);
         }
-      },
-      { threshold: 0.75 }
-    );
+      }
+    }, { threshold: 0.25 });
 
     observer.observe(container);
 
     playToggleBtn?.addEventListener('click', () => {
       if (!videoUsable) return;
-      const isPlaying = playToggleBtn?.getAttribute("aria-label") === "Pause animation";
+      const isPlaying = playToggleBtn.getAttribute("aria-label") === "Pause animation";
       if (isPlaying) {
         video?.pause();
-        playToggleBtn?.setAttribute("aria-label", "Play animation");
-        playToggleBtn?.setAttribute("aria-pressed", "false");
+        updateToggleBtnState(false);
       } else {
-        video?.play().catch(() => {});
-        playToggleBtn?.setAttribute("aria-label", "Pause animation");
-        playToggleBtn?.setAttribute("aria-pressed", "true");
+        video?.play().then(() => {
+          updateToggleBtnState(true);
+        }).catch(() => {
+          updateToggleBtnState(false);
+        });
       }
     });
 
     video?.addEventListener("error", markVideoAsInvalid);
   }
 
-  // Init propre
+  // Init
   initializeVideoLogic();
   requestAnimationFrame(updateStyles);
-
-  window.addEventListener('scroll', onScroll, { passive: true });
-  window.addEventListener('resize', onResize);
+  window.addEventListener('scroll', updateStyles, { passive: true });
+  window.addEventListener('resize', updateStyles);
 });
