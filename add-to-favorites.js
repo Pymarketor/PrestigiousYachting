@@ -25,31 +25,51 @@ document.addEventListener("DOMContentLoaded", () => {
     const getFavorites = () => JSON.parse(localStorage.getItem("favorites"));
     const saveFavorites = (favorites) => localStorage.setItem("favorites", JSON.stringify(favorites));
 
-    const updateStorage = (record_id, checked) => {
-      const favorites = getFavorites();
+  const updateStorage = (record_id, checked) => {
+  const favorites = getFavorites();
 
-      // Mettre à jour la liste spécifique
-      const list = favorites[pageList] || [];
-      if (checked) {
-        if (!list.includes(record_id)) list.push(record_id);
-      } else {
-        const index = list.indexOf(record_id);
-        if (index !== -1) list.splice(index, 1);
+  // 1) Mettre à jour la liste spécifique (celle de la page courante)
+  const list = favorites[pageList] || [];
+  if (checked) {
+    if (!list.includes(record_id)) list.push(record_id);
+  } else {
+    const index = list.indexOf(record_id);
+    if (index !== -1) list.splice(index, 1);
+  }
+  favorites[pageList] = list;
+
+  // 2) Mettre à jour la liste "default" intelligemment
+  const defaultList = favorites["default"] || [];
+
+  if (checked) {
+    // Si on coche -> on s'assure que l'id est dans "default"
+    if (!defaultList.includes(record_id)) {
+      defaultList.push(record_id);
+    }
+  } else {
+    // Si on décoche -> on vérifie s'il reste dans une autre liste
+    const otherListsKeys = Object.keys(favorites).filter(
+      (key) => key !== "default"
+    );
+
+    const stillExistsSomewhere = otherListsKeys.some((key) => {
+      const arr = favorites[key];
+      return Array.isArray(arr) && arr.includes(record_id);
+    });
+
+    // S'il n'existe plus dans aucune liste spécifique -> on le retire de "default"
+    if (!stillExistsSomewhere) {
+      const index = defaultList.indexOf(record_id);
+      if (index !== -1) {
+        defaultList.splice(index, 1);
       }
-      favorites[pageList] = list;
+    }
+  }
 
-      // Mettre à jour la liste "default" aussi
-      const defaultList = favorites["default"] || [];
-      if (checked) {
-        if (!defaultList.includes(record_id)) defaultList.push(record_id);
-      } else {
-        const index = defaultList.indexOf(record_id);
-        if (index !== -1) defaultList.splice(index, 1);
-      }
-      favorites["default"] = defaultList;
+  favorites["default"] = defaultList;
 
-      saveFavorites(favorites);
-    };
+  saveFavorites(favorites);
+};
 
     initFavorites();
 
