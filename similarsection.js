@@ -12,7 +12,7 @@
     style.id = STYLE_ID;
     style.textContent = `
       ${ROOT_SELECTOR}[data-py-coverflow-ready="true"] {
-        --py-cf-card: clamp(280px, 60vw, 720px);
+        --py-cf-card: clamp(280px, 45vw, 720px);
         --py-cf-control: 2.875rem;
         position: relative;
         width: 100%;
@@ -112,7 +112,7 @@
         scroll-snap-align: none !important;
         overflow: hidden !important;
         border: 0 !important;
-        border-radius: 1rem !important;
+        border-radius: 2rem !important;
         background: #f1f2f4 !important;
         box-shadow: 0 18px 42px rgba(18, 32, 50, .18) !important;
         opacity: 0;
