@@ -23,6 +23,7 @@ These are utility scripts that should be loaded from this repo through jsDelivr 
 | `yacht-spec-icons-svg.js` | Replace heavy specification image icons with lightweight inline SVG icons | Migrated |
 | `yacht-feature-icons.js` | Decorate official yacht feature values with lightweight inline SVG icons | Migrated |
 | `yacht-gallery-mobile-scroll-focus.js` | Mobile gallery scroll-focus utility; keeps Webflow section margins editable | Migrated as lean utility |
+| `yacht-mobile-info-fix.js` | Mobile expandable information-card behavior and its scoped mobile CSS | Migrated from `yachtmobileinfofix` v1.0.0; pending Webflow replacement QA |
 
 ## CDN tags to use in Webflow
 
@@ -34,6 +35,7 @@ Add only the utilities you actually need on the page. Prefer footer placement wi
 <script src="https://cdn.jsdelivr.net/gh/Pymarketor/PrestigiousYachting@main/yacht-spec-icons-svg.js" defer></script>
 <script src="https://cdn.jsdelivr.net/gh/Pymarketor/PrestigiousYachting@main/yacht-feature-icons.js" defer></script>
 <script src="https://cdn.jsdelivr.net/gh/Pymarketor/PrestigiousYachting@main/yacht-gallery-mobile-scroll-focus.js" defer></script>
+<script src="https://cdn.jsdelivr.net/gh/Pymarketor/PrestigiousYachting@main/yacht-mobile-info-fix.js" defer></script>
 ```
 
 ## Webflow MCP scripts currently applied
@@ -42,7 +44,7 @@ Add only the utilities you actually need on the page. Prefer footer placement wi
 
 | MCP script ID | Display name | Version | Location | Migration recommendation |
 | --- | --- | ---: | --- | --- |
-| `yachtmobileinfofix` | YachtMobileInfoFix | 1.0.0 | footer | Review source before migrating |
+| `yachtmobileinfofix` | YachtMobileInfoFix | 1.0.0 | footer | GitHub equivalent: `yacht-mobile-info-fix.js`; retain the registered script until staging QA confirms parity |
 | `yachtinfostackfix` | YachtInfoStackFix | 1.0.2 | footer | Review source before migrating |
 | `yachtexpandinggallery` | YachtExpandingGallery | 1.0.0 | footer | Component behavior; keep separate from utils unless intentionally versioned |
 | `py_gallery_design_override` | PY Gallery design override | 1.0.5 | footer | Design override; keep in Designer/Webflow unless component CSS fully moves to GitHub |
