@@ -30,6 +30,7 @@ These are utility scripts that should be loaded from this repo through jsDelivr 
 | `py-included-cards-css.js` | Included-cards component styles | Migrated from `py_included_cards_css` v1.0.8; pending Webflow replacement QA |
 | `py-included-cards.js` | Included-cards component behavior | Migrated from `py_included_cards` v1.0.7; pending Webflow replacement QA |
 | `yacht-expanding-gallery.js` | Interactive expanding yacht gallery | Migrated from `yachtexpandinggallery` v1.0.0; pending Webflow replacement QA |
+| `py-gallery-design-override.js` | Yacht gallery visual override and control icons | Migrated from `py_gallery_design_override` v1.0.5; pending Webflow replacement QA |
 
 ## CDN tags to use in Webflow
 
@@ -48,6 +49,7 @@ Add only the utilities you actually need on the page. Prefer footer placement wi
 <script src="https://cdn.jsdelivr.net/gh/Pymarketor/PrestigiousYachting@main/py-included-cards-css.js" defer></script>
 <script src="https://cdn.jsdelivr.net/gh/Pymarketor/PrestigiousYachting@main/py-included-cards.js" defer></script>
 <script src="https://cdn.jsdelivr.net/gh/Pymarketor/PrestigiousYachting@main/yacht-expanding-gallery.js" defer></script>
+<script src="https://cdn.jsdelivr.net/gh/Pymarketor/PrestigiousYachting@main/py-gallery-design-override.js" defer></script>
 ```
 
 ## Webflow MCP scripts currently applied
@@ -59,7 +61,7 @@ Add only the utilities you actually need on the page. Prefer footer placement wi
 | `yachtmobileinfofix` | YachtMobileInfoFix | 1.0.0 | footer | GitHub equivalent: `yacht-mobile-info-fix.js`; retain the registered script until staging QA confirms parity |
 | `yachtinfostackfix` | YachtInfoStackFix | 1.0.2 | footer | GitHub equivalent: `yacht-info-stack-fix.js`; retain the registered script until staging QA confirms parity |
 | `yachtexpandinggallery` | YachtExpandingGallery | 1.0.0 | footer | GitHub equivalent: `yacht-expanding-gallery.js`; retain the registered script until staging QA confirms parity |
-| `py_gallery_design_override` | PY Gallery design override | 1.0.5 | footer | Design override; keep in Designer/Webflow unless component CSS fully moves to GitHub |
+| `py_gallery_design_override` | PY Gallery design override | 1.0.5 | footer | GitHub equivalent: `py-gallery-design-override.js`; retain the registered script until staging QA confirms parity |
 | `yachtfeatureicons` | YachtFeatureIcons | 1.0.2 | footer | GitHub equivalent exists: `yacht-feature-icons.js` |
 | `yachtgallerymobilescrollfocus` | YachtGalleryMobileScrollFocus | 2.7.0 | footer | GitHub equivalent exists: `yacht-gallery-mobile-scroll-focus.js` |
 | `py_apple_reveal` | PY Apple Reveal | 1.0.0 | footer | GitHub equivalent: `py-apple-reveal.js`; retain the registered script until staging QA confirms parity |
