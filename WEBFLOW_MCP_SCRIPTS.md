@@ -2,6 +2,8 @@
 
 This file tracks scripts that were added or managed through Webflow MCP / Webflow Apps and whether they should live in this GitHub repository.
 
+Last review: 2026-09-01.
+
 ## Site
 
 - Webflow site: Prestigious Yachting
@@ -18,6 +20,21 @@ These are utility scripts that should be loaded from this repo through jsDelivr 
 | --- | --- | --- |
 | `py-yacht-video-safe-v2.js` | Safe yacht hero video loading, fallback image handling, reduced motion/data saver behavior | Migrated |
 | `py-lazy-litepicker-loader.js` | Lazy-load Litepicker CSS/JS only when the booking/date UI is approached | Migrated |
+| `yacht-spec-icons-svg.js` | Replace heavy specification image icons with lightweight inline SVG icons | Migrated |
+| `yacht-feature-icons.js` | Decorate official yacht feature values with lightweight inline SVG icons | Migrated |
+| `yacht-gallery-mobile-scroll-focus.js` | Mobile gallery scroll-focus utility; keeps Webflow section margins editable | Migrated as lean utility |
+
+## CDN tags to use in Webflow
+
+Add only the utilities you actually need on the page. Prefer footer placement with `defer`.
+
+```html
+<script src="https://cdn.jsdelivr.net/gh/Pymarketor/PrestigiousYachting@main/py-yacht-video-safe-v2.js" defer></script>
+<script src="https://cdn.jsdelivr.net/gh/Pymarketor/PrestigiousYachting@main/py-lazy-litepicker-loader.js" defer></script>
+<script src="https://cdn.jsdelivr.net/gh/Pymarketor/PrestigiousYachting@main/yacht-spec-icons-svg.js" defer></script>
+<script src="https://cdn.jsdelivr.net/gh/Pymarketor/PrestigiousYachting@main/yacht-feature-icons.js" defer></script>
+<script src="https://cdn.jsdelivr.net/gh/Pymarketor/PrestigiousYachting@main/yacht-gallery-mobile-scroll-focus.js" defer></script>
+```
 
 ## Webflow MCP scripts currently applied
 
@@ -28,12 +45,12 @@ These are utility scripts that should be loaded from this repo through jsDelivr 
 | `yachtmobileinfofix` | YachtMobileInfoFix | 1.0.0 | footer | Review source before migrating |
 | `yachtinfostackfix` | YachtInfoStackFix | 1.0.2 | footer | Review source before migrating |
 | `yachtexpandinggallery` | YachtExpandingGallery | 1.0.0 | footer | Component behavior; keep separate from utils unless intentionally versioned |
-| `py_gallery_design_override` | PY Gallery design override | 1.0.5 | footer | Design override; keep in Designer/Webflow unless we move component CSS fully to GitHub |
-| `yachtfeatureicons` | YachtFeatureIcons | 1.0.2 | footer | Good candidate for GitHub utility once source is confirmed |
-| `yachtgallerymobilescrollfocus` | YachtGalleryMobileScrollFocus | 2.7.0 | footer | Good candidate for GitHub utility once source is confirmed |
+| `py_gallery_design_override` | PY Gallery design override | 1.0.5 | footer | Design override; keep in Designer/Webflow unless component CSS fully moves to GitHub |
+| `yachtfeatureicons` | YachtFeatureIcons | 1.0.2 | footer | GitHub equivalent exists: `yacht-feature-icons.js` |
+| `yachtgallerymobilescrollfocus` | YachtGalleryMobileScrollFocus | 2.7.0 | footer | GitHub equivalent exists: `yacht-gallery-mobile-scroll-focus.js` |
 | `py_apple_reveal` | PY Apple Reveal | 1.0.0 | footer | Global utility candidate; review source before migrating |
-| `py_included_cards_css` | PY Included Cards CSS | 1.0.8 | footer | Component CSS; migrate only if the whole component becomes GitHub-owned |
-| `py_included_cards` | PY Included Cards | 1.0.7 | footer | Component logic; migrate only if the whole component becomes GitHub-owned |
+| `py_included_cards_css` | PY Included Cards CSS | 1.0.8 | footer | Component CSS; migrate only if the whole included-cards component becomes GitHub-owned |
+| `py_included_cards` | PY Included Cards | 1.0.7 | footer | Component logic; migrate only if the whole included-cards component becomes GitHub-owned |
 | `yachtmobileinputfix` | YachtMobileInputFix | 1.2.0 | footer | Utility candidate, but verify no overlap with Designer styles before migrating |
 
 ### Sunset Yacht Charter page
@@ -47,15 +64,17 @@ These are utility scripts that should be loaded from this repo through jsDelivr 
 
 No MCP custom code block was found during the last check.
 
-## Webflow embed/update checklist
+## Safe replacement checklist
 
-When a utility is moved to GitHub, replace the Webflow MCP/script block with a jsDelivr script tag:
+When a utility is moved to GitHub:
 
-```html
-<script src="https://cdn.jsdelivr.net/gh/Pymarketor/PrestigiousYachting@main/FILENAME.js" defer></script>
-```
+1. Add the GitHub/jsDelivr `<script>` tag in Webflow.
+2. Publish to staging/Webflow subdomain first.
+3. Verify the behavior on desktop and mobile.
+4. Only then remove or disable the matching MCP script to avoid duplicate execution.
+5. Republish the final site.
 
-Prefer adding scripts at the end of the footer unless the script must run before rendering.
+Do not remove component scripts until their GitHub version is intentionally created and tested.
 
 ## Rules for future scripts
 
