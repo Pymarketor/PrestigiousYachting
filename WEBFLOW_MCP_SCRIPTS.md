@@ -27,6 +27,7 @@ These are utility scripts that should be loaded from this repo through jsDelivr 
 | `yacht-info-stack-fix.js` | Mobile layout fix when an information card expands | Migrated from `yachtinfostackfix` v1.0.2; pending Webflow replacement QA |
 | `py-apple-reveal.js` | Scroll-triggered reveal behavior that honors reduced-motion preferences | Migrated from `py_apple_reveal` v1.0.0; pending Webflow replacement QA |
 | `yacht-mobile-input-fix.js` | Accessible labels for yacht request form inputs | Migrated from `yachtmobileinputfix` v1.2.0; pending Webflow replacement QA |
+| `py-included-cards-css.js` | Included-cards component styles | Migrated from `py_included_cards_css` v1.0.8; pending Webflow replacement QA |
 
 ## CDN tags to use in Webflow
 
@@ -42,6 +43,7 @@ Add only the utilities you actually need on the page. Prefer footer placement wi
 <script src="https://cdn.jsdelivr.net/gh/Pymarketor/PrestigiousYachting@main/yacht-info-stack-fix.js" defer></script>
 <script src="https://cdn.jsdelivr.net/gh/Pymarketor/PrestigiousYachting@main/py-apple-reveal.js" defer></script>
 <script src="https://cdn.jsdelivr.net/gh/Pymarketor/PrestigiousYachting@main/yacht-mobile-input-fix.js" defer></script>
+<script src="https://cdn.jsdelivr.net/gh/Pymarketor/PrestigiousYachting@main/py-included-cards-css.js" defer></script>
 ```
 
 ## Webflow MCP scripts currently applied
@@ -57,7 +59,7 @@ Add only the utilities you actually need on the page. Prefer footer placement wi
 | `yachtfeatureicons` | YachtFeatureIcons | 1.0.2 | footer | GitHub equivalent exists: `yacht-feature-icons.js` |
 | `yachtgallerymobilescrollfocus` | YachtGalleryMobileScrollFocus | 2.7.0 | footer | GitHub equivalent exists: `yacht-gallery-mobile-scroll-focus.js` |
 | `py_apple_reveal` | PY Apple Reveal | 1.0.0 | footer | GitHub equivalent: `py-apple-reveal.js`; retain the registered script until staging QA confirms parity |
-| `py_included_cards_css` | PY Included Cards CSS | 1.0.8 | footer | Component CSS; migrate only if the whole included-cards component becomes GitHub-owned |
+| `py_included_cards_css` | PY Included Cards CSS | 1.0.8 | footer | GitHub equivalent: `py-included-cards-css.js`; retain the registered script until staging QA confirms parity |
 | `py_included_cards` | PY Included Cards | 1.0.7 | footer | Component logic; migrate only if the whole included-cards component becomes GitHub-owned |
 | `yachtmobileinputfix` | YachtMobileInputFix | 1.2.0 | footer | GitHub equivalent: `yacht-mobile-input-fix.js`; retain the registered script until staging QA confirms parity |
 
