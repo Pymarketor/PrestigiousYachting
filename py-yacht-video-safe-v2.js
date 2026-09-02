@@ -57,7 +57,7 @@
       video.setAttribute("playsinline", "");
       video.setAttribute("webkit-playsinline", "");
       // Keep the poster as the LCP candidate. The video starts loading only when
-      // the hero is near the viewport (or after a mobile interaction).
+      // the hero is near the viewport.
       video.setAttribute("preload", "none");
 
       const poster = fallbackImage?.currentSrc || fallbackImage?.src;
@@ -79,7 +79,7 @@
 
       let inView = false;
       let userPaused = !canAutoplay;
-      let interactionReleased = !mobile;
+      let interactionReleased = true;
       let mediaPrepared = false;
 
       const prepareMedia = () => {
@@ -159,16 +159,6 @@
       }, { threshold: 0.25, rootMargin: "100px 0px" });
 
       observer.observe(container);
-
-      if (mobile) {
-        const release = () => {
-          interactionReleased = true;
-          prepareMedia();
-          play();
-        };
-        window.addEventListener("scroll", release, { once: true, passive: true });
-        window.addEventListener("touchstart", release, { once: true, passive: true });
-      }
 
       document.addEventListener("visibilitychange", () => {
         if (document.hidden) pause(false);
