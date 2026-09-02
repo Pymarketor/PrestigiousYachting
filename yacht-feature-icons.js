@@ -269,24 +269,37 @@
     getFeatureItems().forEach(decorateFeature);
   };
 
-  const observe = () => {
+  const observe = (wrapper) => {
     const observer = new MutationObserver(boot);
-    document.querySelectorAll(".wrapper-features").forEach((wrapper) => {
-      observer.observe(wrapper, { childList: true, subtree: true, characterData: true });
-    });
+    observer.observe(wrapper, { childList: true, subtree: true, characterData: true });
+  };
+
+  const bootWhenNearViewport = () => {
+    const wrappers = Array.from(document.querySelectorAll(".wrapper-features"));
+    if (!wrappers.length) return;
+
+    if (!("IntersectionObserver" in window)) {
+      boot();
+      wrappers.forEach(observe);
+      return;
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        observer.unobserve(entry.target);
+        installStyles();
+        Array.from(entry.target.querySelectorAll(FEATURE_SELECTOR)).forEach(decorateFeature);
+        observe(entry.target);
+      });
+    }, { rootMargin: "500px 0px" });
+
+    wrappers.forEach((wrapper) => observer.observe(wrapper));
   };
 
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", () => {
-      boot();
-      observe();
-    }, { once: true });
+    document.addEventListener("DOMContentLoaded", bootWhenNearViewport, { once: true });
   } else {
-    boot();
-    observe();
+    bootWhenNearViewport();
   }
-
-  window.addEventListener("load", boot, { once: true });
-  setTimeout(boot, 800);
-  setTimeout(boot, 1800);
 })();
