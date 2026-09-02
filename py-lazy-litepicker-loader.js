@@ -47,6 +47,30 @@
     );
   };
 
+  const isVisible = (element) => {
+    if (!element) return false;
+    const style = window.getComputedStyle(element);
+    return style.display !== "none" && style.visibility !== "hidden" &&
+      Number.parseFloat(style.opacity || "1") > 0;
+  };
+
+  const watchRequestModal = () => {
+    const modal = document.querySelector(".modal-one-click-request");
+    if (!modal) return;
+
+    const prepareWhenOpen = () => {
+      if (isVisible(modal)) prepareLitepicker();
+    };
+
+    const observer = new MutationObserver(prepareWhenOpen);
+    observer.observe(modal, {
+      attributes: true,
+      attributeFilter: ["class", "style", "hidden", "aria-hidden"]
+    });
+
+    prepareWhenOpen();
+  };
+
   const prepareLitepicker = () => {
     loadStylesheet();
     return loadScript().then(() => {
@@ -61,4 +85,10 @@
   document.addEventListener("focusin", (event) => {
     if (shouldPrepareCalendar(event.target)) prepareLitepicker();
   });
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", watchRequestModal, { once: true });
+  } else {
+    watchRequestModal();
+  }
 })();
