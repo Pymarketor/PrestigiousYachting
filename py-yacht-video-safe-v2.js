@@ -56,7 +56,9 @@
       video.removeAttribute("autoplay");
       video.setAttribute("playsinline", "");
       video.setAttribute("webkit-playsinline", "");
-      video.setAttribute("preload", mobile ? "none" : "metadata");
+      // Keep the poster as the LCP candidate. The video starts loading only when
+      // the hero is near the viewport (or after a mobile interaction).
+      video.setAttribute("preload", "none");
 
       const poster = fallbackImage?.currentSrc || fallbackImage?.src;
       if (poster) video.setAttribute("poster", poster);
@@ -78,6 +80,14 @@
       let inView = false;
       let userPaused = !canAutoplay;
       let interactionReleased = !mobile;
+      let mediaPrepared = false;
+
+      const prepareMedia = () => {
+        if (mediaPrepared) return;
+        mediaPrepared = true;
+        video.setAttribute("preload", "metadata");
+        video.load();
+      };
 
       const setButtonState = (playing) => {
         if (!button) return;
@@ -106,6 +116,7 @@
 
       const play = () => {
         if (userPaused || !interactionReleased || !inView || document.hidden) return;
+        prepareMedia();
         video.play().then(() => {
           revealVideo();
           setButtonState(true);
@@ -122,6 +133,7 @@
         event.preventDefault();
         event.stopPropagation();
         interactionReleased = true;
+        prepareMedia();
         if (!video.paused && !video.ended) {
           pause(true);
           return;
@@ -139,7 +151,10 @@
 
       const observer = new IntersectionObserver(([entry]) => {
         inView = Boolean(entry?.isIntersecting);
-        if (inView) play();
+        if (inView) {
+          if (!mobile) prepareMedia();
+          play();
+        }
         else pause(false);
       }, { threshold: 0.25, rootMargin: "100px 0px" });
 
@@ -148,6 +163,7 @@
       if (mobile) {
         const release = () => {
           interactionReleased = true;
+          prepareMedia();
           play();
         };
         window.addEventListener("scroll", release, { once: true, passive: true });
