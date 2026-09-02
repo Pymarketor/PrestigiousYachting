@@ -62,12 +62,21 @@
       if (isVisible(modal)) prepareLitepicker();
     };
 
+    const scheduleOpenCheck = () => {
+      [0, 80, 220, 500].forEach((delay) => {
+        window.setTimeout(prepareWhenOpen, delay);
+      });
+    };
+
     const observer = new MutationObserver(prepareWhenOpen);
     observer.observe(modal, {
       attributes: true,
       attributeFilter: ["class", "style", "hidden", "aria-hidden"]
     });
 
+    // The Webflow interaction can open the modal without changing the trigger's
+    // classes. A short post-click check covers that animation path too.
+    document.addEventListener("click", scheduleOpenCheck, true);
     prepareWhenOpen();
   };
 
