@@ -747,17 +747,35 @@
     scheduleSync();
   };
 
-  const boot = () => {
+  const boot = (root) => {
     installStyles();
-    document.querySelectorAll(ROOT_SELECTOR).forEach(initialize);
+    if (root) initialize(root);
+    else document.querySelectorAll(ROOT_SELECTOR).forEach(initialize);
+  };
+
+  const bootWhenNearViewport = () => {
+    const roots = Array.from(document.querySelectorAll(ROOT_SELECTOR));
+    if (!roots.length) return;
+
+    if (!("IntersectionObserver" in window)) {
+      boot();
+      return;
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        observer.unobserve(entry.target);
+        boot(entry.target);
+      });
+    }, { rootMargin: "600px 0px" });
+
+    roots.forEach((root) => observer.observe(root));
   };
 
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", boot, { once: true });
+    document.addEventListener("DOMContentLoaded", bootWhenNearViewport, { once: true });
   } else {
-    boot();
+    bootWhenNearViewport();
   }
-  window.addEventListener("load", boot, { once: true });
-  setTimeout(boot, 700);
-  setTimeout(boot, 1800);
 })();
