@@ -7,36 +7,27 @@
       const video = content?.querySelector(".video-element");
       const fallback = content?.querySelector(".video-fallback");
       const fallbackImage = fallback?.querySelector("img");
-      const controls = container.querySelector(".video-controls") || document.querySelector(".video-controls");
-      const button = container.querySelector(".video-play-toggle") || document.querySelector(".video-play-toggle");
+      const controls = container.querySelector(".video-controls.w-embed, .video-controls");
+      const button = container.querySelector(".video-play-toggle");
 
       if (!content || !video) return;
       container.dataset.pyVideoSafeReady = "true";
 
       const source = Array.from(video.querySelectorAll("source"))
         .map((item) => item.getAttribute("src") || "")
-        .find((src) => src.trim().length > 0);
+        .find((src) => src.trim());
 
       const showPosterOnly = () => {
-        video.pause?.();
-        video.removeAttribute("autoplay");
+        video.pause();
         video.setAttribute("preload", "none");
         video.style.display = "none";
         content.classList.remove("is-video-ready");
-
         if (fallback) {
           fallback.style.display = "block";
           fallback.style.opacity = "1";
           fallback.style.visibility = "visible";
-          fallback.style.pointerEvents = "auto";
         }
-
         if (controls) controls.style.display = "none";
-        if (button) {
-          button.style.display = "none";
-          button.setAttribute("aria-hidden", "true");
-          button.setAttribute("tabindex", "-1");
-        }
       };
 
       if (!source) {
@@ -44,10 +35,9 @@
         return;
       }
 
-      const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      const mobile = window.matchMedia("(max-width: 767px)").matches;
-      const saveData = Boolean(navigator.connection?.saveData);
-      const canAutoplay = !prefersReducedMotion && !saveData;
+      const canAutoplay =
+        !window.matchMedia("(prefers-reduced-motion: reduce)").matches &&
+        !navigator.connection?.saveData;
 
       video.muted = true;
       video.defaultMuted = true;
@@ -56,8 +46,6 @@
       video.removeAttribute("autoplay");
       video.setAttribute("playsinline", "");
       video.setAttribute("webkit-playsinline", "");
-      // Keep the poster as the LCP candidate. The video starts loading only when
-      // the hero is near the viewport.
       video.setAttribute("preload", "none");
 
       const poster = fallbackImage?.currentSrc || fallbackImage?.src;
@@ -72,14 +60,11 @@
       if (controls) controls.style.removeProperty("display");
       if (button) {
         button.style.removeProperty("display");
-        button.removeAttribute("aria-hidden");
-        button.removeAttribute("tabindex");
         button.setAttribute("type", "button");
       }
 
       let inView = false;
       let userPaused = !canAutoplay;
-      let interactionReleased = true;
       let mediaPrepared = false;
 
       const prepareMedia = () => {
@@ -115,12 +100,14 @@
       };
 
       const play = () => {
-        if (userPaused || !interactionReleased || !inView || document.hidden) return;
+        if (userPaused || !inView || document.hidden) return;
         prepareMedia();
-        video.play().then(() => {
-          revealVideo();
-          setButtonState(true);
-        }).catch(showFallback);
+        video.play()
+          .then(() => {
+            revealVideo();
+            setButtonState(true);
+          })
+          .catch(showFallback);
       };
 
       const pause = (manual = false) => {
@@ -129,18 +116,20 @@
         setButtonState(false);
       };
 
+      // Capture phase is intentional: it keeps Webflow interactions or embedded
+      // controls from cancelling the play/pause action after this handler runs.
       button?.addEventListener("click", (event) => {
         event.preventDefault();
-        event.stopPropagation();
-        interactionReleased = true;
+        event.stopImmediatePropagation();
+
         prepareMedia();
-        if (!video.paused && !video.ended) {
+        if (video.paused || video.ended) {
+          userPaused = false;
+          play();
+        } else {
           pause(true);
-          return;
         }
-        userPaused = false;
-        play();
-      }, { passive: false });
+      }, true);
 
       video.addEventListener("playing", () => {
         revealVideo();
@@ -152,10 +141,11 @@
       const observer = new IntersectionObserver(([entry]) => {
         inView = Boolean(entry?.isIntersecting);
         if (inView) {
-          if (!mobile) prepareMedia();
+          prepareMedia();
           play();
+        } else {
+          pause(false);
         }
-        else pause(false);
       }, { threshold: 0.25, rootMargin: "100px 0px" });
 
       observer.observe(container);
