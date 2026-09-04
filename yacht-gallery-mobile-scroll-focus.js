@@ -47,7 +47,8 @@
           min-height: var(--py-gallery-thumb-height) !important;
           aspect-ratio: auto !important;
           overflow-anchor: none;
-          transition: height 640ms cubic-bezier(.65, 0, .35, 1) !important;
+          will-change: height;
+          transition: height 760ms cubic-bezier(.65, 0, .35, 1) !important;
         }
         ${ROOT} ${CARD}[data-active="true"],
         ${ROOT} ${CARD}.is-active {
@@ -62,6 +63,21 @@
           height: 100% !important;
           max-width: none !important;
           object-fit: cover !important;
+          transform: translateZ(0) scale(1.035) !important;
+          filter: saturate(.88) brightness(.96);
+          will-change: transform, filter;
+          transition:
+            transform 760ms cubic-bezier(.65, 0, .35, 1),
+            filter 760ms cubic-bezier(.65, 0, .35, 1) !important;
+        }
+        ${ROOT} ${CARD}[data-active="true"] img,
+        ${ROOT} ${CARD}[data-active="true"] video,
+        ${ROOT} ${CARD}[data-active="true"] [data-py-gallery-image],
+        ${ROOT} ${CARD}.is-active img,
+        ${ROOT} ${CARD}.is-active video,
+        ${ROOT} ${CARD}.is-active [data-py-gallery-image] {
+          transform: translateZ(0) scale(1) !important;
+          filter: saturate(1) brightness(1);
         }
         ${ROOT} ${CARD}[data-active="true"] .py-gallery-zoom,
         ${ROOT} ${CARD}.is-active .py-gallery-zoom {
@@ -71,7 +87,10 @@
         }
       }
       @media (prefers-reduced-motion: reduce) {
-        ${ROOT} ${CARD} { transition: none !important; }
+        ${ROOT} ${CARD},
+        ${ROOT} ${CARD} img,
+        ${ROOT} ${CARD} video,
+        ${ROOT} [data-py-gallery-image] { transition: none !important; }
       }
     `;
     document.head.appendChild(style);
