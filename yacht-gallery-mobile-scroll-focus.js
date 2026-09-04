@@ -8,6 +8,7 @@
   const STYLE_ID = "py-gallery-mobile-scroll-focus-css";
   const FOCUS_LINE = 0.52;
   const HYSTERESIS = 28;
+  const TRANSITION_LOCK = 820;
 
   const injectStyles = () => {
     document.getElementById(STYLE_ID)?.remove();
@@ -104,11 +105,14 @@
 
     let active = Math.max(0, cards.findIndex((card) => card.dataset.active === "true"));
     let frame = 0;
+    let lockedUntil = 0;
+    let trailingTimer = 0;
 
     const activate = (index) => {
       const next = Math.max(0, Math.min(index, cards.length - 1));
       if (next === active && cards[next].dataset.active === "true") return;
       active = next;
+      lockedUntil = performance.now() + TRANSITION_LOCK;
       cards.forEach((card, cardIndex) => {
         const isActive = cardIndex === active;
         card.dataset.active = String(isActive);
@@ -120,6 +124,14 @@
     const update = () => {
       frame = 0;
       if (!MOBILE.matches) return;
+      if (performance.now() < lockedUntil) {
+        clearTimeout(trailingTimer);
+        trailingTimer = window.setTimeout(
+          requestUpdate,
+          Math.max(16, lockedUntil - performance.now() + 16)
+        );
+        return;
+      }
       const rootRect = root.getBoundingClientRect();
       const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
       if (rootRect.bottom < 0 || rootRect.top > viewportHeight) return;
