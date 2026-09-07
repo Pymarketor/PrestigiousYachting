@@ -1,0 +1,261 @@
+/* Prestigious Yachting — CMS yacht template custom styles.
+ * Consolidated from Webflow page-level custom code for CDN caching.
+ */
+
+.fs-combobox_option_yacht.w--current {
+  color: black;
+  background-color: white;
+  border-bottom-color: black;
+  border-width: 4px;
+  border-color: #3898ec;
+}
+.fs-combobox_option.w--current {
+  color: black;
+  background-color: white;
+  border-bottom-color: black;
+  border-width: 2px;
+  border-color: #3898ec;
+}
+body, * {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+body::-webkit-scrollbar,
+*::-webkit-scrollbar {
+  display: none;
+}
+
+[data-py-expanding-gallery] {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  border-radius: 0 !important;
+}
+[data-py-expanding-track] {
+  display: grid !important;
+  width: 100% !important;
+  max-width: none !important;
+  height: auto !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  grid-template-columns: 1fr !important;
+  grid-template-rows: none !important;
+  gap: 4px !important;
+  border-radius: 0 !important;
+}
+.py-gallery-row {
+  display: grid;
+  width: 100%;
+  height: min(62vh, 37vw);
+  min-height: 440px;
+  grid-template-rows: 1fr;
+  gap: 4px;
+  transition:
+    grid-template-columns 500ms cubic-bezier(0, 0, 0.2, 1),
+    grid-template-rows 500ms cubic-bezier(0, 0, 0.2, 1);
+  will-change: grid-template-columns, grid-template-rows;
+}
+[data-py-expanding-card] {
+  position: relative !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  border-radius: 0 !important;
+}
+[data-py-expanding-card][data-active="true"],
+[data-py-expanding-card].is-active {
+  flex: 12 1 0% !important;
+}
+[data-py-expanding-card]:not([data-active="true"]):not(.is-active) {
+  flex: 1 1 0% !important;
+}
+[data-py-gallery-image] {
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 100% !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+  object-fit: cover !important;
+  object-position: center !important;
+  transform: scale(1.035);
+  backface-visibility: hidden;
+  transition: transform 300ms cubic-bezier(0, 0, 0.2, 1) !important;
+  will-change: transform;
+}
+[data-py-expanding-card][data-active="true"] [data-py-gallery-image] {
+  transform: scale(1);
+}
+.py-gallery-zoom {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  z-index: 3;
+  display: grid;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  place-items: center;
+  border: 1px solid rgba(255,255,255,.72);
+  border-radius: 50%;
+  color: #111827;
+  background: rgba(255,255,255,.9);
+  box-shadow: 0 8px 24px rgba(0,0,0,.16);
+  cursor: zoom-in;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity .2s ease, transform .2s ease, background-color .2s ease;
+}
+[data-py-expanding-card][data-active="true"] .py-gallery-zoom,
+[data-py-expanding-card].is-active .py-gallery-zoom,
+[data-py-expanding-card]:focus-within .py-gallery-zoom {
+  opacity: 1;
+  transform: translateY(0);
+}
+.py-gallery-zoom:hover,
+.py-gallery-zoom:focus-visible {
+  background: #fff;
+  outline: 2px solid #1e3a5f;
+  outline-offset: 2px;
+}
+.py-gallery-dialog {
+  width: 100vw;
+  max-width: none;
+  height: 100dvh;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  color: #fff;
+  background: rgba(5,10,18,.96);
+}
+.py-gallery-dialog::backdrop {
+  background: rgba(5,10,18,.96);
+}
+.py-gallery-dialog[open] {
+  display: grid;
+  place-items: center;
+}
+.py-gallery-dialog__image {
+  width: 100%;
+  height: 100%;
+  padding: clamp(18px, 4vw, 64px);
+  object-fit: contain;
+  touch-action: pinch-zoom;
+  user-select: none;
+}
+.py-gallery-dialog__close,
+.py-gallery-dialog__nav {
+  position: fixed;
+  z-index: 2;
+  display: grid;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  place-items: center;
+  border: 1px solid rgba(255,255,255,.45);
+  border-radius: 50%;
+  color: #fff;
+  background: rgba(0,0,0,.46);
+  cursor: pointer;
+}
+.py-gallery-dialog__close {
+  top: max(16px, env(safe-area-inset-top));
+  right: max(16px, env(safe-area-inset-right));
+  font-size: 30px;
+}
+.py-gallery-dialog__nav {
+  top: 50%;
+  font-size: 30px;
+  transform: translateY(-50%);
+}
+.py-gallery-dialog__nav--prev { left: max(12px, env(safe-area-inset-left)); }
+.py-gallery-dialog__nav--next { right: max(12px, env(safe-area-inset-right)); }
+.py-gallery-dialog__close:focus-visible,
+.py-gallery-dialog__nav:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+@media screen and (max-width: 991px) {
+  .py-gallery-row {
+    height: min(54vh, 48vw);
+    min-height: 360px;
+  }
+}
+@media screen and (max-width: 767px) {
+  /* Phone gallery: edge-to-edge, square corners. */
+  .gallery-yacht-section,
+  .gallery-yacht-container,
+  .gallery-yacht-global,
+  [data-py-expanding-gallery] {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-inline: 0 !important;
+    padding-inline: 0 !important;
+    border-radius: 0 !important;
+  }
+  [data-py-expanding-track],
+  .py-gallery-row,
+  [data-py-expanding-card],
+  [data-py-gallery-image] {
+    border-radius: 0 !important;
+  }
+  [data-py-expanding-track] {
+    height: auto !important;
+    min-height: 0 !important;
+    gap: 3px !important;
+  }
+  .py-gallery-row {
+    height: auto;
+    min-height: 0;
+    grid-template-columns: 1fr;
+    gap: 3px;
+  }
+  [data-py-expanding-card] {
+    width: 100% !important;
+    min-height: 54px !important;
+    aspect-ratio: auto !important;
+  }
+  [data-py-expanding-card][data-active="true"],
+  [data-py-expanding-card].is-active {
+    height: auto !important;
+    min-height: 0 !important;
+    aspect-ratio: 3 / 2 !important;
+  }
+  .py-gallery-zoom {
+    right: 10px;
+    bottom: 10px;
+    width: 42px;
+    height: 42px;
+  }
+  .py-gallery-dialog__nav {
+    top: auto;
+    bottom: max(18px, env(safe-area-inset-bottom));
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .py-gallery-row,
+  [data-py-gallery-image],
+  .py-gallery-zoom {
+    transition: none !important;
+  }
+}
+
+.image-gallery,
+.image-card-yacht,
+.image-yacht-card {
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+}
+@supports (content-visibility: auto) {
+  .gallery-yacht-section,
+  .similar-yacht-section {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 900px;
+  }
+}
