@@ -13,9 +13,29 @@
       if (!content || !video) return;
       container.dataset.pyVideoSafeReady = "true";
 
-      const source = Array.from(video.querySelectorAll("source"))
+      const sourceNodes = Array.from(video.querySelectorAll("source"));
+      const source = sourceNodes
         .map((item) => item.getAttribute("src") || "")
         .find((src) => src.trim());
+
+      /*
+       * The CMS embed contains autoplay. Browsers may therefore ignore preload="none"
+       * and start the full 15–20 MB media request while the LCP poster is still loading.
+       * Capture the CMS URL, abort that speculative request, and restore it only after
+       * the poster and window load have completed (or immediately after a user click).
+       */
+      video.pause();
+      video.autoplay = false;
+      video.removeAttribute("autoplay");
+      sourceNodes.forEach((item) => {
+        const src = item.getAttribute("src");
+        if (!src) return;
+        item.dataset.pyVideoSrc = src;
+        item.removeAttribute("src");
+      });
+      video.removeAttribute("src");
+      video.setAttribute("preload", "none");
+      video.load();
 
       const showPosterOnly = () => {
         video.pause();
@@ -43,10 +63,8 @@
       video.defaultMuted = true;
       video.loop = true;
       video.playsInline = true;
-      video.removeAttribute("autoplay");
       video.setAttribute("playsinline", "");
       video.setAttribute("webkit-playsinline", "");
-      video.setAttribute("preload", "none");
 
       const poster = fallbackImage?.currentSrc || fallbackImage?.src;
       if (poster) video.setAttribute("poster", poster);
@@ -66,12 +84,23 @@
       let inView = false;
       let userPaused = !canAutoplay;
       let mediaPrepared = false;
+      let mediaAllowed = false;
+      let allowTimer = 0;
 
-      const prepareMedia = () => {
-        if (mediaPrepared) return;
+      const restoreSources = () => {
+        sourceNodes.forEach((item) => {
+          const src = item.dataset.pyVideoSrc;
+          if (src) item.setAttribute("src", src);
+        });
+      };
+
+      const prepareMedia = (force = false) => {
+        if (mediaPrepared || (!mediaAllowed && !force)) return false;
         mediaPrepared = true;
+        restoreSources();
         video.setAttribute("preload", "metadata");
         video.load();
+        return true;
       };
 
       const setButtonState = (playing) => {
@@ -99,9 +128,9 @@
         setButtonState(false);
       };
 
-      const play = () => {
-        if (userPaused || !inView || document.hidden) return;
-        prepareMedia();
+      const play = (force = false) => {
+        if ((!mediaAllowed && !force) || userPaused || !inView || document.hidden) return;
+        if (!prepareMedia(force)) return;
         video.play()
           .then(() => {
             revealVideo();
@@ -116,16 +145,43 @@
         setButtonState(false);
       };
 
-      // Capture phase is intentional: it keeps Webflow interactions or embedded
-      // controls from cancelling the play/pause action after this handler runs.
+      const allowMedia = () => {
+        if (mediaAllowed) return;
+        mediaAllowed = true;
+        if (inView && !userPaused) play();
+      };
+
+      const posterReady = () => {
+        if (!fallbackImage) return Promise.resolve();
+        const loaded = fallbackImage.complete
+          ? Promise.resolve()
+          : new Promise((resolve) => {
+              fallbackImage.addEventListener("load", resolve, { once: true });
+              fallbackImage.addEventListener("error", resolve, { once: true });
+            });
+        return loaded.then(() => fallbackImage.decode?.().catch(() => {}) || undefined);
+      };
+
+      posterReady().then(() => {
+        const afterWindowLoad = () => {
+          clearTimeout(allowTimer);
+          allowTimer = window.setTimeout(allowMedia, 500);
+        };
+        if (document.readyState === "complete") afterWindowLoad();
+        else window.addEventListener("load", afterWindowLoad, { once: true });
+      });
+      allowTimer = window.setTimeout(allowMedia, 5000);
+
+      // Capture phase keeps embedded/Webflow interactions from cancelling controls.
       button?.addEventListener("click", (event) => {
         event.preventDefault();
         event.stopImmediatePropagation();
 
-        prepareMedia();
         if (video.paused || video.ended) {
           userPaused = false;
-          play();
+          mediaAllowed = true;
+          prepareMedia(true);
+          play(true);
         } else {
           pause(true);
         }
@@ -140,12 +196,8 @@
 
       const observer = new IntersectionObserver(([entry]) => {
         inView = Boolean(entry?.isIntersecting);
-        if (inView) {
-          prepareMedia();
-          play();
-        } else {
-          pause(false);
-        }
+        if (inView) play();
+        else pause(false);
       }, { threshold: 0.25, rootMargin: "100px 0px" });
 
       observer.observe(container);
