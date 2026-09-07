@@ -11,7 +11,18 @@ Last review: 2026-09-07.
 - Yacht CMS template page ID: `68653f3547f48fe22426f0e7`
 - Published collection path: `/yachts/{slug}`
 
-## Loading order
+## Production delivery
+
+Webflow downloads two JavaScript bundles. The source modules below remain independent and editable.
+
+| Bundle | Location | Source modules | Purpose |
+| --- | --- | ---: | --- |
+| `yacht-template-critical.bundle.js` | head, defer | 3 | Paint guards, hero video and mobile gallery focus |
+| `yacht-template-runtime.bundle.js` | footer, defer | 14 | CMS, forms, accessibility, gallery, cards, icons and similar yachts |
+
+The template also loads `yacht-template-styles.css`, Finsweet Attributes and Litepicker.
+
+## Source-module order
 
 | Priority | File | Location | Purpose |
 | ---: | --- | --- | --- |
@@ -51,7 +62,7 @@ Last review: 2026-09-07.
 
 1. Validate JavaScript syntax.
 2. Update the GitHub files.
-3. Pin every jsDelivr URL to the new commit.
+3. Rebuild both production bundles and pin every jsDelivr URL to the new commit.
 4. Publish Webflow.
 5. Verify desktop and mobile interactions.
 6. Run PageSpeed Insights on the published URL.
