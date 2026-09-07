@@ -259,7 +259,8 @@ document.addEventListener("DOMContentLoaded", () => {
       };
 
       const prepareMedia = (force = false) => {
-        if (mediaPrepared || (!mediaAllowed && !force)) return false;
+        if (mediaPrepared) return true;
+        if (!mediaAllowed && !force) return false;
         mediaPrepared = true;
         restoreSources();
         video.setAttribute("preload", "metadata");
