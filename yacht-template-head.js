@@ -2,35 +2,9 @@
  * Source of truth: GitHub. Loaded with defer before Finsweet.
  */
 
-/* Migrated Webflow head block 1. */
-(() => {
-  const unsafeLockSelector = [
-    '.f-modal-centre[fs-scrolldisable-element="when-visible"]',
-    '.f-modal-centre-other[fs-scrolldisable-element="when-visible"]',
-    '.modal-one-click-request[fs-scrolldisable-element="when-visible"]',
-    '.modal-favorite-list[fs-scrolldisable-element="when-visible"]',
-    '.fs_selectcustom-yacht[fs-scrolldisable-element="when-visible"]'
-  ].join(",");
-
-  const neutralize = (root) => {
-    if (!(root instanceof Element)) return;
-    if (root.matches(unsafeLockSelector)) {
-      root.removeAttribute("fs-scrolldisable-element");
-    }
-    root.querySelectorAll?.(unsafeLockSelector).forEach((element) => {
-      element.removeAttribute("fs-scrolldisable-element");
-    });
-  };
-
-  const observer = new MutationObserver((mutations) => {
-    mutations.forEach((mutation) => {
-      mutation.addedNodes.forEach(neutralize);
-    });
-  });
-
-  observer.observe(document.documentElement, { childList: true, subtree: true });
-  document.addEventListener("DOMContentLoaded", () => neutralize(document.body), { once: true });
-})();
+/* Finsweet Attributes v2 owns scroll locking for modal elements.
+ * Keep fs-scrolldisable-element="when-visible" intact on Webflow elements.
+ */
 
 /* Migrated Webflow head block 2. */
 document.documentElement.classList.add("cls-lock-accordions");
