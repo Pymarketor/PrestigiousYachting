@@ -1,0 +1,4 @@
+/* Prestigious Yachting — gallery close icon alignment. */
+.py-gallery-dialog__close svg path {
+  stroke-width: 2 !important;
+}
