@@ -15,5 +15,14 @@ Use an icon anywhere in Webflow with:
 <span class="py-icon" data-py-icon="arrow" aria-hidden="true"></span>
 ```
 
-Available names: `arrow`, `cross`, `plus`, `check`, `search`, `chevron-left`, `chevron-right`, `expand`.
+Available names: `arrow`, `cross`, `plus`, `check`, `search`, `chevron-left`, `chevron-right`, `expand`, `external-link`.
+
+Navigation mapping:
+
+- `expand`: plus icon for accordions, modals and gallery opening.
+- `cross`: close icon for modals and zoom viewers.
+- `chevron-left` / `chevron-right`: slider and scroll navigation.
+- `external-link`: links that open a new tab.
+
+The loader also maps the existing Webflow component classes automatically, so current GitHub components can be migrated without changing their interaction attributes.
 Use a Git tag instead of `main` once the library is stable, for example `@v1.0.0`.
