@@ -49,11 +49,11 @@
   function markLegacyIcons() {
     var mappings = [
       ['.fs_accordion-1_icon', 'expand'],
-      ['.more-picto', 'expand'],
+      ['.more-picto, .open-arrow', 'expand'],
       ['.open-arrow-link', 'external-link'],
-      ['.picto-arrow-exit, .error-cross', 'cross'],
-      ['[data-slider-prev], .arrow-scroll-left-us, .arrow-scroll-left-card-other', 'chevron-left'],
-      ['[data-slider-next], .arrow-scroll-right-us, .arrow-scroll-right-card-other', 'chevron-right']
+      ['.picto-arrow-exit, .error-cross, .fs_modal-1_close-icon, .fs_modal-1_close-icon-2, .f-icon-regular', 'cross'],
+      ['[data-slider-prev], [class*="arrow-scroll-left"], [class*="arrow-slide-left"]', 'chevron-left'],
+      ['[data-slider-next], [class*="arrow-scroll-right"], [class*="arrow-slide-right"]', 'chevron-right']
     ];
     mappings.forEach(function (mapping) {
       document.querySelectorAll(mapping[0]).forEach(function (target) {
@@ -70,6 +70,8 @@
 
   window.PYIcons = { render: render, load: load, baseUrl: baseUrl, markLegacyIcons: markLegacyIcons };
   function boot() { markLegacyIcons(); render(); }
+  var observer = new MutationObserver(function () { markLegacyIcons(); render(); });
+  observer.observe(document.documentElement, { childList: true, subtree: true });
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
   else boot();
 }());
