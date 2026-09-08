@@ -54,12 +54,7 @@
     });
   };
 
-  const lockVisualPosition = () => {
-    if (locked) return;
-    locked = true;
-    savedScrollY = lastUnlockedScrollY;
-    savedBodyStyles = rememberBodyStyles();
-
+  const applyBodyLockStyles = () => {
     Object.assign(document.body.style, {
       position: "fixed",
       top: `-${savedScrollY}px`,
@@ -67,6 +62,15 @@
       right: "0",
       width: "100%"
     });
+  };
+
+  const lockVisualPosition = () => {
+    if (!locked) {
+      locked = true;
+      savedScrollY = lastUnlockedScrollY;
+      savedBodyStyles = rememberBodyStyles();
+    }
+    applyBodyLockStyles();
   };
 
   const unlockVisualPosition = () => {
@@ -96,9 +100,17 @@
         return;
       }
 
+      // Finsweet may clear body styles while applying its own html lock.
+      // Reapply once after Finsweet, then keep the position stable until closure.
+      applyBodyLockStyles();
       stopVisibilityMonitor();
       visibilityTimer = window.setInterval(() => {
-        if (hasVisibleModal()) return;
+        if (hasVisibleModal()) {
+          if (getComputedStyle(document.body).position !== "fixed") {
+            applyBodyLockStyles();
+          }
+          return;
+        }
         stopVisibilityMonitor();
         unlockVisualPosition();
       }, 100);
