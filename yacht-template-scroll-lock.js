@@ -10,6 +10,7 @@
     ".modal-one-click-request",
     ".modal-favorite-list"
   ];
+  const openTriggerSelector = ".btn-make-a-request-yacht, [open-favorite-modal], [data-py-expanding-card]";
   const preservedTargets = [
     ".zoom-image-wrapper",
     ".container-one-click",
@@ -100,6 +101,12 @@
 
     document.addEventListener("click", (event) => {
       if (!locked && !hasVisibleModal()) lastUnlockedScrollY = window.scrollY;
+
+      if (event.target.closest(openTriggerSelector) && !locked) {
+        lockVisualPosition();
+        requestAnimationFrame(syncLock);
+      }
+
       if (event.target.closest(
         '[open-favorite-modal][href="#"], [favorite-modal="trigger"][href="#"]'
       )) {
@@ -126,6 +133,8 @@
       });
     }, 0);
   };
+
+  window.__pyScrollLockBridge = { loaded: true, sync: syncLock };
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", init, { once: true });
