@@ -89,6 +89,7 @@
   const monitorUntilClosed = () => {
     clearTimeout(openingTimer);
     openingTimer = window.setTimeout(() => {
+      openingTimer = 0;
       if (!hasVisibleModal()) {
         stopVisibilityMonitor();
         unlockVisualPosition();
