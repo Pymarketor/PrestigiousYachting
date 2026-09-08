@@ -259,3 +259,20 @@ body::-webkit-scrollbar,
     contain-intrinsic-size: auto 900px;
   }
 }
+
+
+/* Unified navigation icon treatment */
+.py-gallery-zoom.py-icon-wrap,
+.py-gallery-dialog__close.py-icon-wrap,
+.py-gallery-dialog__nav.py-icon-wrap {
+  color: var(--py-icon-color, currentColor);
+  background: rgb(255 255 255 / 50%);
+  border: 1px solid rgb(255 255 255 / 35%);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+.py-gallery-zoom.py-icon-wrap:hover,
+.py-gallery-dialog__close.py-icon-wrap:hover,
+.py-gallery-dialog__nav.py-icon-wrap:hover {
+  background: rgb(255 255 255 / 78%);
+}
