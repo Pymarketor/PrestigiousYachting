@@ -58,7 +58,7 @@
     mappings.forEach(function (mapping) {
       document.querySelectorAll(mapping[0]).forEach(function (target) {
         if (!target.dataset.pyIcon) target.dataset.pyIcon = mapping[1];
-        target.classList.add('py-icon');
+        target.classList.add('py-icon', 'py-icon-wrap', 'is-glass');
         target.replaceChildren();
       });
     });
