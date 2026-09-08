@@ -46,11 +46,30 @@
     });
   }
 
+  function markLegacyIcons() {
+    var mappings = [
+      ['.fs_accordion-1_icon', 'expand'],
+      ['.more-picto', 'expand'],
+      ['.open-arrow-link', 'external-link'],
+      ['.picto-arrow-exit, .error-cross', 'cross'],
+      ['[data-slider-prev], .arrow-scroll-left-us, .arrow-scroll-left-card-other', 'chevron-left'],
+      ['[data-slider-next], .arrow-scroll-right-us, .arrow-scroll-right-card-other', 'chevron-right']
+    ];
+    mappings.forEach(function (mapping) {
+      document.querySelectorAll(mapping[0]).forEach(function (target) {
+        if (!target.dataset.pyIcon) target.dataset.pyIcon = mapping[1];
+        target.classList.add('py-icon');
+        target.replaceChildren();
+      });
+    });
+  }
+
   var style = document.createElement('style');
   style.textContent = '.py-icon{display:inline-flex;width:1em;height:1em;line-height:1;color:currentColor}.py-icon-svg{display:block;width:100%;height:100%;stroke:currentColor}.py-icon--left{transform:rotate(180deg)}.py-icon--up{transform:rotate(-90deg)}.py-icon--down{transform:rotate(90deg)}';
   document.head.appendChild(style);
 
-  window.PYIcons = { render: render, load: load, baseUrl: baseUrl };
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { render(); });
-  else render();
+  window.PYIcons = { render: render, load: load, baseUrl: baseUrl, markLegacyIcons: markLegacyIcons };
+  function boot() { markLegacyIcons(); render(); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
 }());
