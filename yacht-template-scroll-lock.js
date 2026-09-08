@@ -85,8 +85,11 @@
         return;
       }
 
-      window.scrollTo(0, savedScrollY);
-      requestAnimationFrame(() => window.scrollTo(0, savedScrollY));
+      const restore = () => window.scrollTo(0, savedScrollY);
+      [0, 50, 150, 350, 750, 1500].forEach((delay) => {
+        window.setTimeout(restore, delay);
+      });
+      requestAnimationFrame(restore);
       lastUnlockedScrollY = savedScrollY;
     };
 
