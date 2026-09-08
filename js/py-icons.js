@@ -52,13 +52,33 @@
     });
   }
 
+  // Migration bridge for legacy Webflow embeds still present in published CMS templates.
+  // New embeds should use data-py-icon directly.
+  function migrateLegacyEmbeds() {
+    var mappings = [
+      ['.fs_accordion-1_icon, .more-picto, .open-arrow', 'expand'],
+      ['.picto-arrow-exit, .error-cross, .fs_modal-1_close-icon, .fs_modal-1_close-icon-2, .f-icon-regular', 'cross'],
+      ['.open-arrow-link', 'external-link'],
+      ['[data-slider-prev], [class*="arrow-scroll-left"], [class*="arrow-slide-left"]', 'chevron-left'],
+      ['[data-slider-next], [class*="arrow-scroll-right"], [class*="arrow-slide-right"]', 'chevron-right']
+    ];
+    mappings.forEach(function (mapping) {
+      document.querySelectorAll(mapping[0]).forEach(function (target) {
+        if (target.dataset.pyIconLoaded === 'true' || target.dataset.pyIcon) return;
+        target.dataset.pyIcon = mapping[1];
+        target.classList.add('py-icon', 'py-icon-wrap', 'is-glass');
+        target.replaceChildren();
+      });
+    });
+  }
+
   var style = document.createElement('style');
   style.textContent = '.py-icon{display:inline-flex;width:1em;height:1em;line-height:1;color:currentColor}.py-icon-svg{display:block;width:100%;height:100%;stroke:currentColor}.py-icon--left{transform:rotate(180deg)}.py-icon--up{transform:rotate(-90deg)}.py-icon--down{transform:rotate(90deg)}';
   document.head.appendChild(style);
 
   window.PYIcons = { render: render, load: load, baseUrl: baseUrl, markIconNodes: markIconNodes };
-  function boot() { markIconNodes(); render(); }
-  var observer = new MutationObserver(function () { markIconNodes(); render(); });
+  function boot() { migrateLegacyEmbeds(); markIconNodes(); render(); }
+  var observer = new MutationObserver(function () { migrateLegacyEmbeds(); markIconNodes(); render(); });
   observer.observe(document.documentElement, { childList: true, subtree: true });
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
   else boot();
