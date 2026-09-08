@@ -24,6 +24,8 @@
   let savedScrollY = window.scrollY;
   let lastUnlockedScrollY = window.scrollY;
   let savedBodyStyles = null;
+  let openingTimer = 0;
+  let visibilityTimer = 0;
 
   const isVisible = (element) => {
     const style = getComputedStyle(element);
@@ -79,9 +81,32 @@
     lastUnlockedScrollY = savedScrollY;
   };
 
+  const stopVisibilityMonitor = () => {
+    clearInterval(visibilityTimer);
+    visibilityTimer = 0;
+  };
+
+  const monitorUntilClosed = () => {
+    clearTimeout(openingTimer);
+    openingTimer = window.setTimeout(() => {
+      if (!hasVisibleModal()) {
+        stopVisibilityMonitor();
+        unlockVisualPosition();
+        return;
+      }
+
+      stopVisibilityMonitor();
+      visibilityTimer = window.setInterval(() => {
+        if (hasVisibleModal()) return;
+        stopVisibilityMonitor();
+        unlockVisualPosition();
+      }, 100);
+    }, 500);
+  };
+
   const syncLock = () => {
     if (hasVisibleModal()) lockVisualPosition();
-    else unlockVisualPosition();
+    else if (!openingTimer) unlockVisualPosition();
   };
 
   const restoreFinsweetAttributes = () => {
@@ -104,7 +129,7 @@
 
       if (event.target.closest(openTriggerSelector) && !locked) {
         lockVisualPosition();
-        requestAnimationFrame(syncLock);
+        monitorUntilClosed();
       }
 
       if (event.target.closest(
@@ -134,7 +159,11 @@
     }, 0);
   };
 
-  window.__pyScrollLockBridge = { loaded: true, sync: syncLock };
+  window.__pyScrollLockBridge = {
+    loaded: true,
+    sync: syncLock,
+    state: () => ({ locked, savedScrollY, modalVisible: hasVisibleModal() })
+  };
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", init, { once: true });
