@@ -415,10 +415,10 @@
     dialog.className = "py-gallery-dialog";
     dialog.setAttribute("aria-label", "Yacht photo viewer");
     dialog.innerHTML =
-      '<button class="py-gallery-dialog__close" type="button" aria-label="Close photo viewer">×</button>' +
-      '<button class="py-gallery-dialog__nav py-gallery-dialog__nav--prev" type="button" aria-label="Previous photo">‹</button>' +
+      '<button class="py-gallery-dialog__close py-icon-wrap is-glass" type="button" aria-label="Close photo viewer"><span class="py-icon" data-py-icon="cross"></span></button>' +
+      '<button class="py-gallery-dialog__nav py-gallery-dialog__nav--prev py-icon-wrap is-glass" type="button" aria-label="Previous photo"><span class="py-icon" data-py-icon="chevron-left"></span></button>' +
       '<img class="py-gallery-dialog__image" alt="">' +
-      '<button class="py-gallery-dialog__nav py-gallery-dialog__nav--next" type="button" aria-label="Next photo">›</button>';
+      '<button class="py-gallery-dialog__nav py-gallery-dialog__nav--next py-icon-wrap is-glass" type="button" aria-label="Next photo"><span class="py-icon" data-py-icon="chevron-right"></span></button>';
     document.body.appendChild(dialog);
 
     const dialogImage = dialog.querySelector(".py-gallery-dialog__image");
@@ -459,9 +459,8 @@
       zoom.type = "button";
       zoom.className = "py-gallery-zoom";
       zoom.setAttribute("aria-label", image && image.alt ? "Enlarge image: " + image.alt : "Enlarge gallery image");
-      zoom.innerHTML =
-        '<svg width="21" height="21" viewBox="0 0 24 24" aria-hidden="true" focusable="false">' +
-        '<path d="M9 3H3v6M15 3h6v6M9 21H3v-6M15 21h6v-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      zoom.classList.add("py-icon-wrap", "is-glass");
+      zoom.innerHTML = '<span class="py-icon" data-py-icon="expand" aria-hidden="true"></span>';
       zoom.addEventListener("click", (event) => {
         event.preventDefault();
         event.stopPropagation();
