@@ -78,11 +78,19 @@
     locked = false;
     restoreBodyStyles();
 
-    const restore = () => window.scrollTo(0, savedScrollY);
-    restore();
-    requestAnimationFrame(restore);
-    window.setTimeout(restore, 0);
-    lastUnlockedScrollY = savedScrollY;
+    const restoreAfterFinsweet = (attempt = 0) => {
+      const htmlStillLocked = getComputedStyle(document.documentElement).overflow === "hidden";
+      if (htmlStillLocked && attempt < 40) {
+        window.setTimeout(() => restoreAfterFinsweet(attempt + 1), 50);
+        return;
+      }
+
+      window.scrollTo(0, savedScrollY);
+      requestAnimationFrame(() => window.scrollTo(0, savedScrollY));
+      lastUnlockedScrollY = savedScrollY;
+    };
+
+    restoreAfterFinsweet();
   };
 
   const stopVisibilityMonitor = () => {
