@@ -46,21 +46,9 @@
     });
   }
 
-  function markLegacyIcons() {
-    var mappings = [
-      ['.fs_accordion-1_icon', 'expand'],
-      ['.more-picto, .open-arrow', 'expand'],
-      ['.open-arrow-link', 'external-link'],
-      ['.picto-arrow-exit, .error-cross, .fs_modal-1_close-icon, .fs_modal-1_close-icon-2, .f-icon-regular', 'cross'],
-      ['[data-slider-prev], [class*="arrow-scroll-left"], [class*="arrow-slide-left"]', 'chevron-left'],
-      ['[data-slider-next], [class*="arrow-scroll-right"], [class*="arrow-slide-right"]', 'chevron-right']
-    ];
-    mappings.forEach(function (mapping) {
-      document.querySelectorAll(mapping[0]).forEach(function (target) {
-        if (!target.dataset.pyIcon) target.dataset.pyIcon = mapping[1];
-        target.classList.add('py-icon', 'py-icon-wrap', 'is-glass');
-        target.replaceChildren();
-      });
+  function markIconNodes() {
+    document.querySelectorAll('[data-py-icon]').forEach(function (target) {
+      target.classList.add('py-icon', 'py-icon-wrap', 'is-glass');
     });
   }
 
@@ -68,9 +56,9 @@
   style.textContent = '.py-icon{display:inline-flex;width:1em;height:1em;line-height:1;color:currentColor}.py-icon-svg{display:block;width:100%;height:100%;stroke:currentColor}.py-icon--left{transform:rotate(180deg)}.py-icon--up{transform:rotate(-90deg)}.py-icon--down{transform:rotate(90deg)}';
   document.head.appendChild(style);
 
-  window.PYIcons = { render: render, load: load, baseUrl: baseUrl, markLegacyIcons: markLegacyIcons };
-  function boot() { markLegacyIcons(); render(); }
-  var observer = new MutationObserver(function () { markLegacyIcons(); render(); });
+  window.PYIcons = { render: render, load: load, baseUrl: baseUrl, markIconNodes: markIconNodes };
+  function boot() { markIconNodes(); render(); }
+  var observer = new MutationObserver(function () { markIconNodes(); render(); });
   observer.observe(document.documentElement, { childList: true, subtree: true });
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
   else boot();
