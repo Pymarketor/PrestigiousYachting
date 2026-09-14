@@ -69,33 +69,13 @@
     });
   }
 
-  // Migration bridge for legacy Webflow embeds still present in published CMS templates.
-  // New embeds should use data-py-icon directly.
-  function migrateLegacyEmbeds() {
-    var mappings = [
-      ['.fs_accordion-1_icon, .more-picto, .open-arrow', 'expand'],
-      ['.picto-arrow-exit, .error-cross, .fs_modal-1_close-icon, .fs_modal-1_close-icon-2, .f-icon-regular', 'cross'],
-      ['.open-arrow-link', 'external-link'],
-      ['[data-slider-prev], [class*="arrow-scroll-left"], [class*="arrow-slide-left"]', 'chevron-left'],
-      ['[data-slider-next], [class*="arrow-scroll-right"], [class*="arrow-slide-right"]', 'chevron-right']
-    ];
-    mappings.forEach(function (mapping) {
-      document.querySelectorAll(mapping[0]).forEach(function (target) {
-        if (target.dataset.pyIconLoaded === 'true' || target.dataset.pyIcon) return;
-        target.dataset.pyIcon = mapping[1];
-        target.classList.add('py-icon', 'py-icon-wrap', 'is-glass');
-        target.replaceChildren();
-      });
-    });
-  }
-
   var style = document.createElement('style');
   style.textContent = '.py-icon{display:inline-flex;width:1.25rem;height:1.25rem;line-height:1;color:var(--py-icon-color,currentColor)}.py-icon-wrap.py-icon{width:var(--py-icon-size,2.5rem)!important;height:var(--py-icon-size,2.5rem)!important}.py-icon-wrap.py-icon>.py-icon-svg{width:var(--py-icon-inner-size,1.25rem)!important;height:var(--py-icon-inner-size,1.25rem)!important}.py-icon-svg{display:block;width:100%;height:100%;color:var(--py-icon-color,#333)!important;stroke:var(--py-icon-color,#333)!important;overflow:visible}.py-icon-svg path,.py-icon-svg line,.py-icon-svg polyline,.py-icon-svg polygon{stroke:currentColor}.py-icon--left{transform:rotate(180deg)}.py-icon--up{transform:rotate(-90deg)}.py-icon--down{transform:rotate(90deg)}';
   document.head.appendChild(style);
 
   window.PYIcons = { render: render, load: load, baseUrl: baseUrl, fallbackBaseUrl: fallbackBaseUrl, markIconNodes: markIconNodes };
-  function boot() { migrateLegacyEmbeds(); markIconNodes(); render(); }
-  var observer = new MutationObserver(function () { migrateLegacyEmbeds(); markIconNodes(); render(); });
+  function boot() { markIconNodes(); render(); }
+  var observer = new MutationObserver(function () { markIconNodes(); render(); });
   observer.observe(document.documentElement, { childList: true, subtree: true });
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
   else boot();
