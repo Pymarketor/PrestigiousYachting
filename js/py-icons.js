@@ -90,7 +90,7 @@
   }
 
   var style = document.createElement('style');
-  style.textContent = '.py-icon{display:inline-flex;width:1em;height:1em;line-height:1;color:var(--py-icon-color,currentColor)}.py-icon-svg{display:block;width:100%;height:100%;color:var(--py-icon-color,#333)!important;stroke:var(--py-icon-color,#333)!important;overflow:visible}.py-icon-svg path,.py-icon-svg line,.py-icon-svg polyline,.py-icon-svg polygon{stroke:currentColor}.py-icon--left{transform:rotate(180deg)}.py-icon--up{transform:rotate(-90deg)}.py-icon--down{transform:rotate(90deg)}';
+  style.textContent = '.py-icon{display:inline-flex;width:1.25rem;height:1.25rem;line-height:1;color:var(--py-icon-color,currentColor)}.py-icon-wrap.py-icon{width:var(--py-icon-size,2.5rem)!important;height:var(--py-icon-size,2.5rem)!important}.py-icon-wrap.py-icon>.py-icon-svg{width:var(--py-icon-inner-size,1.25rem)!important;height:var(--py-icon-inner-size,1.25rem)!important}.py-icon-svg{display:block;width:100%;height:100%;color:var(--py-icon-color,#333)!important;stroke:var(--py-icon-color,#333)!important;overflow:visible}.py-icon-svg path,.py-icon-svg line,.py-icon-svg polyline,.py-icon-svg polygon{stroke:currentColor}.py-icon--left{transform:rotate(180deg)}.py-icon--up{transform:rotate(-90deg)}.py-icon--down{transform:rotate(90deg)}';
   document.head.appendChild(style);
 
   window.PYIcons = { render: render, load: load, baseUrl: baseUrl, fallbackBaseUrl: fallbackBaseUrl, markIconNodes: markIconNodes };
