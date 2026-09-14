@@ -45,6 +45,8 @@
       load(name).then(function (svg) {
         var copy = svg.cloneNode(true);
         copy.classList.add('py-icon-svg');
+        copy.style.setProperty('color', 'var(--py-icon-color, #333)', 'important');
+        copy.style.setProperty('stroke', 'var(--py-icon-color, #333)', 'important');
         target.replaceChildren(copy);
         target.dataset.pyIconLoaded = 'true';
       }).catch(function (error) {
