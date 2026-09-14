@@ -45,6 +45,14 @@
       load(name).then(function (svg) {
         var copy = svg.cloneNode(true);
         copy.classList.add('py-icon-svg');
+        copy.style.setProperty('display', 'block', 'important');
+        copy.style.setProperty('width', '100%', 'important');
+        copy.style.setProperty('height', '100%', 'important');
+        copy.style.setProperty('min-width', '1px', 'important');
+        copy.style.setProperty('min-height', '1px', 'important');
+        copy.style.setProperty('opacity', '1', 'important');
+        copy.style.setProperty('visibility', 'visible', 'important');
+        copy.style.setProperty('overflow', 'visible', 'important');
         copy.style.setProperty('color', 'var(--py-icon-color, #333)', 'important');
         copy.style.setProperty('stroke', 'var(--py-icon-color, #333)', 'important');
         target.replaceChildren(copy);
