@@ -8,15 +8,22 @@
   var repo = 'Pymarketor/PrestigiousYachting';
   var version = 'main';
   var baseUrl = 'https://cdn.jsdelivr.net/gh/' + repo + '@' + version + '/icons/';
+  var fallbackBaseUrl = 'https://raw.githubusercontent.com/' + repo + '/' + version + '/icons/';
   var cache = Object.create(null);
 
   function load(name) {
     if (!/^[a-z0-9-]+$/.test(name)) return Promise.reject(new Error('Invalid icon name'));
     if (!cache[name]) {
-      cache[name] = fetch(baseUrl + name + '.svg', { credentials: 'omit' })
+      cache[name] = fetch(baseUrl + name + '.svg', { credentials: 'omit', cache: 'no-store' })
         .then(function (response) {
-          if (!response.ok) throw new Error('Icon not found: ' + name);
+          if (!response.ok) throw new Error('CDN icon not found: ' + name);
           return response.text();
+        })
+        .catch(function () {
+          return fetch(fallbackBaseUrl + name + '.svg', { credentials: 'omit', cache: 'no-store' }).then(function (response) {
+            if (!response.ok) throw new Error('Icon not found: ' + name);
+            return response.text();
+          });
         })
         .then(function (svgText) {
           var doc = new DOMParser().parseFromString(svgText, 'image/svg+xml');
@@ -76,7 +83,7 @@
   style.textContent = '.py-icon{display:inline-flex;width:1em;height:1em;line-height:1;color:currentColor}.py-icon-svg{display:block;width:100%;height:100%;stroke:currentColor}.py-icon--left{transform:rotate(180deg)}.py-icon--up{transform:rotate(-90deg)}.py-icon--down{transform:rotate(90deg)}';
   document.head.appendChild(style);
 
-  window.PYIcons = { render: render, load: load, baseUrl: baseUrl, markIconNodes: markIconNodes };
+  window.PYIcons = { render: render, load: load, baseUrl: baseUrl, fallbackBaseUrl: fallbackBaseUrl, markIconNodes: markIconNodes };
   function boot() { migrateLegacyEmbeds(); markIconNodes(); render(); }
   var observer = new MutationObserver(function () { migrateLegacyEmbeds(); markIconNodes(); render(); });
   observer.observe(document.documentElement, { childList: true, subtree: true });
