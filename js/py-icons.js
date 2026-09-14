@@ -80,7 +80,7 @@
   }
 
   var style = document.createElement('style');
-  style.textContent = '.py-icon{display:inline-flex;width:1em;height:1em;line-height:1;color:currentColor}.py-icon-svg{display:block;width:100%;height:100%;stroke:currentColor}.py-icon--left{transform:rotate(180deg)}.py-icon--up{transform:rotate(-90deg)}.py-icon--down{transform:rotate(90deg)}';
+  style.textContent = '.py-icon{display:inline-flex;width:1em;height:1em;line-height:1;color:var(--py-icon-color,currentColor)}.py-icon-svg{display:block;width:100%;height:100%;color:var(--py-icon-color,#333)!important;stroke:var(--py-icon-color,#333)!important;overflow:visible}.py-icon-svg path,.py-icon-svg line,.py-icon-svg polyline,.py-icon-svg polygon{stroke:currentColor}.py-icon--left{transform:rotate(180deg)}.py-icon--up{transform:rotate(-90deg)}.py-icon--down{transform:rotate(90deg)}';
   document.head.appendChild(style);
 
   window.PYIcons = { render: render, load: load, baseUrl: baseUrl, fallbackBaseUrl: fallbackBaseUrl, markIconNodes: markIconNodes };
