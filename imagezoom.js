@@ -1,8 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
-  document.querySelectorAll('[Image="trigger"]').forEach(trigger => {
+  document.querySelectorAll('[image="trigger"], [Image="trigger"]').forEach(trigger => {
     trigger.addEventListener("click", () => {
-      const sourceImg = trigger.querySelector('[Image="source"]');
-      const targetImg = document.querySelector('[Image="target"]');
+      const sourceImg = trigger.querySelector('[image="source"], [Image="source"]');
+      const targetImg = document.querySelector('[image="target"], [Image="target"]');
 
       if (!sourceImg || !targetImg) return;
 
