@@ -362,10 +362,10 @@
 /* Migrated Webflow footer block 5. */
 (() => {
   const init = () => {
-    const root = document.querySelector("[data-py-expanding-gallery]");
+    const root = document.querySelector("[data-py-expanding-gallery], .slider-gallery[slider-instance="yacht"]");
     if (!root || root.dataset.pyZoomReady === "true") return;
-    const cards = Array.from(root.querySelectorAll("[data-py-expanding-card]"));
-    const track = root.querySelector("[data-py-expanding-track]");
+    const cards = Array.from(root.querySelectorAll("[data-py-expanding-card], [data-slider-slide][instance="yacht"]"));
+    const track = root.querySelector("[data-py-expanding-track], [data-slider-track][instance="yacht"]");
     if (!cards.length || !track) return;
     root.dataset.pyZoomReady = "true";
 
