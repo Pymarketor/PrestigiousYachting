@@ -6,10 +6,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const track = slider.querySelector(`[data-slider-track][instance="${instance}"]`);
 
     // Exclut le .slider-padding-start des slides à naviguer
+    if (!track) return;
+
     const slides = [...slider.querySelectorAll(`[data-slider-slide][instance="${instance}"]:not(.slider-padding-start)`)];
     
     const prevBtn = slider.querySelector(`[data-slider-prev][instance="${instance}"]`);
     const nextBtn = slider.querySelector(`[data-slider-next][instance="${instance}"]`);
+
+    if (prevBtn && !prevBtn.dataset.pyIcon) { prevBtn.dataset.pyIcon = 'chevron-left'; prevBtn.classList.add('py-icon-wrap', 'is-glass'); prevBtn.innerHTML = '<span data-py-icon="chevron-left" aria-hidden="true"></span>'; }
+    if (nextBtn && !nextBtn.dataset.pyIcon) { nextBtn.dataset.pyIcon = 'chevron-right'; nextBtn.classList.add('py-icon-wrap', 'is-glass'); nextBtn.innerHTML = '<span data-py-icon="chevron-right" aria-hidden="true"></span>'; }
 
     const allowLoop = slider.getAttribute("slider-loop") === "true";
     const allowScrollManual = slider.getAttribute("slider-scroll-manual") !== "false";
