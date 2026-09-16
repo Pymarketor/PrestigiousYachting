@@ -394,6 +394,14 @@
     const global = root.querySelector(".similar-yacht-global") || frame?.parentElement;
     const previousControl = root.querySelector(".arrow-scroll-left-card-other");
     const nextControl = root.querySelector(".arrow-scroll-right-card-other");
+    const setNavIcon = (control, role) => {
+      if (!(control instanceof HTMLElement)) return;
+      control.dataset.pyIcon = role;
+      control.classList.add("py-icon-wrap", "is-glass");
+      control.innerHTML = '<span data-py-icon="' + role + '" aria-hidden="true"></span>';
+    };
+    setNavIcon(previousControl, "chevron-left");
+    setNavIcon(nextControl, "chevron-right");
     if (!(frame instanceof HTMLElement) || !(track instanceof HTMLElement) || !(global instanceof HTMLElement)) return;
 
     root.dataset.pyCoverflowMounted = "true";
