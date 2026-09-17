@@ -35,7 +35,6 @@
   `;
   if (!style.isConnected) document.head.appendChild(style);
 
-  const icon = (name) => `<span data-py-icon="${name}"></span>`;
   let dialog;
   let dialogCards = [];
   let dialogIndex = 0;
@@ -43,9 +42,13 @@
 
   const setControlIcon = (control, name) => {
     if (!control) return;
-    const expected = control.querySelector(`:scope > [data-py-icon="${name}"]`);
-    if (!expected) control.innerHTML = icon(name);
-    window.PYIcons?.render(control);
+    control.dataset.pyIcon = name;
+    const expected = control.querySelector(":scope > .py-icon-svg");
+    if (!expected) {
+      delete control.dataset.pyIconLoaded;
+      control.replaceChildren();
+    }
+    window.PYIcons?.render(control.parentElement || document);
   };
 
   const syncDialogIcons = () => {
@@ -70,7 +73,7 @@
     dialog = document.querySelector(".py-gallery-dialog") || document.createElement("dialog");
     dialog.className = "py-gallery-dialog";
     dialog.setAttribute("aria-label", "Yacht photo viewer");
-    dialog.innerHTML = `<button class="py-gallery-dialog__close py-icon-wrap is-glass" type="button" aria-label="Close photo viewer">${icon("cross")}</button><button class="py-gallery-dialog__nav py-gallery-dialog__nav--prev py-icon-wrap is-glass" type="button" aria-label="Previous photo">${icon("chevron-left")}</button><img class="py-gallery-dialog__image" alt=""><button class="py-gallery-dialog__nav py-gallery-dialog__nav--next py-icon-wrap is-glass" type="button" aria-label="Next photo">${icon("chevron-right")}</button>`;
+    dialog.innerHTML = `<button class="py-gallery-dialog__close py-icon-wrap is-glass" data-py-icon="cross" type="button" aria-label="Close photo viewer"></button><button class="py-gallery-dialog__nav py-gallery-dialog__nav--prev py-icon-wrap is-glass" data-py-icon="chevron-left" type="button" aria-label="Previous photo"></button><img class="py-gallery-dialog__image" alt=""><button class="py-gallery-dialog__nav py-gallery-dialog__nav--next py-icon-wrap is-glass" data-py-icon="chevron-right" type="button" aria-label="Next photo"></button>`;
     if (!dialog.isConnected) document.body.appendChild(dialog);
     dialog.querySelector(".py-gallery-dialog__close").addEventListener("click", () => dialog.close());
     dialog.querySelector(".py-gallery-dialog__nav--prev").addEventListener("click", () => showDialogImage(dialogIndex - 1));
@@ -141,8 +144,8 @@
         zoom = document.createElement("button");
         zoom.type = "button";
         zoom.className = "py-gallery-zoom py-icon-wrap is-glass";
+        zoom.dataset.pyIcon = "plus";
         zoom.setAttribute("aria-label", image.alt ? `Enlarge image: ${image.alt}` : "Enlarge gallery image");
-        zoom.innerHTML = icon("plus");
         card.appendChild(zoom);
       }
       setControlIcon(zoom, "plus");
