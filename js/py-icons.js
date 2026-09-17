@@ -1,6 +1,6 @@
-/* Prestigious Yachting — shared SVG icon loader.
- * The Webflow element owns the wrapper; data-py-icon only renders the artwork.
- * Usage: <span data-py-icon="plus" aria-hidden="true"></span>
+/* Prestigious Yachting — shared SVG icon loader
+ * The fetched SVG is inlined so currentColor follows the Webflow element color.
+ * Usage: <span data-py-icon="arrow" aria-hidden="true"></span>
  */
 (function () {
   'use strict';
@@ -8,61 +8,53 @@
   var repo = 'Pymarketor/PrestigiousYachting';
   var version = 'main';
   var baseUrl = 'https://cdn.jsdelivr.net/gh/' + repo + '@' + version + '/icons/';
-  var rawBaseUrl = 'https://raw.githubusercontent.com/' + repo + '/' + version + '/icons/';
+  var fallbackBaseUrl = 'https://raw.githubusercontent.com/' + repo + '/' + version + '/icons/';
   var cache = Object.create(null);
-
-  function fetchSvg(name) {
-    return fetch(baseUrl + name + '.svg', { credentials: 'omit', cache: 'no-store' })
-      .then(function (response) {
-        if (response.ok) return response.text();
-        return fetch(rawBaseUrl + name + '.svg', { credentials: 'omit', cache: 'no-store' })
-          .then(function (fallback) {
-            if (!fallback.ok) throw new Error('Icon not found: ' + name);
-            return fallback.text();
-          });
-      });
-  }
-
-  function normalizeSvg(svg, name) {
-    if (!svg || svg.nodeName.toLowerCase() !== 'svg') throw new Error('Invalid SVG: ' + name);
-    svg.removeAttribute('xmlns');
-    svg.removeAttribute('width');
-    svg.removeAttribute('height');
-    svg.setAttribute('aria-hidden', 'true');
-    svg.setAttribute('focusable', 'false');
-    if (!svg.hasAttribute('fill') && !svg.hasAttribute('stroke')) svg.setAttribute('fill', 'currentColor');
-    svg.querySelectorAll('[fill]').forEach(function (node) {
-      if (node.getAttribute('fill') !== 'none') node.setAttribute('fill', 'currentColor');
-    });
-    svg.querySelectorAll('[stroke]').forEach(function (node) {
-      if (node.getAttribute('stroke') !== 'none') node.setAttribute('stroke', 'currentColor');
-    });
-    return svg;
-  }
 
   function load(name) {
     if (!/^[a-z0-9-]+$/.test(name)) return Promise.reject(new Error('Invalid icon name'));
     if (!cache[name]) {
-      cache[name] = fetchSvg(name).then(function (svgText) {
-        var doc = new DOMParser().parseFromString(svgText, 'image/svg+xml');
-        return normalizeSvg(doc.documentElement, name);
-      });
+      cache[name] = fetch(baseUrl + name + '.svg', { credentials: 'omit', cache: 'no-store' })
+        .then(function (response) {
+          if (!response.ok) throw new Error('CDN icon not found: ' + name);
+          return response.text();
+        })
+        .catch(function () {
+          return fetch(fallbackBaseUrl + name + '.svg', { credentials: 'omit', cache: 'no-store' }).then(function (response) {
+            if (!response.ok) throw new Error('Icon not found: ' + name);
+            return response.text();
+          });
+        })
+        .then(function (svgText) {
+          var doc = new DOMParser().parseFromString(svgText, 'image/svg+xml');
+          var svg = doc.documentElement;
+          if (!svg || svg.nodeName.toLowerCase() !== 'svg') throw new Error('Invalid SVG: ' + name);
+          svg.removeAttribute('xmlns');
+          svg.setAttribute('aria-hidden', 'true');
+          svg.setAttribute('focusable', 'false');
+          return svg;
+        });
     }
     return cache[name];
   }
 
   function render(root) {
-    var scope = root || document;
-    var targets = [];
-    if (scope.matches && scope.matches('[data-py-icon]')) targets.push(scope);
-    scope.querySelectorAll('[data-py-icon]').forEach(function (target) { targets.push(target); });
-    targets.forEach(function (target) {
-      target.classList.add('py-icon');
+    (root || document).querySelectorAll('[data-py-icon]').forEach(function (target) {
       if (target.dataset.pyIconLoaded === 'true') return;
       var name = target.dataset.pyIcon;
       load(name).then(function (svg) {
         var copy = svg.cloneNode(true);
         copy.classList.add('py-icon-svg');
+        copy.style.setProperty('display', 'block', 'important');
+        copy.style.setProperty('width', '100%', 'important');
+        copy.style.setProperty('height', '100%', 'important');
+        copy.style.setProperty('min-width', '1px', 'important');
+        copy.style.setProperty('min-height', '1px', 'important');
+        copy.style.setProperty('opacity', '1', 'important');
+        copy.style.setProperty('visibility', 'visible', 'important');
+        copy.style.setProperty('overflow', 'visible', 'important');
+        copy.style.setProperty('color', 'var(--py-icon-color, #333)', 'important');
+        copy.style.setProperty('stroke', 'var(--py-icon-color, #333)', 'important');
         target.replaceChildren(copy);
         target.dataset.pyIconLoaded = 'true';
       }).catch(function (error) {
@@ -71,20 +63,20 @@
     });
   }
 
+  function markIconNodes() {
+    document.querySelectorAll('[data-py-icon]').forEach(function (target) {
+      target.classList.add('py-icon', 'py-icon-wrap', 'is-glass');
+    });
+  }
+
   var style = document.createElement('style');
-  style.textContent = '.py-icon{display:inline-flex;width:var(--py-icon-inner-size,1.25rem);height:var(--py-icon-inner-size,1.25rem);align-items:center;justify-content:center;line-height:1;color:inherit;flex:0 0 auto}.py-icon>.py-icon-svg{display:block;width:100%;height:100%;overflow:visible}.py-icon-svg [fill]:not([fill="none"]){fill:currentColor!important}.py-icon-svg [stroke]:not([stroke="none"]){stroke:currentColor!important}';
+  style.textContent = '.py-icon{display:inline-flex;width:1.25rem;height:1.25rem;line-height:1;color:var(--py-icon-color,currentColor)}.py-icon-wrap.py-icon{width:var(--py-icon-size,2.5rem)!important;height:var(--py-icon-size,2.5rem)!important}.py-icon-wrap.py-icon>.py-icon-svg{width:var(--py-icon-inner-size,1.25rem)!important;height:var(--py-icon-inner-size,1.25rem)!important}.py-icon-svg{display:block;width:100%;height:100%;color:var(--py-icon-color,#333)!important;stroke:var(--py-icon-color,#333)!important;overflow:visible}.py-icon-svg path,.py-icon-svg line,.py-icon-svg polyline,.py-icon-svg polygon{stroke:currentColor}.py-icon--left{transform:rotate(180deg)}.py-icon--up{transform:rotate(-90deg)}.py-icon--down{transform:rotate(90deg)}';
   document.head.appendChild(style);
 
-  window.PYIcons = { render: render, load: load, baseUrl: baseUrl };
-  function boot() { render(); }
-  var observer = new MutationObserver(function (mutations) {
-    mutations.forEach(function (mutation) {
-      mutation.addedNodes.forEach(function (node) {
-        if (node.nodeType === 1) render(node);
-      });
-    });
-  });
+  window.PYIcons = { render: render, load: load, baseUrl: baseUrl, fallbackBaseUrl: fallbackBaseUrl, markIconNodes: markIconNodes };
+  function boot() { markIconNodes(); render(); }
+  var observer = new MutationObserver(function () { markIconNodes(); render(); });
   observer.observe(document.documentElement, { childList: true, subtree: true });
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot, { once: true });
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
   else boot();
 }());
