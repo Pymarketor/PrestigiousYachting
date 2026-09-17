@@ -31,8 +31,22 @@
 
   const init = (root) => {
     const track = root.querySelector(TRACK);
-    const cards = getCards(root);
-    if (!track || !cards.length) return false;
+    if (!track) return false;
+    let cards = getCards(root);
+
+    // The template has a compact hero gallery and a full CMS gallery.
+    // If the compact list is empty, reuse the rendered CMS cards instead
+    // of depending on the removed Slider JS structure.
+    if (!cards.length && root.closest(".wrapper-main-gallery")) {
+      const donor = [...document.querySelectorAll(ROOT)]
+        .find((candidate) => candidate !== root && getCards(candidate).length);
+      if (donor && !root.dataset.pyGalleryHydrated) {
+        getCards(donor).slice(0, 4).forEach((card) => track.appendChild(card.cloneNode(true)));
+        root.dataset.pyGalleryHydrated = "true";
+        cards = getCards(root);
+      }
+    }
+    if (!cards.length) return false;
 
     let state = galleries.get(root);
     if (!state) {
