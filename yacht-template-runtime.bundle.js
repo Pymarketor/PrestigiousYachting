@@ -1549,6 +1549,10 @@ document.addEventListener("DOMContentLoaded",()=>{let g=document.querySelector("
         display: none !important;
       }
 
+      ${ROOT_SELECTOR}[data-py-coverflow-ready="true"] .bottom-right.r-z-45:has([data-py-icon="external-link"]) {
+        transform: none !important;
+      }
+
       ${ROOT_SELECTOR}[data-py-coverflow-ready="true"] .card-favorite-yacht-image > .open-arrow {
         z-index: 12 !important;
         display: flex !important;
