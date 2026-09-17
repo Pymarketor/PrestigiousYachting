@@ -513,10 +513,10 @@ document.addEventListener("DOMContentLoaded", () => {
 /* Migrated Webflow footer block 5. */
 (() => {
   const init = () => {
-    const root = document.querySelector("[data-py-expanding-gallery], .slider-gallery[slider-instance="yacht"]");
+    const root = document.querySelector("[data-py-expanding-gallery]");
     if (!root || root.dataset.pyZoomReady === "true") return;
-    const cards = Array.from(root.querySelectorAll("[data-py-expanding-card], [data-slider-slide][instance="yacht"]"));
-    const track = root.querySelector("[data-py-expanding-track], [data-slider-track][instance="yacht"]");
+    const cards = Array.from(root.querySelectorAll("[data-py-expanding-card]"));
+    const track = root.querySelector("[data-py-expanding-track]");
     if (!cards.length || !track) return;
     root.dataset.pyZoomReady = "true";
 
@@ -566,10 +566,10 @@ document.addEventListener("DOMContentLoaded", () => {
     dialog.className = "py-gallery-dialog";
     dialog.setAttribute("aria-label", "Yacht photo viewer");
     dialog.innerHTML =
-      '<button class="py-gallery-dialog__close py-icon-wrap is-glass" type="button" aria-label="Close photo viewer"><span class="py-icon" data-py-icon="cross"></span></button>' +
-      '<button class="py-gallery-dialog__nav py-gallery-dialog__nav--prev py-icon-wrap is-glass" type="button" aria-label="Previous photo"><span class="py-icon" data-py-icon="chevron-left"></span></button>' +
+      '<button class="py-gallery-dialog__close" type="button" aria-label="Close photo viewer">×</button>' +
+      '<button class="py-gallery-dialog__nav py-gallery-dialog__nav--prev" type="button" aria-label="Previous photo">‹</button>' +
       '<img class="py-gallery-dialog__image" alt="">' +
-      '<button class="py-gallery-dialog__nav py-gallery-dialog__nav--next py-icon-wrap is-glass" type="button" aria-label="Next photo"><span class="py-icon" data-py-icon="chevron-right"></span></button>';
+      '<button class="py-gallery-dialog__nav py-gallery-dialog__nav--next" type="button" aria-label="Next photo">›</button>';
     document.body.appendChild(dialog);
 
     const dialogImage = dialog.querySelector(".py-gallery-dialog__image");
@@ -610,8 +610,9 @@ document.addEventListener("DOMContentLoaded", () => {
       zoom.type = "button";
       zoom.className = "py-gallery-zoom";
       zoom.setAttribute("aria-label", image && image.alt ? "Enlarge image: " + image.alt : "Enlarge gallery image");
-      zoom.classList.add("py-icon-wrap", "is-glass");
-      zoom.innerHTML = '<span class="py-icon" data-py-icon="expand" aria-hidden="true"></span>';
+      zoom.innerHTML =
+        '<svg width="21" height="21" viewBox="0 0 24 24" aria-hidden="true" focusable="false">' +
+        '<path d="M9 3H3v6M15 3h6v6M9 21H3v-6M15 21h6v-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
       zoom.addEventListener("click", (event) => {
         event.preventDefault();
         event.stopPropagation();
@@ -1344,6 +1345,34 @@ document.addEventListener("DOMContentLoaded",()=>{let g=document.querySelector("
   const STYLE_ID = "py-similar-coverflow-v3-style";
   const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
 
+  const findNewTabLink = (card) => {
+    const legacyLink = card.querySelector("a.open-arrow");
+    if (legacyLink instanceof HTMLAnchorElement) return legacyLink;
+    return Array.from(card.querySelectorAll("a")).find((link) =>
+      link.querySelector('[data-py-icon="external-link"]')
+    ) || null;
+  };
+
+  const syncCardLinks = (card, isCurrent) => {
+    const sameTabLink = card.querySelector(".forrward-link[href]");
+    const newTabLink = findNewTabLink(card);
+    if (sameTabLink instanceof HTMLAnchorElement) {
+      sameTabLink.tabIndex = -1;
+      sameTabLink.removeAttribute("target");
+      sameTabLink.setAttribute("aria-label", "Open yacht details in this tab");
+    }
+    if (!(newTabLink instanceof HTMLAnchorElement)) return;
+    const sourceHref = sameTabLink?.getAttribute("href");
+    if ((!newTabLink.getAttribute("href") || newTabLink.getAttribute("href") === "#") && sourceHref) {
+      newTabLink.setAttribute("href", sourceHref);
+    }
+    newTabLink.target = "_blank";
+    newTabLink.rel = "noopener noreferrer";
+    newTabLink.tabIndex = isCurrent ? 0 : -1;
+    newTabLink.setAttribute("aria-label", "Open yacht details in a new tab");
+    newTabLink.dataset.pySimilarNewtab = "true";
+  };
+
   const installStyles = () => {
     if (document.getElementById(STYLE_ID)) return;
     const style = document.createElement("style");
@@ -1850,10 +1879,7 @@ document.addEventListener("DOMContentLoaded",()=>{let g=document.querySelector("
       cards.forEach((card, index) => {
         card.setAttribute("aria-current", String(index === current));
         card.setAttribute("aria-label", (index + 1) + " of " + cards.length);
-        const imageLink = card.querySelector(".forrward-link[href]");
-        const arrowLink = card.querySelector(".open-arrow[href]");
-        if (imageLink instanceof HTMLElement) imageLink.tabIndex = -1;
-        if (arrowLink instanceof HTMLElement) arrowLink.tabIndex = index === current ? 0 : -1;
+        syncCardLinks(card, index === current);
       });
       root.dataset.pyCoverflowIndex = String(current);
       if (current !== selected) {
@@ -1968,7 +1994,7 @@ document.addEventListener("DOMContentLoaded",()=>{let g=document.querySelector("
 
     frame.addEventListener("pointerdown", (event) => {
       if (!cards.length || event.button > 0) return;
-      if (event.target instanceof Element && event.target.closest(".arrow-scroll-left-card-other, .arrow-scroll-right-card-other, .open-arrow")) return;
+      if (event.target instanceof Element && event.target.closest(".arrow-scroll-left-card-other, .arrow-scroll-right-card-other, a[href]")) return;
       if (animationFrame !== null) cancelAnimationFrame(animationFrame);
       animationFrame = null;
       target = position;
@@ -2023,9 +2049,7 @@ document.addEventListener("DOMContentLoaded",()=>{let g=document.querySelector("
         event.stopImmediatePropagation();
         return;
       }
-      const itemLink = event.target instanceof Element
-        ? event.target.closest(".card-favorite-yacht-image > .forrward-link[href], .card-favorite-yacht-image > .open-arrow[href]")
-        : null;
+      const itemLink = event.target instanceof Element ? event.target.closest("a[href]") : null;
       if (itemLink instanceof HTMLAnchorElement) return;
       const index = cards.indexOf(card);
       if (index >= 0 && index !== indexAt(position)) {
