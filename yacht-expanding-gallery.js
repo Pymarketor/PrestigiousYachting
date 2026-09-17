@@ -19,15 +19,15 @@
     ${ROOT} ${CARD}{position:relative!important;display:block!important;min-width:0!important;min-height:0!important;overflow:hidden!important;border-radius:.675rem!important;background:#e8e8e8!important;cursor:pointer!important;isolation:isolate!important}
     ${ROOT} ${IMAGE}{display:block!important;width:100%!important;height:100%!important;min-width:100%!important;object-fit:cover!important;object-position:center!important;border-radius:.675rem!important;transform:scale(1.035);transition:transform .35s cubic-bezier(.22,1,.36,1)!important}
     ${ROOT} ${CARD}[data-active="true"] ${IMAGE}{transform:scale(1)}
-    ${ROOT} .py-gallery-zoom{--py-icon-size:2.5rem;--py-icon-inner-size:1.2rem;position:absolute!important;right:.875rem!important;bottom:.875rem!important;z-index:4!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;opacity:0;transform:scale(.96);cursor:zoom-in!important;transition:opacity .2s ease,transform .2s ease!important}
+    ${ROOT} .py-gallery-zoom{position:absolute!important;right:.875rem!important;bottom:.875rem!important;z-index:4!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;opacity:0;transform:scale(.96);cursor:zoom-in!important;transition:opacity .2s ease,transform .2s ease!important}
     ${ROOT} ${CARD}[data-active="true"] .py-gallery-zoom,${ROOT} ${CARD}:focus-within .py-gallery-zoom{opacity:1;transform:scale(1)}
     .py-gallery-dialog{position:fixed!important;inset:0!important;z-index:2147482999!important;width:100vw!important;max-width:none!important;height:100dvh!important;max-height:none!important;margin:0!important;padding:clamp(1rem,4vw,4rem)!important;overflow:hidden!important;border:0!important;background:rgb(5 10 18 / 96%)!important}
     .py-gallery-dialog[open]{display:grid!important;place-items:center!important}
     .py-gallery-dialog::backdrop{background:rgb(5 10 18 / 96%)!important}
     .py-gallery-dialog__image{display:block!important;width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;object-fit:contain!important}
     .py-gallery-dialog__close,.py-gallery-dialog__nav{position:fixed!important;z-index:2147483000!important;border:0!important}
-    .py-gallery-dialog__close{--py-icon-size:2.75rem;--py-icon-inner-size:.9rem;top:max(1rem,env(safe-area-inset-top));right:max(1rem,env(safe-area-inset-right))}
-    .py-gallery-dialog__nav{--py-icon-size:2.75rem;--py-icon-inner-size:1.7rem;top:50%;transform:translateY(-50%)}
+    .py-gallery-dialog__close{top:max(1rem,env(safe-area-inset-top));right:max(1rem,env(safe-area-inset-right))}
+    .py-gallery-dialog__nav{top:50%;transform:translateY(-50%)}
     .py-gallery-dialog__nav--prev{left:max(1rem,env(safe-area-inset-left))}.py-gallery-dialog__nav--next{right:max(1rem,env(safe-area-inset-right))}
     .py-gallery-dialog__nav--prev .py-icon-svg,.py-gallery-dialog__nav--next .py-icon-svg{transform:none!important}
     @media screen and (max-width:767px){${ROOT} ${LIST},${ROOT} .py-gallery-row{gap:.5rem!important}${ROOT} .py-gallery-row{height:auto!important;min-height:0!important;grid-template-columns:1fr!important;transition:grid-template-rows .45s cubic-bezier(.22,1,.36,1)!important}${ROOT} ${CARD}{min-height:54px!important;border-radius:.55rem!important}${ROOT} ${IMAGE}{border-radius:.55rem!important}.py-gallery-dialog__nav{top:auto!important;bottom:max(1rem,env(safe-area-inset-bottom));transform:none!important}}
