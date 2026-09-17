@@ -6,6 +6,34 @@
   const STYLE_ID = "py-similar-coverflow-v3-style";
   const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
 
+  const findNewTabLink = (card) => {
+    const legacyLink = card.querySelector("a.open-arrow");
+    if (legacyLink instanceof HTMLAnchorElement) return legacyLink;
+    return Array.from(card.querySelectorAll("a")).find((link) =>
+      link.querySelector('[data-py-icon="external-link"]')
+    ) || null;
+  };
+
+  const syncCardLinks = (card, isCurrent) => {
+    const sameTabLink = card.querySelector(".forrward-link[href]");
+    const newTabLink = findNewTabLink(card);
+    if (sameTabLink instanceof HTMLAnchorElement) {
+      sameTabLink.tabIndex = -1;
+      sameTabLink.removeAttribute("target");
+      sameTabLink.setAttribute("aria-label", "Open yacht details in this tab");
+    }
+    if (!(newTabLink instanceof HTMLAnchorElement)) return;
+    const sourceHref = sameTabLink?.getAttribute("href");
+    if ((!newTabLink.getAttribute("href") || newTabLink.getAttribute("href") === "#") && sourceHref) {
+      newTabLink.setAttribute("href", sourceHref);
+    }
+    newTabLink.target = "_blank";
+    newTabLink.rel = "noopener noreferrer";
+    newTabLink.tabIndex = isCurrent ? 0 : -1;
+    newTabLink.setAttribute("aria-label", "Open yacht details in a new tab");
+    newTabLink.dataset.pySimilarNewtab = "true";
+  };
+
   const installStyles = () => {
     if (document.getElementById(STYLE_ID)) return;
     const style = document.createElement("style");
@@ -394,14 +422,6 @@
     const global = root.querySelector(".similar-yacht-global") || frame?.parentElement;
     const previousControl = root.querySelector(".arrow-scroll-left-card-other");
     const nextControl = root.querySelector(".arrow-scroll-right-card-other");
-    const setNavIcon = (control, role) => {
-      if (!(control instanceof HTMLElement)) return;
-      control.dataset.pyIcon = role;
-      control.classList.add("py-icon-wrap", "is-glass");
-      control.innerHTML = '<span data-py-icon="' + role + '" aria-hidden="true"></span>';
-    };
-    setNavIcon(previousControl, "chevron-left");
-    setNavIcon(nextControl, "chevron-right");
     if (!(frame instanceof HTMLElement) || !(track instanceof HTMLElement) || !(global instanceof HTMLElement)) return;
 
     root.dataset.pyCoverflowMounted = "true";
@@ -520,10 +540,7 @@
       cards.forEach((card, index) => {
         card.setAttribute("aria-current", String(index === current));
         card.setAttribute("aria-label", (index + 1) + " of " + cards.length);
-        const imageLink = card.querySelector(".forrward-link[href]");
-        const arrowLink = card.querySelector(".open-arrow[href]");
-        if (imageLink instanceof HTMLElement) imageLink.tabIndex = -1;
-        if (arrowLink instanceof HTMLElement) arrowLink.tabIndex = index === current ? 0 : -1;
+        syncCardLinks(card, index === current);
       });
       root.dataset.pyCoverflowIndex = String(current);
       if (current !== selected) {
@@ -638,7 +655,7 @@
 
     frame.addEventListener("pointerdown", (event) => {
       if (!cards.length || event.button > 0) return;
-      if (event.target instanceof Element && event.target.closest(".arrow-scroll-left-card-other, .arrow-scroll-right-card-other, .open-arrow")) return;
+      if (event.target instanceof Element && event.target.closest(".arrow-scroll-left-card-other, .arrow-scroll-right-card-other, a[href]")) return;
       if (animationFrame !== null) cancelAnimationFrame(animationFrame);
       animationFrame = null;
       target = position;
@@ -693,9 +710,7 @@
         event.stopImmediatePropagation();
         return;
       }
-      const itemLink = event.target instanceof Element
-        ? event.target.closest(".card-favorite-yacht-image > .forrward-link[href], .card-favorite-yacht-image > .open-arrow[href]")
-        : null;
+      const itemLink = event.target instanceof Element ? event.target.closest("a[href]") : null;
       if (itemLink instanceof HTMLAnchorElement) return;
       const index = cards.indexOf(card);
       if (index >= 0 && index !== indexAt(position)) {
