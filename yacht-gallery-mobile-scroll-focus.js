@@ -2,7 +2,7 @@
 (() => {
   "use strict";
 
-  const ROOT = "[data-py-expanding-gallery]";
+  const ROOT = "[data-py-expanding-gallery], [data-py-gallery-source=\"cms\"]";
   const CARD = "[data-py-expanding-card]";
   const MOBILE = matchMedia("(max-width: 767px)");
   const STYLE_ID = "py-gallery-mobile-scroll-focus-css";
@@ -23,7 +23,8 @@
           min-height: 0 !important;
           overflow-anchor: none;
         }
-        ${ROOT} [data-py-expanding-track] {
+        ${ROOT} [data-py-expanding-track],
+        ${ROOT} .flex-v-gallery {
           display: flex !important;
           flex-direction: column !important;
           height: auto !important;
