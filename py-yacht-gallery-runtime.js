@@ -4,14 +4,24 @@
 (() => {
   "use strict";
 
-  const ROOT = "[data-py-expanding-gallery]";
-  const TRACK = "[data-py-expanding-track]";
-  const CARD = "[data-py-expanding-card]";
+  const ROOT = "[data-py-expanding-gallery], [data-py-gallery-source=\"cms\"]";
+  const TRACK = "[data-py-expanding-track], .flex-v-gallery";
+  const CARD = "[data-py-expanding-card], .flex-v-gallery > *";
   const IMAGE = "[data-py-gallery-image], img";
 
   const galleries = new WeakMap();
 
-  const getCards = (root) => [...root.querySelectorAll(CARD)].filter((card) => card.querySelector(IMAGE));
+  const getCards = (root) => [...root.querySelectorAll(CARD)].filter((card) => {
+    const image = card.querySelector(IMAGE);
+    return image || Boolean(card.style.backgroundImage);
+  });
+
+  const getImageSource = (card) => {
+    const image = card.querySelector(IMAGE);
+    if (image) return { src: image.currentSrc || image.src, alt: image.alt || "Yacht gallery photo" };
+    const match = card.style.backgroundImage.match(/url\(["']?(.+?)["']?\)/);
+    return match ? { src: match[1], alt: card.getAttribute("aria-label") || "Yacht gallery photo" } : null;
+  };
 
   const ensureDialog = () => {
     let dialog = document.querySelector(".py-gallery-dialog");
@@ -30,7 +40,7 @@
   };
 
   const init = (root) => {
-    const track = root.querySelector(TRACK);
+    const track = root.querySelector(TRACK) || root;
     if (!track) return false;
     let cards = getCards(root);
 
@@ -62,12 +72,8 @@
         card.setAttribute("tabindex", "0");
         card.setAttribute("role", "button");
 
-        const image = card.querySelector(IMAGE);
-        if (image) {
-          image.setAttribute("data-py-gallery-image", "");
-          image.setAttribute("draggable", "false");
-          card.setAttribute("aria-label", image.alt ? `Expand image: ${image.alt}` : `Expand yacht gallery image ${index + 1}`);
-        }
+        const image = getImageSource(card);
+        if (image) card.setAttribute("aria-label", image.alt ? `Expand image: ${image.alt}` : `Expand yacht gallery image ${index + 1}`);
 
         card.addEventListener("pointerenter", (event) => {
           if (event.pointerType === "mouse") activate(root, index);
@@ -119,12 +125,12 @@
     const state = galleries.get(root);
     if (!state) return;
     const dialog = state.dialog || (state.dialog = ensureDialog());
-    const image = state.cards[index]?.querySelector(IMAGE);
+    const image = state.cards[index] && getImageSource(state.cards[index]);
     const target = dialog.querySelector(".py-gallery-dialog__image");
     if (!image || !target) return;
     state.active = index;
-    target.src = image.currentSrc || image.src;
-    target.alt = image.alt || "Yacht gallery photo";
+    target.src = image.src;
+    target.alt = image.alt;
     dialog.setAttribute("data-py-gallery-root", "");
     if (typeof dialog.showModal === "function") dialog.showModal();
     else dialog.setAttribute("open", "");
