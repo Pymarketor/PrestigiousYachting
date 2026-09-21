@@ -225,6 +225,8 @@
 
 /* Migrated Webflow footer block 4. */
 (() => {
+  if (window.PYAgenticNavigation) return;
+
   const falseLinkSelectors = [
     'a.fs_selectcustom-1_link-2[href="#"]',
     'a.fs_selectcustom-4_link[href="#"]',
