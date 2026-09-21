@@ -4,6 +4,9 @@
 (() => {
   "use strict";
 
+  // yacht-expanding-gallery.js is the authoritative runtime when present.
+  if (document.querySelector('script[src*="yacht-expanding-gallery.js"]')) return;
+
   const ROOT = "[data-py-expanding-gallery], [data-py-gallery-source=\"cms\"]";
   const TRACK = "[data-py-expanding-track], .flex-v-gallery";
   const CARD = "[data-py-expanding-card], .flex-v-gallery > *";
