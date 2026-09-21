@@ -364,7 +364,7 @@ document.addEventListener("DOMContentLoaded", () => {
 (() => {
   "use strict";
 
-  const ROOT = "[data-py-expanding-gallery]";
+  const ROOT = "[data-py-expanding-gallery]:has([data-py-expanding-track])";
   const CARD = "[data-py-expanding-card]";
   const MOBILE = matchMedia("(max-width: 767px)");
   const STYLE_ID = "py-gallery-mobile-scroll-focus-css";
