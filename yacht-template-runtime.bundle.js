@@ -554,7 +554,7 @@
         track.removeAttribute("aria-label");
       }
       gallery.querySelectorAll(".py-gallery-row").forEach((row) => {
-        row.setAttribute("role", "group");
+        row.setAttribute("role", "listitem");
       });
       gallery.querySelectorAll("[data-py-expanding-card]").forEach((card, index) => {
         const image = card.querySelector("[data-py-gallery-image], img");
@@ -564,7 +564,7 @@
           card.setAttribute("tabindex", "0");
           card.setAttribute("aria-label", description ? `Expand image: ${description}` : `Expand yacht gallery image ${index + 1}`);
         } else {
-          card.setAttribute("role", "img");
+          card.setAttribute("role", "listitem");
           card.removeAttribute("tabindex");
           card.setAttribute("aria-label", description || `Yacht gallery image ${index + 1}`);
         }

@@ -22,6 +22,8 @@ Webflow downloads two JavaScript bundles. The source modules below remain indepe
 
 The template also loads `yacht-template-styles.css`, Finsweet Attributes and Litepicker.
 
+`cms-agentic-navigation.js` is the shared accessibility and agent-navigation layer for every CMS template. Load it once from Webflow site-wide footer custom code, not separately inside each template.
+
 ## Source-module order
 
 | Priority | File | Location | Purpose |
@@ -56,6 +58,7 @@ The template also loads `yacht-template-styles.css`, Finsweet Attributes and Lit
 6. Keep Litepicker eager until a lazy-loading change passes modal-open tests on iOS and Android.
 7. Preserve `prefers-reduced-motion` behavior for every animation.
 8. Do not force Webflow spacing or typography from JavaScript.
+9. Keep direct children of every ARIA `list` as `listitem`, `presentation` or `none`; the agentic Lighthouse audit validates this relationship.
 
 ## Release checklist
 
@@ -73,3 +76,5 @@ The template also loads `yacht-template-styles.css`, Finsweet Attributes and Lit
 The former inline hero-video controller is no longer part of the delivery plan. It competed with `py-yacht-video-safe-v2.js` for play/pause state and viewport behavior.
 
 The runtime bundle deliberately excludes `array-cms.js`, `cascade-ready-inputs.js`, the included-card modules and `yacht-expanding-gallery.js`, because Webflow loads those files independently. This prevents duplicate download, parsing and initialization logic.
+
+The repository also contains `llms.txt`. It must be served as `text/plain` from `https://www.prestigiousyachting.com/llms.txt` through the domain/CDN layer; storing it on GitHub alone does not expose it at the website root.

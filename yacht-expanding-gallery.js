@@ -172,7 +172,7 @@
     root.dataset.pyCompactGalleryReady = "true";
     root.hidden = false;
     cards.forEach((card, index) => {
-      card.setAttribute("role", "img");
+      card.setAttribute("role", "listitem");
       if (!card.getAttribute("aria-label")) card.setAttribute("aria-label", `Yacht gallery image ${index + 1}`);
     });
     return true;
@@ -195,7 +195,7 @@
     for (let start = 0; start < cards.length; start += 5) {
       const row = document.createElement("div");
       row.className = "py-gallery-row";
-      row.setAttribute("role", "group");
+      row.setAttribute("role", "listitem");
       row.setAttribute("aria-label", `Gallery row ${rows.length + 1}`);
       cards.slice(start, start + 5).forEach((card) => row.appendChild(card));
       list.appendChild(row);

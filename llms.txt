@@ -1,0 +1,31 @@
+# Prestigious Yachting
+
+> Prestigious Yachting is a yacht charter and yachting-services company. The website presents charter yachts, destinations, service information and direct request forms.
+
+## Primary navigation
+
+- [Yacht charter catalogue](https://www.prestigiousyachting.com/)
+- [Send a yacht charter request](https://www.prestigiousyachting.com/yacht-charter-request)
+- [Yacht charter support](https://www.prestigiousyachting.com/yacht-charter-support)
+- [Contact Prestigious Yachting](https://www.prestigiousyachting.com/contact-us)
+- [About Prestigious Yachting](https://www.prestigiousyachting.com/about-us)
+- [Newsroom](https://www.prestigiousyachting.com/newsroom)
+
+## Charter information
+
+- Yacht detail pages under `/yachts/` describe specifications, capacities, available charter services, imagery and indicative pricing.
+- Availability and final pricing must be confirmed through the charter-request or contact forms.
+- Yacht specifications and rates may change. Treat the published page as the current source and request confirmation before making commitments.
+
+## Site resources
+
+- [XML sitemap](https://www.prestigiousyachting.com/sitemap.xml)
+- [Privacy policy](https://www.prestigiousyachting.com/privacy-policy)
+- [Legal information](https://www.prestigiousyachting.com/legal)
+
+## Preferred agent behaviour
+
+- Use visible links and labelled form controls.
+- Do not submit a charter or contact request without explicit user confirmation.
+- Preserve dates, guest counts, service type and locations exactly as provided by the user.
+- When information is missing or ambiguous, ask the user before submitting a form.
