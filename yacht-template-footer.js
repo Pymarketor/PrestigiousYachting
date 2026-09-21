@@ -352,6 +352,8 @@
     labelEmptyLinks();
   };
 
+  window.PYAgenticNavigation = { normalize: applyAgenticNavigation };
+
   document.addEventListener("keydown", (event) => {
     if (!["Enter", " "].includes(event.key)) return;
     const control = event.target instanceof Element ? event.target.closest(actionSelectors) : null;
