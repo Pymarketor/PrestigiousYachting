@@ -25,8 +25,7 @@ body::-webkit-scrollbar,
   display: none;
 }
 
-[data-py-expanding-gallery],
-[data-py-gallery-source="cms"] {
+[data-py-gallery-runtime="expanding"] {
   box-sizing: border-box !important;
   width: 100% !important;
   max-width: 100% !important;
@@ -34,8 +33,7 @@ body::-webkit-scrollbar,
   overflow: hidden !important;
   border-radius: 0 !important;
 }
-[data-py-expanding-track],
-[data-py-gallery-source="cms"] .flex-v-gallery {
+[data-py-gallery-runtime="expanding"] [data-py-expanding-track] {
   display: grid !important;
   width: 100% !important;
   max-width: none !important;
@@ -192,8 +190,7 @@ body::-webkit-scrollbar,
   .gallery-yacht-section,
   .gallery-yacht-container,
   .gallery-yacht-global,
-  [data-py-expanding-gallery],
-  [data-py-gallery-source="cms"] {
+  [data-py-gallery-runtime="expanding"] {
     box-sizing: border-box !important;
     width: 100% !important;
     max-width: 100% !important;
@@ -201,15 +198,13 @@ body::-webkit-scrollbar,
     padding-inline: 0 !important;
     border-radius: 0 !important;
   }
-  [data-py-expanding-track],
-  [data-py-gallery-source="cms"] .flex-v-gallery,
+  [data-py-gallery-runtime="expanding"] [data-py-expanding-track],
   .py-gallery-row,
   [data-py-expanding-card],
   [data-py-gallery-image] {
     border-radius: 0 !important;
   }
-  [data-py-expanding-track],
-  [data-py-gallery-source="cms"] .flex-v-gallery {
+  [data-py-gallery-runtime="expanding"] [data-py-expanding-track] {
     height: auto !important;
     min-height: 0 !important;
     gap: 3px !important;
