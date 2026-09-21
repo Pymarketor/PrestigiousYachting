@@ -25,7 +25,8 @@ body::-webkit-scrollbar,
   display: none;
 }
 
-[data-py-expanding-gallery] {
+[data-py-expanding-gallery],
+[data-py-gallery-source="cms"] {
   box-sizing: border-box !important;
   width: 100% !important;
   max-width: 100% !important;
@@ -33,7 +34,8 @@ body::-webkit-scrollbar,
   overflow: hidden !important;
   border-radius: 0 !important;
 }
-[data-py-expanding-track] {
+[data-py-expanding-track],
+[data-py-gallery-source="cms"] .flex-v-gallery {
   display: grid !important;
   width: 100% !important;
   max-width: none !important;
@@ -190,7 +192,8 @@ body::-webkit-scrollbar,
   .gallery-yacht-section,
   .gallery-yacht-container,
   .gallery-yacht-global,
-  [data-py-expanding-gallery] {
+  [data-py-expanding-gallery],
+  [data-py-gallery-source="cms"] {
     box-sizing: border-box !important;
     width: 100% !important;
     max-width: 100% !important;
@@ -199,12 +202,14 @@ body::-webkit-scrollbar,
     border-radius: 0 !important;
   }
   [data-py-expanding-track],
+  [data-py-gallery-source="cms"] .flex-v-gallery,
   .py-gallery-row,
   [data-py-expanding-card],
   [data-py-gallery-image] {
     border-radius: 0 !important;
   }
-  [data-py-expanding-track] {
+  [data-py-expanding-track],
+  [data-py-gallery-source="cms"] .flex-v-gallery {
     height: auto !important;
     min-height: 0 !important;
     gap: 3px !important;
@@ -258,21 +263,4 @@ body::-webkit-scrollbar,
     content-visibility: auto;
     contain-intrinsic-size: auto 900px;
   }
-}
-
-
-/* Unified navigation icon treatment */
-.py-gallery-zoom.py-icon-wrap,
-.py-gallery-dialog__close.py-icon-wrap,
-.py-gallery-dialog__nav.py-icon-wrap {
-  color: var(--py-icon-color, currentColor);
-  background: rgb(255 255 255 / 50%);
-  border: 1px solid rgb(255 255 255 / 35%);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
-}
-.py-gallery-zoom.py-icon-wrap:hover,
-.py-gallery-dialog__close.py-icon-wrap:hover,
-.py-gallery-dialog__nav.py-icon-wrap:hover {
-  background: rgb(255 255 255 / 78%);
 }
