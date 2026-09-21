@@ -8,7 +8,9 @@
   const OUTER = "[data-py-expanding-track]";
   const LIST = "[data-py-gallery-list]";
   const CARD = "[data-py-expanding-card]";
-  // Keep the fallback <img> selector inside every gallery scope. A raw comma\n  // here would expand `${FULL_ROOT} ${IMAGE}` into a global `img` rule.\n  const IMAGE = ":is([data-py-gallery-image], img)";
+  // Keep the fallback <img> selector inside every gallery scope.
+  // A raw comma here would make the fallback img selector global.
+  const IMAGE = ":is([data-py-gallery-image], img)";
   const FULL_ROOT = "[data-py-gallery-runtime=\"expanding\"]";
   const COMPACT_ROOT = "[data-py-gallery-runtime=\"compact\"]";
   const STYLE_ID = "py-expanding-gallery-css";
