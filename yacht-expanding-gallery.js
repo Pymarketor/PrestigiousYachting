@@ -8,8 +8,8 @@
   const OUTER = "[data-py-expanding-track]";
   const LIST = "[data-py-gallery-list]";
   const CARD = "[data-py-expanding-card]";
-  // Keep the fallback <img> selector inside every gallery scope.
-  // A raw comma here would make the fallback img selector global.
+  // Keep the fallback <img> selector inside every gallery scope. A raw comma
+  // here would expand `${FULL_ROOT} ${IMAGE}` into a global `img` rule.
   const IMAGE = ":is([data-py-gallery-image], img)";
   const FULL_ROOT = "[data-py-gallery-runtime=\"expanding\"]";
   const COMPACT_ROOT = "[data-py-gallery-runtime=\"compact\"]";
@@ -28,7 +28,9 @@
     ${FULL_ROOT} .py-gallery-zoom{position:absolute!important;right:.875rem!important;bottom:.875rem!important;z-index:4!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;opacity:0;transform:scale(.96);cursor:zoom-in!important;transition:opacity .2s ease,transform .2s ease!important}
     ${FULL_ROOT} ${CARD}[data-active="true"] .py-gallery-zoom,${FULL_ROOT} ${CARD}:focus-within .py-gallery-zoom{opacity:1;transform:scale(1)}
     .wrapper-main-gallery{height:auto!important;min-height:0!important;align-items:stretch!important}
-    .wrapper-main-gallery>.video-container.yacht{box-sizing:border-box!important;flex:1 1 0!important;width:auto!important;min-width:0!important;height:auto!important;aspect-ratio:auto!important;align-self:stretch!important;margin:0!important;border-radius:.675rem!important;overflow:hidden!important}\n    .wrapper-main-gallery>.video-container.yacht>.video-container-loaded{inset:0!important;width:100%!important;height:100%!important;border-radius:inherit!important;overflow:hidden!important}\n    .wrapper-main-gallery>.video-container.yacht .video-content,.wrapper-main-gallery>.video-container.yacht .video-fallback,.wrapper-main-gallery>.video-container.yacht .video-start-frame,.wrapper-main-gallery>.video-container.yacht .video-element{width:100%!important;height:100%!important;border-radius:inherit!important}
+    .wrapper-main-gallery>.video-container.yacht{box-sizing:border-box!important;flex:1 1 0!important;width:auto!important;min-width:0!important;height:auto!important;aspect-ratio:auto!important;align-self:stretch!important;margin:0!important;border-radius:.675rem!important;overflow:hidden!important}
+    .wrapper-main-gallery>.video-container.yacht>.video-container-loaded{inset:0!important;width:100%!important;height:100%!important;border-radius:inherit!important;overflow:hidden!important}
+    .wrapper-main-gallery>.video-container.yacht .video-content,.wrapper-main-gallery>.video-container.yacht .video-fallback,.wrapper-main-gallery>.video-container.yacht .video-start-frame,.wrapper-main-gallery>.video-container.yacht .video-element{width:100%!important;height:100%!important;border-radius:inherit!important}
     .wrapper-main-gallery>${COMPACT_ROOT}{box-sizing:border-box!important;display:block!important;flex:0 0 45%!important;width:45%!important;max-width:45%!important;min-width:45%!important;height:auto!important;min-height:0!important;padding:0 0 0 .625rem!important;overflow:visible!important}
     ${COMPACT_ROOT} .flex-v-gallery{display:grid!important;width:100%!important;height:auto!important;min-height:0!important;padding:0!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;grid-template-rows:none!important;grid-auto-rows:auto!important;gap:.625rem!important}
     ${COMPACT_ROOT} .flex-v-gallery>${CARD}{position:relative!important;width:100%!important;height:auto!important;aspect-ratio:3/2!important;min-width:0!important;min-height:0!important;overflow:hidden!important;border-radius:.675rem!important;background-color:#e8e8e8!important;background-position:center!important;background-repeat:no-repeat!important;background-size:cover!important}
@@ -36,15 +38,17 @@
     .py-gallery-dialog[open]{display:grid!important;place-items:center!important}
     .py-gallery-dialog::backdrop{background:rgb(0 0 0 / 48%)!important;-webkit-backdrop-filter:blur(18px) saturate(120%);backdrop-filter:blur(18px) saturate(120%)}
     .py-gallery-dialog__panel{position:relative;display:grid;width:min(88vw,90rem);height:min(82dvh,58rem);min-height:0;grid-template-rows:minmax(0,1fr) auto;overflow:hidden;border:1px solid rgb(255 255 255 / 68%);border-radius:clamp(1.5rem,2.5vw,2rem);background:#f5f5f7;box-shadow:0 40px 100px rgb(0 0 0 / 38%),0 2px 10px rgb(0 0 0 / 12%);isolation:isolate;animation:py-gallery-dialog-in .42s cubic-bezier(.22,1,.36,1) both}
-    .py-gallery-dialog__stage{display:grid;min-width:0;min-height:0;padding:clamp(.75rem,2vw,2rem);place-items:center;overflow:hidden;background:#fff}
-    .py-gallery-dialog__image{display:block!important;width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;object-fit:contain!important;border-radius:clamp(1rem,1.6vw,1.5rem)!important;background:#f5f5f7}
+    .py-gallery-dialog__stage{display:grid;min-width:0;min-height:0;padding:0;place-items:stretch;overflow:hidden;background:#0b0b0c}
+    .py-gallery-dialog__image{display:block!important;width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;object-fit:cover!important;object-position:center!important;border-radius:0!important;background:#0b0b0c}
     .py-gallery-dialog__footer{display:grid;box-sizing:border-box;min-height:4.75rem;grid-template-columns:minmax(4rem,1fr) auto minmax(4rem,1fr);align-items:center;gap:1rem;padding:.75rem clamp(1rem,2vw,1.75rem);border-top:1px solid rgb(0 0 0 / 8%);background:rgb(245 245 247 / 92%);-webkit-backdrop-filter:blur(18px) saturate(130%);backdrop-filter:blur(18px) saturate(130%)}
     .py-gallery-dialog__count,.py-gallery-dialog__hint{margin:0;color:rgb(29 29 31 / 58%);font-size:.75rem;font-weight:500;line-height:1.2;letter-spacing:.01em}
     .py-gallery-dialog__hint{text-align:right}
-    .py-gallery-dialog__dots{display:flex;align-items:center;justify-content:center;gap:.5rem;max-width:min(58vw,24rem);overflow:hidden}
-    .py-gallery-dialog__dot{box-sizing:border-box;width:.5rem;height:.5rem;min-width:.5rem;padding:0;border:0;border-radius:50%;background:rgb(29 29 31 / 28%);cursor:pointer;transition:width .25s cubic-bezier(.22,1,.36,1),background-color .2s ease,transform .2s ease}
-    .py-gallery-dialog__dot:hover,.py-gallery-dialog__dot:focus-visible{background:rgb(29 29 31 / 55%);outline:0;transform:scale(1.15)}
-    .py-gallery-dialog__dot[aria-current="true"]{width:1.5rem;border-radius:100rem;background:#1d1d1f}
+    .py-gallery-dialog__dots{display:flex;align-items:center;justify-content:flex-start;gap:.5rem;max-width:min(62vw,42rem);padding:.25rem;overflow-x:auto;overflow-y:hidden;scrollbar-width:none}
+    .py-gallery-dialog__dots::-webkit-scrollbar{display:none}
+    .py-gallery-dialog__dot{box-sizing:border-box;width:3.5rem;height:2.25rem;min-width:3.5rem;padding:0;overflow:hidden;border:2px solid transparent;border-radius:.5rem;background:#d2d2d7;opacity:.58;cursor:pointer;transition:border-color .2s ease,opacity .2s ease,transform .2s ease}
+    .py-gallery-dialog__dot-image{display:block!important;width:100%!important;height:100%!important;object-fit:cover!important;object-position:center!important;border-radius:calc(.5rem - 2px)!important;pointer-events:none}
+    .py-gallery-dialog__dot:hover,.py-gallery-dialog__dot:focus-visible{opacity:.9;outline:0;transform:scale(1.04)}
+    .py-gallery-dialog__dot[aria-current="true"]{border-color:#1d1d1f;opacity:1;transform:scale(1.06)}
     .py-gallery-dialog__close,.py-gallery-dialog__nav{--py-icon-size:3rem;--py-icon-inner-size:1.125rem;position:fixed!important;z-index:2147483000!important;border:1px solid rgb(255 255 255 / 72%)!important;color:#1d1d1f!important;background:rgb(245 245 247 / 88%)!important;box-shadow:0 10px 32px rgb(0 0 0 / 20%),inset 0 0 1px rgb(255 255 255 / 90%)!important;-webkit-backdrop-filter:blur(18px) saturate(140%)!important;backdrop-filter:blur(18px) saturate(140%)!important;transition:background-color .2s ease,transform .2s ease,box-shadow .2s ease!important}
     .py-gallery-dialog__close{top:max(1.25rem,env(safe-area-inset-top));right:max(1.25rem,env(safe-area-inset-right))}
     .py-gallery-dialog__nav{top:50%;transform:translateY(-50%)}
@@ -54,7 +58,7 @@
     .py-gallery-dialog__nav:hover,.py-gallery-dialog__nav:focus-visible{transform:translateY(-50%) scale(1.04)}
     .py-gallery-dialog__nav--prev .py-icon-svg,.py-gallery-dialog__nav--next .py-icon-svg{transform:none!important}
     @keyframes py-gallery-dialog-in{from{opacity:0;transform:translateY(18px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
-    @media screen and (max-width:767px){.wrapper-main-gallery{height:auto!important;min-height:0!important}.wrapper-main-gallery>${COMPACT_ROOT}{padding-left:.25rem!important}${COMPACT_ROOT} .flex-v-gallery{gap:.25rem!important}${FULL_ROOT} ${LIST},${FULL_ROOT} .py-gallery-row{gap:.5rem!important}${FULL_ROOT} .py-gallery-row{height:auto!important;min-height:0!important;grid-template-columns:1fr!important;transition:grid-template-rows .45s cubic-bezier(.22,1,.36,1)!important}${FULL_ROOT} ${CARD}{min-height:54px!important;border-radius:.55rem!important}${FULL_ROOT} ${IMAGE}{border-radius:.55rem!important}.py-gallery-dialog{padding:max(4.5rem,calc(env(safe-area-inset-top) + 3.5rem)) .5rem max(4.75rem,calc(env(safe-area-inset-bottom) + 4rem))!important}.py-gallery-dialog__panel{width:calc(100vw - 1rem);height:calc(100dvh - 9.25rem);border-radius:1.35rem}.py-gallery-dialog__stage{padding:.5rem}.py-gallery-dialog__image{border-radius:1rem!important}.py-gallery-dialog__footer{min-height:3.75rem;grid-template-columns:3rem minmax(0,1fr);padding:.625rem 1rem}.py-gallery-dialog__hint{display:none}.py-gallery-dialog__dots{max-width:none}.py-gallery-dialog__close,.py-gallery-dialog__nav{--py-icon-size:2.75rem;--py-icon-inner-size:1rem}.py-gallery-dialog__close{top:max(.75rem,env(safe-area-inset-top));right:max(.75rem,env(safe-area-inset-right))}.py-gallery-dialog__nav{top:auto!important;bottom:max(.75rem,env(safe-area-inset-bottom));transform:none!important}.py-gallery-dialog__nav--prev{left:max(.75rem,env(safe-area-inset-left))}.py-gallery-dialog__nav--next{right:max(.75rem,env(safe-area-inset-right))}.py-gallery-dialog__nav:hover,.py-gallery-dialog__nav:focus-visible{transform:scale(1.04)}}
+    @media screen and (max-width:767px){.wrapper-main-gallery{height:auto!important;min-height:0!important}.wrapper-main-gallery>${COMPACT_ROOT}{padding-left:.25rem!important}${COMPACT_ROOT} .flex-v-gallery{gap:.25rem!important}${FULL_ROOT} ${LIST},${FULL_ROOT} .py-gallery-row{gap:.5rem!important}${FULL_ROOT} .py-gallery-row{height:auto!important;min-height:0!important;grid-template-columns:1fr!important;transition:grid-template-rows .45s cubic-bezier(.22,1,.36,1)!important}${FULL_ROOT} ${CARD}{min-height:54px!important;border-radius:.55rem!important}${FULL_ROOT} ${IMAGE}{border-radius:.55rem!important}.py-gallery-dialog{padding:max(4.5rem,calc(env(safe-area-inset-top) + 3.5rem)) .5rem max(4.75rem,calc(env(safe-area-inset-bottom) + 4rem))!important}.py-gallery-dialog__panel{width:calc(100vw - 1rem);height:calc(100dvh - 9.25rem);border-radius:1.35rem}.py-gallery-dialog__footer{min-height:3.75rem;grid-template-columns:3rem minmax(0,1fr);padding:.5rem .75rem}.py-gallery-dialog__hint{display:none}.py-gallery-dialog__dots{max-width:none;gap:.375rem}.py-gallery-dialog__dot{width:2.75rem;height:1.8rem;min-width:2.75rem;border-radius:.4rem}.py-gallery-dialog__dot-image{border-radius:calc(.4rem - 2px)!important}.py-gallery-dialog__close,.py-gallery-dialog__nav{--py-icon-size:2.75rem;--py-icon-inner-size:1rem}.py-gallery-dialog__close{top:max(.75rem,env(safe-area-inset-top));right:max(.75rem,env(safe-area-inset-right))}.py-gallery-dialog__nav{top:auto!important;bottom:max(.75rem,env(safe-area-inset-bottom));transform:none!important}.py-gallery-dialog__nav--prev{left:max(.75rem,env(safe-area-inset-left))}.py-gallery-dialog__nav--next{right:max(.75rem,env(safe-area-inset-right))}.py-gallery-dialog__nav:hover,.py-gallery-dialog__nav:focus-visible{transform:scale(1.04)}}
     @media(prefers-reduced-motion:reduce){${FULL_ROOT} .py-gallery-row,${FULL_ROOT} ${IMAGE},.py-gallery-dialog__panel,.py-gallery-dialog__dot{transition:none!important;animation:none!important}}
   `;
   if (!style.isConnected) document.head.appendChild(style);
@@ -98,11 +102,21 @@
     if (count) count.textContent = `${dialogIndex + 1} / ${dialogCards.length}`;
     if (!dots) return;
     if (dots.children.length !== dialogCards.length) {
-      dots.replaceChildren(...dialogCards.map((_, index) => {
+      dots.replaceChildren(...dialogCards.map((card, index) => {
         const dot = document.createElement("button");
+        const source = getCardSource(card);
         dot.className = "py-gallery-dialog__dot";
         dot.type = "button";
-        dot.setAttribute("aria-label", `View photo ${index + 1}`);
+        dot.setAttribute("aria-label", source?.alt ? `View photo ${index + 1}: ${source.alt}` : `View photo ${index + 1}`);
+        if (source?.src) {
+          const thumbnail = document.createElement("img");
+          thumbnail.className = "py-gallery-dialog__dot-image";
+          thumbnail.src = source.src;
+          thumbnail.alt = "";
+          thumbnail.loading = "lazy";
+          thumbnail.decoding = "async";
+          dot.appendChild(thumbnail);
+        }
         dot.addEventListener("click", () => showDialogImage(index));
         return dot;
       }));
