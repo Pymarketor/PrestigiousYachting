@@ -362,11 +362,12 @@
 /* Migrated Webflow footer block 5. */
 (() => {
   const init = () => {
-    const root = document.querySelector("[data-py-expanding-gallery], .slider-gallery[slider-instance="yacht"]");
+    if (document.querySelector('script[src*="yacht-expanding-gallery.js"]')) return;
+    const root = document.querySelector("[data-py-expanding-gallery], [data-py-gallery-source=\"cms\"]");
     if (!root || root.dataset.pyZoomReady === "true") return;
-    const cards = Array.from(root.querySelectorAll("[data-py-expanding-card], [data-slider-slide][instance="yacht"]"));
-    const track = root.querySelector("[data-py-expanding-track], [data-slider-track][instance="yacht"]");
-    if (!cards.length || !track) return;
+    const cards = Array.from(root.querySelectorAll("[data-py-expanding-card]"));
+    const track = root.querySelector("[data-py-expanding-track], .flex-v-gallery") || root;
+    if (!cards.length) return;
     root.dataset.pyZoomReady = "true";
 
     const rowSize = 5;
@@ -415,10 +416,10 @@
     dialog.className = "py-gallery-dialog";
     dialog.setAttribute("aria-label", "Yacht photo viewer");
     dialog.innerHTML =
-      '<button class="py-gallery-dialog__close py-icon-wrap is-glass" type="button" aria-label="Close photo viewer"><span class="py-icon" data-py-icon="cross"></span></button>' +
-      '<button class="py-gallery-dialog__nav py-gallery-dialog__nav--prev py-icon-wrap is-glass" type="button" aria-label="Previous photo"><span class="py-icon" data-py-icon="chevron-left"></span></button>' +
+      '<button class="py-gallery-dialog__close" type="button" aria-label="Close photo viewer">×</button>' +
+      '<button class="py-gallery-dialog__nav py-gallery-dialog__nav--prev" type="button" aria-label="Previous photo">‹</button>' +
       '<img class="py-gallery-dialog__image" alt="">' +
-      '<button class="py-gallery-dialog__nav py-gallery-dialog__nav--next py-icon-wrap is-glass" type="button" aria-label="Next photo"><span class="py-icon" data-py-icon="chevron-right"></span></button>';
+      '<button class="py-gallery-dialog__nav py-gallery-dialog__nav--next" type="button" aria-label="Next photo">›</button>';
     document.body.appendChild(dialog);
 
     const dialogImage = dialog.querySelector(".py-gallery-dialog__image");
@@ -459,8 +460,9 @@
       zoom.type = "button";
       zoom.className = "py-gallery-zoom";
       zoom.setAttribute("aria-label", image && image.alt ? "Enlarge image: " + image.alt : "Enlarge gallery image");
-      zoom.classList.add("py-icon-wrap", "is-glass");
-      zoom.innerHTML = '<span class="py-icon" data-py-icon="expand" aria-hidden="true"></span>';
+      zoom.innerHTML =
+        '<svg width="21" height="21" viewBox="0 0 24 24" aria-hidden="true" focusable="false">' +
+        '<path d="M9 3H3v6M15 3h6v6M9 21H3v-6M15 21h6v-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
       zoom.addEventListener("click", (event) => {
         event.preventDefault();
         event.stopPropagation();
@@ -516,10 +518,10 @@
       link.setAttribute("aria-label", "Open yacht gallery");
     });
 
-    document.querySelectorAll("[data-py-expanding-gallery]").forEach((gallery) => {
+    document.querySelectorAll("[data-py-expanding-gallery]:has([data-py-expanding-track])").forEach((gallery) => {
       gallery.setAttribute("role", "region");
       gallery.setAttribute("aria-label", "Yacht photo gallery");
-      const track = gallery.querySelector("[data-py-expanding-track]");
+      const track = gallery.querySelector("[data-py-expanding-track], .flex-v-gallery");
       if (track) {
         track.setAttribute("role", "presentation");
         track.removeAttribute("aria-label");
