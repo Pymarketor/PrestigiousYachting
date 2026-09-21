@@ -2,11 +2,13 @@
 (() => {
   "use strict";
 
-  const ROOT = "[data-py-expanding-gallery]";
-  const OUTER = "[data-py-expanding-track]";
-  const LIST = "[data-py-gallery-list]";
-  const CARD = "[data-py-expanding-card]";
-  const IMAGE = "[data-py-gallery-image]";
+  // The CMS gallery is now a Webflow Collection List. Keep the data
+  // attributes as an override, but use the stable CMS targets as defaults.
+  const ROOT = "[data-py-expanding-gallery], [data-py-gallery-source=\"cms\"]";
+  const OUTER = "[data-py-expanding-track], .flex-v-gallery";
+  const LIST = "[data-py-gallery-list], .flex-v-gallery";
+  const CARD = "[data-py-expanding-card], .flex-v-gallery > *";
+  const IMAGE = "[data-py-gallery-image], img";
   const STYLE_ID = "py-expanding-gallery-css";
 
   const style = document.getElementById(STYLE_ID) || document.createElement("style");
@@ -53,6 +55,15 @@
   let dialogIndex = 0;
   let returnFocus;
 
+  const getCardSource = (card) => {
+    const image = card.querySelector(IMAGE);
+    if (image?.currentSrc || image?.src) {
+      return { src: image.currentSrc || image.src, alt: image.alt || "Yacht gallery photo" };
+    }
+    const match = card.style.backgroundImage.match(/url\\([\"']?(.+?)[\"']?\\)/);
+    return match ? { src: match[1], alt: card.getAttribute("aria-label") || "Yacht gallery photo" } : null;
+  };
+
   const setControlIcon = (control, name) => {
     if (!control) return;
     control.dataset.pyIcon = name;
@@ -95,11 +106,11 @@
   const showDialogImage = (index) => {
     if (!dialogCards.length) return;
     dialogIndex = (index + dialogCards.length) % dialogCards.length;
-    const source = dialogCards[dialogIndex].querySelector(IMAGE);
+    const source = getCardSource(dialogCards[dialogIndex]);
     const target = ensureDialog().querySelector(".py-gallery-dialog__image");
     if (!source || !target) return;
-    target.src = source.currentSrc || source.src;
-    target.alt = source.alt || "Yacht gallery photo";
+    target.src = source.src;
+    target.alt = source.alt;
     syncDialogPagination();
   };
 
@@ -134,9 +145,9 @@
 
   const initialize = (root) => {
     if (root.dataset.pyGalleryReady === "true") return true;
-    const outer = root.querySelector(OUTER);
+    const outer = root.querySelector(OUTER) || root;
     const list = root.querySelector(LIST) || outer;
-    const cards = [...root.querySelectorAll(CARD)].filter((card) => card.querySelector(IMAGE));
+    const cards = [...root.querySelectorAll(CARD)].filter((card) => getCardSource(card));
     if (!outer || !list || !cards.length) return false;
 
     root.dataset.pyGalleryReady = "true";
@@ -172,15 +183,16 @@
       const image = card.querySelector(IMAGE);
       card.tabIndex = 0;
       card.setAttribute("role", "button");
-      image.draggable = false;
-      card.setAttribute("aria-label", image.alt ? `Expand image: ${image.alt}` : `Expand yacht gallery image ${cards.indexOf(card) + 1}`);
+      if (image) image.draggable = false;
+      const source = getCardSource(card);
+      card.setAttribute("aria-label", source?.alt ? `Expand image: ${source.alt}` : `Expand yacht gallery image ${cards.indexOf(card) + 1}`);
       let zoom = card.querySelector(".py-gallery-zoom");
       if (!zoom) {
         zoom = document.createElement("button");
         zoom.type = "button";
         zoom.className = "py-gallery-zoom py-icon-wrap is-glass";
         zoom.dataset.pyIcon = "plus";
-        zoom.setAttribute("aria-label", image.alt ? `Enlarge image: ${image.alt}` : "Enlarge gallery image");
+        zoom.setAttribute("aria-label", source?.alt ? `Enlarge image: ${source.alt}` : "Enlarge gallery image");
         card.appendChild(zoom);
       }
       setControlIcon(zoom, "plus");
