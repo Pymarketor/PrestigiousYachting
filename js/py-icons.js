@@ -7,20 +7,20 @@
 
   var repo = 'Pymarketor/PrestigiousYachting';
   var version = 'a0c84bc7924e4e567b6d4be73c46706d9bd6640d';
-  var baseUrl = 'https://raw.githubusercontent.com/' + repo + '/' + version + '/icons/';
-  var fallbackBaseUrl = 'https://cdn.jsdelivr.net/gh/' + repo + '@' + version + '/icons/';
+  var baseUrl = 'https://cdn.jsdelivr.net/gh/' + repo + '@' + version + '/icons/';
+  var fallbackBaseUrl = 'https://raw.githubusercontent.com/' + repo + '/' + version + '/icons/';
   var cache = Object.create(null);
 
   function load(name) {
     if (!/^[a-z0-9-]+$/.test(name)) return Promise.reject(new Error('Invalid icon name'));
     if (!cache[name]) {
-      cache[name] = fetch(baseUrl + name + '.svg', { credentials: 'omit', cache: 'no-store' })
+      cache[name] = fetch(baseUrl + name + '.svg', { credentials: 'omit', cache: 'force-cache' })
         .then(function (response) {
           if (!response.ok) throw new Error('GitHub icon not found: ' + name);
           return response.text();
         })
         .catch(function () {
-          return fetch(fallbackBaseUrl + name + '.svg', { credentials: 'omit', cache: 'no-store' }).then(function (response) {
+          return fetch(fallbackBaseUrl + name + '.svg', { credentials: 'omit', cache: 'force-cache' }).then(function (response) {
             if (!response.ok) throw new Error('Icon not found: ' + name);
             return response.text();
           });
@@ -38,8 +38,15 @@
     return cache[name];
   }
 
+  function iconNodes(root) {
+    var scope = root || document;
+    var nodes = [];
+    if (scope.nodeType === 1 && scope.matches('[data-py-icon]')) nodes.push(scope);
+    return nodes.concat(Array.prototype.slice.call(scope.querySelectorAll('[data-py-icon]')));
+  }
+
   function render(root) {
-    (root || document).querySelectorAll('[data-py-icon]').forEach(function (target) {
+    iconNodes(root).forEach(function (target) {
       if (target.dataset.pyIconLoaded === 'true') return;
       var name = target.dataset.pyIcon;
       load(name).then(function (svg) {
@@ -61,8 +68,8 @@
     });
   }
 
-  function markIconNodes() {
-    document.querySelectorAll('[data-py-icon]').forEach(function (target) {
+  function markIconNodes(root) {
+    iconNodes(root).forEach(function (target) {
       target.classList.add('py-icon', 'py-icon-wrap', 'is-glass');
     });
   }
@@ -72,8 +79,25 @@
   document.head.appendChild(style);
 
   window.PYIcons = { render: render, load: load, baseUrl: baseUrl, fallbackBaseUrl: fallbackBaseUrl, markIconNodes: markIconNodes };
-  function boot() { markIconNodes(); render(); }
-  var observer = new MutationObserver(function () { markIconNodes(); render(); });
+  function boot(root) { markIconNodes(root); render(root); }
+  var pendingRoots = new Set();
+  var scheduled = false;
+  function flushAddedIcons() {
+    scheduled = false;
+    pendingRoots.forEach(boot);
+    pendingRoots.clear();
+  }
+  var observer = new MutationObserver(function (records) {
+    records.forEach(function (record) {
+      record.addedNodes.forEach(function (node) {
+        if (node.nodeType === 1) pendingRoots.add(node);
+      });
+    });
+    if (pendingRoots.size && !scheduled) {
+      scheduled = true;
+      queueMicrotask(flushAddedIcons);
+    }
+  });
   observer.observe(document.documentElement, { childList: true, subtree: true });
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
   else boot();

@@ -253,6 +253,13 @@
     document.querySelectorAll(".open-arrow").forEach((link) => {
       if (!link.getAttribute("aria-label")) link.setAttribute("aria-label", "Open yacht details");
     });
+    document.querySelectorAll('a[target="_blank"]').forEach((link) => {
+      link.setAttribute("rel", "noopener noreferrer");
+      const currentLabel = (link.getAttribute("aria-label") || link.textContent || "Open link").trim();
+      if (!/new (tab|window)/i.test(currentLabel)) {
+        link.setAttribute("aria-label", `${currentLabel} (opens in a new tab)`);
+      }
+    });
     document.querySelectorAll("a").forEach((link) => {
       if ((link.getAttribute("aria-label") || link.textContent || "").trim()) return;
       const imageAlt = link.querySelector('img[alt]:not([alt=""])')?.getAttribute("alt");
@@ -336,6 +343,7 @@
   };
 
   const applyAgenticNavigation = () => {
+    document.querySelector("nav.dropdown-list-nav-bar")?.setAttribute("aria-label", "Primary navigation");
     normalizeFalseLinks();
     normalizeComboboxes();
     normalizeActions();
@@ -355,8 +363,22 @@
   } else {
     applyAgenticNavigation();
   }
-  setTimeout(applyAgenticNavigation, 500);
-  setTimeout(applyAgenticNavigation, 1500);
+  const scheduleAgenticRefresh = (() => {
+    let queued = false;
+    return () => {
+      if (queued) return;
+      queued = true;
+      const run = () => {
+        queued = false;
+        applyAgenticNavigation();
+      };
+      if ("requestIdleCallback" in window) requestIdleCallback(run, { timeout: 500 });
+      else setTimeout(run, 50);
+    };
+  })();
+  const agenticObserver = new MutationObserver(scheduleAgenticRefresh);
+  agenticObserver.observe(document.documentElement, { childList: true, subtree: true });
+  setTimeout(() => agenticObserver.disconnect(), 5000);
 })();
 
 /* Migrated Webflow footer block 5. */
@@ -518,7 +540,7 @@
       link.setAttribute("aria-label", "Open yacht gallery");
     });
 
-    document.querySelectorAll("[data-py-expanding-gallery]:has([data-py-expanding-track])").forEach((gallery) => {
+    document.querySelectorAll("[data-py-expanding-gallery]").forEach((gallery) => {
       gallery.setAttribute("role", "region");
       gallery.setAttribute("aria-label", "Yacht photo gallery");
       const track = gallery.querySelector("[data-py-expanding-track], .flex-v-gallery");
@@ -532,10 +554,15 @@
       gallery.querySelectorAll("[data-py-expanding-card]").forEach((card, index) => {
         const image = card.querySelector("[data-py-gallery-image], img");
         const description = image?.getAttribute("alt")?.trim();
-        card.setAttribute("role", "group");
-        card.removeAttribute("aria-pressed");
-        card.removeAttribute("tabindex");
-        card.setAttribute("aria-label", description ? `Expand image: ${description}` : `Expand yacht gallery image ${index + 1}`);
+        if (gallery.dataset.pyGalleryRuntime === "expanding") {
+          card.setAttribute("role", "button");
+          card.setAttribute("tabindex", "0");
+          card.setAttribute("aria-label", description ? `Expand image: ${description}` : `Expand yacht gallery image ${index + 1}`);
+        } else {
+          card.setAttribute("role", "img");
+          card.removeAttribute("tabindex");
+          card.setAttribute("aria-label", description || `Yacht gallery image ${index + 1}`);
+        }
       });
     });
 

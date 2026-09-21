@@ -151,9 +151,6 @@
     dialog.addEventListener("close", () => { dialog.querySelector(".py-gallery-dialog__image").removeAttribute("src"); returnFocus?.focus?.({ preventScroll: true }); });
     dialog.addEventListener("keydown", (event) => { if (event.key === "ArrowLeft") showDialogImage(dialogIndex - 1); if (event.key === "ArrowRight") showDialogImage(dialogIndex + 1); });
     syncDialogIcons();
-    const iconGuard = new MutationObserver(syncDialogIcons);
-    iconGuard.observe(dialog, { childList: true, subtree: true });
-    setTimeout(() => iconGuard.disconnect(), 2500);
     return dialog;
   };
 
@@ -242,6 +239,25 @@
       card.addEventListener("pointerenter", (event) => { if (event.pointerType === "mouse") activate(); }, { passive: true });
       card.addEventListener("focus", activate);
       card.addEventListener("click", (event) => { if (!event.target.closest("button,a")) activate(); });
+      card.addEventListener("keydown", (event) => {
+        const rowCards = [...row.querySelectorAll(CARD)];
+        let nextIndex = null;
+        if (event.key === "ArrowRight" || event.key === "ArrowDown") nextIndex = (index + 1) % rowCards.length;
+        if (event.key === "ArrowLeft" || event.key === "ArrowUp") nextIndex = (index - 1 + rowCards.length) % rowCards.length;
+        if (event.key === "Home") nextIndex = 0;
+        if (event.key === "End") nextIndex = rowCards.length - 1;
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          activate();
+          return;
+        }
+        if (nextIndex === null) return;
+        event.preventDefault();
+        const nextCard = rowCards[nextIndex];
+        activeByRow.set(row, nextIndex);
+        render();
+        nextCard?.focus({ preventScroll: true });
+      });
       zoom.addEventListener("click", (event) => { event.preventDefault(); event.stopPropagation(); openDialog(cards, cards.indexOf(card), zoom); });
     }));
     mobile.addEventListener?.("change", render);
@@ -254,11 +270,16 @@
   };
 
   const boot = () => {
-    const attempt = () => [...document.querySelectorAll(ROOT)].forEach(initialize);
-    attempt();
-    const observer = new MutationObserver(attempt);
+    const attempt = () => {
+      const roots = [...document.querySelectorAll(ROOT)];
+      return roots.length > 0 && roots.every(initialize);
+    };
+    if (attempt()) return;
+    const observer = new MutationObserver(() => {
+      if (attempt()) observer.disconnect();
+    });
     observer.observe(document.body, { childList: true, subtree: true });
-    setTimeout(() => observer.disconnect(), 10000);
+    setTimeout(() => observer.disconnect(), 5000);
   };
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot, { once: true });
   else boot();
