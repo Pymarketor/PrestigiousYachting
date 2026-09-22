@@ -192,6 +192,69 @@ body::-webkit-scrollbar,
   }
 }
 @media screen and (max-width: 767px) {
+  /* Reserve the final hero-gallery geometry before deferred scripts run. */
+  .wrapper-main-gallery {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    justify-content: flex-start !important;
+    gap: .25rem !important;
+    height: auto !important;
+    min-height: 0 !important;
+  }
+  .wrapper-main-gallery > .video-container.yacht {
+    display: flex !important;
+    order: 1 !important;
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    aspect-ratio: 16 / 9 !important;
+    align-self: auto !important;
+    margin: 0 !important;
+    border-radius: .675rem !important;
+  }
+  .wrapper-main-gallery > .video-container.yacht > .video-container-loaded {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+  }
+  .wrapper-main-gallery > .collection-list-wrapper-15 {
+    order: 2 !important;
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+  }
+  .wrapper-main-gallery > .collection-list-wrapper-15 > .flex-v-gallery {
+    display: grid !important;
+    width: 100% !important;
+    height: auto !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    grid-template-rows: 1fr !important;
+    grid-auto-flow: column !important;
+    grid-auto-columns: minmax(0, 1fr) !important;
+    gap: .25rem !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+  }
+  .wrapper-main-gallery > .collection-list-wrapper-15 > .flex-v-gallery > .wrapper-image-gallery {
+    width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+    aspect-ratio: 3 / 2 !important;
+    border-radius: .55rem !important;
+  }
+  .wrapper-main-gallery > .all-photos-cta {
+    bottom: .625rem !important;
+    right: .625rem !important;
+  }
+
   /* Phone gallery: edge-to-edge, square corners. */
   .gallery-yacht-section,
   .gallery-yacht-container,
