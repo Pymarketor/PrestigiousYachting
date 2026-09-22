@@ -25,6 +25,14 @@ body::-webkit-scrollbar,
   display: none;
 }
 
+/* Keep closed accordions collapsed from their first rendered frame. */
+.fs_accordion-1_header[aria-expanded="false"] + .fs_accordion-1_content {
+  display: none !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
 [data-py-gallery-runtime="expanding"] {
   box-sizing: border-box !important;
   width: 100% !important;
