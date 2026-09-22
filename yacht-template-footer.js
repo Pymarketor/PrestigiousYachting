@@ -549,8 +549,8 @@
       gallery.setAttribute("aria-label", "Yacht photo gallery");
       const track = gallery.querySelector("[data-py-expanding-track], .flex-v-gallery");
       if (track) {
-        track.setAttribute("role", "presentation");
-        track.removeAttribute("aria-label");
+        track.setAttribute("role", "list");
+        track.setAttribute("aria-label", "Yacht gallery images");
       }
       gallery.querySelectorAll(".py-gallery-row").forEach((row) => {
         row.setAttribute("role", "listitem");

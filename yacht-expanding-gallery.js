@@ -171,6 +171,8 @@
     root.dataset.pyGalleryRuntime = "compact";
     root.dataset.pyCompactGalleryReady = "true";
     root.hidden = false;
+    list.setAttribute("role", "list");
+    list.setAttribute("aria-label", "Yacht gallery previews");
     cards.forEach((card, index) => {
       card.setAttribute("role", "listitem");
       if (!card.getAttribute("aria-label")) card.setAttribute("aria-label", `Yacht gallery image ${index + 1}`);
