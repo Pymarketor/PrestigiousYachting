@@ -15,8 +15,15 @@
 
       const sourceNodes = Array.from(video.querySelectorAll("source"));
       const source = sourceNodes
-        .map((item) => item.getAttribute("src") || "")
+        .map((item) => item.getAttribute("src") || item.dataset.pyVideoSrc || "")
         .find((src) => src.trim());
+      const sourceLabel = sourceNodes
+        .map((item) => item.getAttribute("alt") || "")
+        .find((label) => label.trim());
+
+      if (sourceLabel && !video.getAttribute("aria-label")) {
+        video.setAttribute("aria-label", sourceLabel);
+      }
 
       /*
        * The CMS embed contains autoplay. Browsers may therefore ignore preload="none"
@@ -28,7 +35,7 @@
       video.autoplay = false;
       video.removeAttribute("autoplay");
       sourceNodes.forEach((item) => {
-        const src = item.getAttribute("src");
+        const src = item.getAttribute("src") || item.dataset.pyVideoSrc;
         if (!src) return;
         item.dataset.pyVideoSrc = src;
         item.removeAttribute("src");
@@ -55,7 +62,9 @@
         return;
       }
 
+      const isMobile = window.matchMedia("(max-width: 767px)").matches;
       const canAutoplay =
+        !isMobile &&
         !window.matchMedia("(prefers-reduced-motion: reduce)").matches &&
         !navigator.connection?.saveData;
 
@@ -111,6 +120,7 @@
       };
 
       const revealVideo = () => {
+        video.style.removeProperty("display");
         content.classList.add("is-video-ready");
         if (fallback) {
           fallback.style.opacity = "0";
@@ -128,6 +138,11 @@
         }
         setButtonState(false);
       };
+
+      if (!canAutoplay) {
+        video.style.display = "none";
+        showFallback();
+      }
 
       const play = (force = false) => {
         if ((!mediaAllowed && !force) || userPaused || !inView || document.hidden) return;
@@ -164,6 +179,7 @@
       };
 
       posterReady().then(() => {
+        if (!canAutoplay) return;
         const afterWindowLoad = () => {
           clearTimeout(allowTimer);
           allowTimer = window.setTimeout(allowMedia, 500);
@@ -171,7 +187,7 @@
         if (document.readyState === "complete") afterWindowLoad();
         else window.addEventListener("load", afterWindowLoad, { once: true });
       });
-      allowTimer = window.setTimeout(allowMedia, 5000);
+      if (canAutoplay) allowTimer = window.setTimeout(allowMedia, 5000);
 
       // Capture phase keeps embedded/Webflow interactions from cancelling controls.
       button?.addEventListener("click", (event) => {
