@@ -548,9 +548,14 @@
       gallery.setAttribute("role", "region");
       gallery.setAttribute("aria-label", "Yacht photo gallery");
       const track = gallery.querySelector("[data-py-expanding-track], .flex-v-gallery");
-      if (track) {
-        track.setAttribute("role", "list");
-        track.setAttribute("aria-label", "Yacht gallery images");
+      const list = gallery.querySelector("[data-py-gallery-list]") || track;
+      if (track && list && track !== list) {
+        track.removeAttribute("role");
+        track.removeAttribute("aria-label");
+      }
+      if (list) {
+        list.setAttribute("role", "list");
+        list.setAttribute("aria-label", "Yacht gallery images");
       }
       gallery.querySelectorAll(".py-gallery-row").forEach((row) => {
         row.setAttribute("role", "listitem");

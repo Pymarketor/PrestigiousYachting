@@ -193,6 +193,12 @@
     root.dataset.pyGalleryRuntime = "expanding";
     root.dataset.pyGalleryReady = "true";
     root.hidden = false;
+    if (outer !== list) {
+      outer.removeAttribute("role");
+      outer.removeAttribute("aria-label");
+    }
+    list.setAttribute("role", "list");
+    list.setAttribute("aria-label", "Yacht gallery images");
     const rows = [];
     for (let start = 0; start < cards.length; start += 5) {
       const row = document.createElement("div");
