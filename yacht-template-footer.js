@@ -121,10 +121,10 @@
           display: block;
           opacity: 0;
           pointer-events: none;
-          transform: translate3d(-50%, calc(100% + 2.5rem), 0) scale(.82);
+          transform: translate3d(-50%, calc(100% + 1.5rem), 0) scale(.86);
           transform-origin: 50% 100%;
-          filter: blur(8px);
-          transition: opacity .13s ease, transform .22s var(--py-cta-ease), filter .15s ease;
+          filter: blur(7px);
+          transition: opacity .22s ease-out, transform .28s var(--py-cta-ease), filter .2s ease-out;
           will-change: transform, opacity, filter;
         }
         .py-desktop-floating-cta.is-mounted {
@@ -152,7 +152,7 @@
           backdrop-filter: saturate(210%) blur(38px);
           box-shadow: 0 10px 36px rgb(0 0 0 / 14%), inset 0 0 1px rgb(255 255 255 / 90%);
           transform: scale(.92);
-          transition: width .22s var(--py-cta-ease), padding .22s var(--py-cta-ease), transform .2s var(--py-cta-ease);
+          transition: width .3s var(--py-cta-ease), padding .3s var(--py-cta-ease), transform .24s var(--py-cta-ease);
           will-change: width, transform;
         }
         .py-desktop-floating-cta .div-block-217.is-measuring {
@@ -215,13 +215,6 @@
     floating.appendChild(clone);
     document.body.appendChild(floating);
 
-    clone.classList.add("is-measuring");
-    const expandedWidth = Math.ceil(clone.getBoundingClientRect().width);
-    clone.classList.remove("is-measuring");
-    if (expandedWidth > 0) {
-      floating.style.setProperty("--py-cta-expanded-width", `${Math.max(328, expandedWidth)}px`);
-    }
-
     const sourceButton = source.querySelector(":scope > .btn-make-a-request-yacht");
     const floatingButton = clone.querySelector(":scope > .btn-make-a-request-yacht");
     if (floatingButton && sourceButton) {
@@ -242,6 +235,19 @@
       });
     }
 
+    let measureFrame = 0;
+    const measureExpandedWidth = () => {
+      cancelAnimationFrame(measureFrame);
+      measureFrame = requestAnimationFrame(() => {
+        clone.classList.add("is-measuring");
+        const expandedWidth = Math.ceil(clone.getBoundingClientRect().width);
+        clone.classList.remove("is-measuring");
+        if (expandedWidth > 0) {
+          floating.style.setProperty("--py-cta-expanded-width", `${Math.max(64, expandedWidth)}px`);
+        }
+      });
+    };
+
     const syncContent = () => {
       const sourcePrice = source.querySelector(".price-1");
       const clonedPrice = clone.querySelector(".price-1");
@@ -249,22 +255,32 @@
       const clonedModal = clone.querySelector('[select-display="modal-1"]');
       if (sourcePrice && clonedPrice) clonedPrice.textContent = sourcePrice.textContent;
       if (sourceModal && clonedModal) clonedModal.textContent = sourceModal.textContent;
+      if (sourceButton && floatingButton) floatingButton.textContent = sourceButton.textContent;
+      measureExpandedWidth();
     };
-    new MutationObserver(syncContent).observe(source, { subtree: true, childList: true, characterData: true });
+    new MutationObserver(syncContent).observe(source, {
+      subtree: true,
+      childList: true,
+      characterData: true,
+      attributes: true,
+      attributeFilter: ["class", "style", "aria-label"]
+    });
     syncContent();
 
     const footer = document.querySelector(".section-footer, footer");
     let enterTimer = 0;
     let exitTimer = 0;
+    let hiding = false;
 
     const showFloating = () => {
       clearTimeout(exitTimer);
+      hiding = false;
       floating.inert = false;
       floating.setAttribute("aria-hidden", "false");
       if (!floating.classList.contains("is-mounted")) {
         floating.classList.add("is-mounted");
         clearTimeout(enterTimer);
-        enterTimer = setTimeout(() => floating.classList.add("is-expanded"), 90);
+        enterTimer = setTimeout(() => floating.classList.add("is-expanded"), 145);
       } else {
         floating.classList.add("is-expanded");
       }
@@ -272,13 +288,18 @@
 
     const hideFloating = () => {
       clearTimeout(enterTimer);
+      if (hiding || !floating.classList.contains("is-mounted")) return;
+      hiding = true;
       floating.classList.remove("is-expanded");
       floating.inert = true;
       floating.setAttribute("aria-hidden", "true");
       clearTimeout(exitTimer);
-      // Let the content fade first, then immediately overlap the pill collapse
-      // with its downward exit so the empty-circle state never lingers.
-      exitTimer = setTimeout(() => floating.classList.remove("is-mounted"), 105);
+      // Start the downward fade while the pill is still becoming a circle.
+      // Repeated scroll events must not restart this short exit sequence.
+      exitTimer = setTimeout(() => {
+        floating.classList.remove("is-mounted");
+        hiding = false;
+      }, 135);
     };
 
     const syncVisibility = () => {
