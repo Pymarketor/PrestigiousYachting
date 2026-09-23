@@ -147,13 +147,22 @@
 
     cancelAnimationFrame(restoreFrame);
     let attempts = 0;
+    let unlockedFrames = 0;
 
     const restore = () => {
       if (hasOpenModal()) return;
 
       const bodyIsFixed = document.body && getComputedStyle(document.body).position === "fixed";
-      if (bodyIsFixed && attempts < 60) {
+      const htmlIsLocked = getComputedStyle(document.documentElement).overflow === "hidden";
+      if ((bodyIsFixed || htmlIsLocked) && attempts < 90) {
         attempts += 1;
+        unlockedFrames = 0;
+        restoreFrame = requestAnimationFrame(restore);
+        return;
+      }
+
+      if (unlockedFrames < 2) {
+        unlockedFrames += 1;
         restoreFrame = requestAnimationFrame(restore);
         return;
       }
