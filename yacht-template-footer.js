@@ -218,7 +218,9 @@
     clone.classList.add("is-measuring");
     const expandedWidth = Math.ceil(clone.getBoundingClientRect().width);
     clone.classList.remove("is-measuring");
-    if (expandedWidth > 0) floating.style.setProperty("--py-cta-expanded-width", `${expandedWidth}px`);
+    if (expandedWidth > 0) {
+      floating.style.setProperty("--py-cta-expanded-width", `${Math.max(328, expandedWidth)}px`);
+    }
 
     const sourceButton = source.querySelector(":scope > .btn-make-a-request-yacht");
     const floatingButton = clone.querySelector(":scope > .btn-make-a-request-yacht");
