@@ -124,7 +124,7 @@
           transform: translate3d(-50%, calc(100% + 2.5rem), 0) scale(.82);
           transform-origin: 50% 100%;
           filter: blur(8px);
-          transition: opacity .16s ease, transform .3s var(--py-cta-ease), filter .2s ease;
+          transition: opacity .13s ease, transform .22s var(--py-cta-ease), filter .15s ease;
           will-change: transform, opacity, filter;
         }
         .py-desktop-floating-cta.is-mounted {
@@ -147,12 +147,12 @@
           overflow: hidden;
           border: 1px solid rgb(255 255 255 / 58%);
           border-radius: 100rem;
-          background: rgb(247 247 247 / 68%);
-          -webkit-backdrop-filter: saturate(190%) blur(30px);
-          backdrop-filter: saturate(190%) blur(30px);
+          background: rgb(247 247 247 / 62%);
+          -webkit-backdrop-filter: saturate(210%) blur(38px);
+          backdrop-filter: saturate(210%) blur(38px);
           box-shadow: 0 10px 36px rgb(0 0 0 / 14%), inset 0 0 1px rgb(255 255 255 / 90%);
           transform: scale(.92);
-          transition: width .3s var(--py-cta-ease) .05s, padding .3s var(--py-cta-ease) .05s, transform .24s var(--py-cta-ease);
+          transition: width .22s var(--py-cta-ease), padding .22s var(--py-cta-ease), transform .2s var(--py-cta-ease);
           will-change: width, transform;
         }
         .py-desktop-floating-cta .div-block-217.is-measuring {
@@ -276,7 +276,9 @@
       floating.inert = true;
       floating.setAttribute("aria-hidden", "true");
       clearTimeout(exitTimer);
-      exitTimer = setTimeout(() => floating.classList.remove("is-mounted"), 260);
+      // Let the content fade first, then immediately overlap the pill collapse
+      // with its downward exit so the empty-circle state never lingers.
+      exitTimer = setTimeout(() => floating.classList.remove("is-mounted"), 105);
     };
 
     const syncVisibility = () => {
