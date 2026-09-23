@@ -119,30 +119,35 @@
           left: 50%;
           bottom: max(1.5rem, env(safe-area-inset-bottom));
           display: block;
+          width: 4rem;
+          max-width: 92vw;
           opacity: 0;
           pointer-events: none;
           transform: translate3d(-50%, calc(100% + 1.5rem), 0) scale(.86);
           transform-origin: 50% 100%;
           filter: blur(7px);
-          transition: opacity .22s ease-out, transform .28s var(--py-cta-ease), filter .2s ease-out;
-          will-change: transform, opacity, filter;
+          transition: width .3s var(--py-cta-ease), opacity .22s ease-out, transform .28s var(--py-cta-ease), filter .2s ease-out;
+          will-change: width, transform, opacity, filter;
         }
         .py-desktop-floating-cta.is-mounted {
           opacity: 1;
           transform: translate3d(-50%, 0, 0) scale(1);
           filter: blur(0);
         }
-        .py-desktop-floating-cta.is-expanded { pointer-events: auto; }
+        .py-desktop-floating-cta.is-expanded {
+          width: min(92vw, var(--py-cta-expanded-width));
+          pointer-events: auto;
+        }
         .py-desktop-floating-cta .div-block-217 {
           box-sizing: border-box;
           min-width: 0;
-          width: 4rem;
-          max-width: min(92vw, var(--py-cta-expanded-width));
+          width: 100%;
+          max-width: none;
           min-height: 4rem;
           display: flex;
           flex-flow: row nowrap;
           align-items: center;
-          justify-content: flex-start;
+          justify-content: center;
           gap: 1rem;
           padding: .5rem;
           overflow: hidden;
@@ -153,8 +158,8 @@
           backdrop-filter: saturate(210%) blur(38px);
           box-shadow: 0 10px 36px rgb(0 0 0 / 14%), inset 0 0 1px rgb(255 255 255 / 90%);
           transform: scale(.92);
-          transition: width .3s var(--py-cta-ease), padding .3s var(--py-cta-ease), transform .24s var(--py-cta-ease);
-          will-change: width, transform;
+          transition: padding .3s var(--py-cta-ease), transform .24s var(--py-cta-ease);
+          will-change: transform;
         }
         .py-desktop-floating-cta .div-block-217.is-measuring {
           position: absolute;
@@ -166,7 +171,6 @@
         }
         .py-desktop-floating-cta.is-mounted .div-block-217 { transform: scale(1); }
         .py-desktop-floating-cta.is-expanded .div-block-217 {
-          width: var(--py-cta-expanded-width);
           padding: .5rem .5rem .5rem 1.25rem;
           transition-delay: 0s;
         }
