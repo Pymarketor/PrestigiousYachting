@@ -125,10 +125,9 @@
     ".background-modal"
   ].join(",");
 
-  let pendingScrollY = null;
-  let modalScrollY = null;
+  let savedScrollY = null;
   let modalWasOpen = false;
-  let restoreToken = 0;
+  let restoreFrame = 0;
 
   const isVisible = (element) => {
     if (!element) return false;
@@ -141,40 +140,35 @@
   const hasOpenModal = () =>
     Array.from(document.querySelectorAll(modalSelector)).some(isVisible);
 
-  const clearForeignScrollLock = () => {
-    const html = document.documentElement;
-    const body = document.body;
+  const restoreScrollOnceUnlocked = () => {
+    const targetY = savedScrollY;
+    if (targetY === null) return;
 
-    ["overflow", "box-sizing", "padding-right"].forEach((property) => {
-      html.style.removeProperty(property);
-    });
+    cancelAnimationFrame(restoreFrame);
+    let attempts = 0;
 
-    if (body) {
-      ["overflow", "position", "top", "left", "right", "width", "padding-right"].forEach((property) => {
-        body.style.removeProperty(property);
-      });
-    }
-  };
+    const restore = () => {
+      if (hasOpenModal()) return;
 
-  const restoreScroll = (targetY, token) => {
-    if (token !== restoreToken || hasOpenModal()) return;
-    clearForeignScrollLock();
-    window.scrollTo({ top: targetY, left: 0, behavior: "auto" });
-  };
+      const bodyIsFixed = document.body && getComputedStyle(document.body).position === "fixed";
+      if (bodyIsFixed && attempts < 60) {
+        attempts += 1;
+        restoreFrame = requestAnimationFrame(restore);
+        return;
+      }
 
-  const scheduleRestore = () => {
-    const targetY = modalScrollY ?? pendingScrollY ?? window.scrollY;
-    const token = ++restoreToken;
+      if (Math.abs(window.scrollY - targetY) > 1) {
+        const html = document.documentElement;
+        const previousBehavior = html.style.scrollBehavior;
+        html.style.scrollBehavior = "auto";
+        window.scrollTo({ top: targetY, left: 0, behavior: "auto" });
+        html.style.scrollBehavior = previousBehavior;
+      }
 
-    [0, 80, 250, 600, 1000].forEach((delay) => {
-      setTimeout(() => restoreScroll(targetY, token), delay);
-    });
+      savedScrollY = null;
+    };
 
-    setTimeout(() => {
-      if (token !== restoreToken || hasOpenModal()) return;
-      modalScrollY = null;
-      pendingScrollY = null;
-    }, 1100);
+    restoreFrame = requestAnimationFrame(restore);
   };
 
   const syncModalState = () => {
@@ -182,24 +176,25 @@
 
     if (isOpen && !modalWasOpen) {
       modalWasOpen = true;
-      modalScrollY = pendingScrollY ?? window.scrollY;
-      pendingScrollY = null;
-
-      clearForeignScrollLock();
-      window.scrollTo({ top: modalScrollY, left: 0, behavior: "auto" });
+      if (savedScrollY === null) savedScrollY = window.scrollY;
       return;
     }
 
     if (!isOpen && modalWasOpen) {
       modalWasOpen = false;
-      scheduleRestore();
+      restoreScrollOnceUnlocked();
     }
   };
 
   const captureOpenerScroll = (event) => {
     const target = event.target instanceof Element ? event.target : null;
-    if (!target?.closest(openerSelector) || hasOpenModal()) return;
-    pendingScrollY = window.scrollY;
+    const opener = target?.closest(openerSelector);
+    if (!opener || hasOpenModal()) return;
+    savedScrollY = window.scrollY;
+
+    if (event.type === "click" && opener.matches('a[href="#"]')) {
+      event.preventDefault();
+    }
   };
 
   document.addEventListener("pointerdown", captureOpenerScroll, true);
@@ -211,9 +206,7 @@
     if (!closeControl) return;
 
     if (closeControl.matches('a[href="#"]')) event.preventDefault();
-    setTimeout(syncModalState, 0);
-    setTimeout(syncModalState, 300);
-    setTimeout(syncModalState, 900);
+    requestAnimationFrame(syncModalState);
   }, true);
 
   const modalObserver = new MutationObserver(syncModalState);

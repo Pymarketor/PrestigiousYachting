@@ -3,6 +3,7 @@
   const LITEPICKER_CSS = "https://cdn.jsdelivr.net/npm/litepicker/dist/css/litepicker.css";
 
   let loadingPromise = null;
+  let readyDispatchPending = false;
 
   const loadStylesheet = () => {
     if (document.querySelector(`link[href="${LITEPICKER_CSS}"]`)) return;
@@ -54,12 +55,32 @@
       Number.parseFloat(style.opacity || "1") > 0;
   };
 
+  const notifyLitepickerReady = () => {
+    if (!window.Litepicker || readyDispatchPending) return;
+    readyDispatchPending = true;
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        readyDispatchPending = false;
+        window.dispatchEvent(new CustomEvent("py:litepicker-ready"));
+      });
+    });
+  };
+
+  const prepareLitepicker = ({ notify = false } = {}) => {
+    loadStylesheet();
+    return loadScript().then(() => {
+      if (notify) notifyLitepickerReady();
+      return window.Litepicker;
+    });
+  };
+
   const watchRequestModal = () => {
     const modal = document.querySelector(".modal-one-click-request");
     if (!modal) return;
 
     const prepareWhenOpen = () => {
-      if (isVisible(modal)) prepareLitepicker();
+      if (isVisible(modal)) prepareLitepicker({ notify: true });
     };
 
     const scheduleOpenCheck = () => {
@@ -80,20 +101,20 @@
     prepareWhenOpen();
   };
 
-  const prepareLitepicker = () => {
-    loadStylesheet();
-    return loadScript().then(() => {
-      window.dispatchEvent(new CustomEvent("py:litepicker-ready"));
-    });
-  };
-
   document.addEventListener("pointerdown", (event) => {
     if (shouldPrepareCalendar(event.target)) prepareLitepicker();
   }, { passive: true, capture: true });
 
   document.addEventListener("focusin", (event) => {
-    if (shouldPrepareCalendar(event.target)) prepareLitepicker();
+    if (!shouldPrepareCalendar(event.target)) return;
+    const modal = document.querySelector(".modal-one-click-request");
+    prepareLitepicker({ notify: isVisible(modal) });
   });
+
+  window.PYLitepickerLoader = {
+    prepare: () => prepareLitepicker(),
+    notify: notifyLitepickerReady
+  };
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", watchRequestModal, { once: true });
