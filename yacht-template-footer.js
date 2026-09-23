@@ -121,9 +121,10 @@
   ].join(",");
 
   let savedScrollY = null;
-  let lastUnlockedScrollY = window.scrollY;
+  let lastPageScrollY = window.scrollY;
   let modalWasOpen = false;
-  let restoreFrame = 0;
+  let pageLocked = false;
+  let lockSnapshot = null;
 
   const isVisible = (element) => {
     if (!element) return false;
@@ -136,45 +137,60 @@
   const hasOpenModal = () =>
     Array.from(document.querySelectorAll(modalSelector)).some(isVisible);
 
-  const restoreScrollOnceUnlocked = () => {
-    const targetY = savedScrollY;
-    if (targetY === null) return;
+  const lockPage = () => {
+    if (pageLocked || !document.body) return;
+    const html = document.documentElement;
+    const body = document.body;
+    const targetY = savedScrollY ?? lastPageScrollY;
+    const scrollbarGap = Math.max(0, window.innerWidth - html.clientWidth);
 
-    cancelAnimationFrame(restoreFrame);
-    let attempts = 0;
-    let unlockedFrames = 0;
-
-    const restore = () => {
-      if (hasOpenModal()) return;
-
-      const bodyIsFixed = document.body && getComputedStyle(document.body).position === "fixed";
-      const htmlIsLocked = getComputedStyle(document.documentElement).overflow === "hidden";
-      if ((bodyIsFixed || htmlIsLocked) && attempts < 90) {
-        attempts += 1;
-        unlockedFrames = 0;
-        restoreFrame = requestAnimationFrame(restore);
-        return;
-      }
-
-      if (unlockedFrames < 2) {
-        unlockedFrames += 1;
-        restoreFrame = requestAnimationFrame(restore);
-        return;
-      }
-
-      if (Math.abs(window.scrollY - targetY) > 1) {
-        const html = document.documentElement;
-        const previousBehavior = html.style.scrollBehavior;
-        html.style.scrollBehavior = "auto";
-        window.scrollTo({ top: targetY, left: 0, behavior: "auto" });
-        html.style.scrollBehavior = previousBehavior;
-      }
-
-      lastUnlockedScrollY = targetY;
-      savedScrollY = null;
+    lockSnapshot = {
+      htmlOverflow: html.style.overflow,
+      bodyPosition: body.style.position,
+      bodyTop: body.style.top,
+      bodyLeft: body.style.left,
+      bodyRight: body.style.right,
+      bodyWidth: body.style.width,
+      bodyPaddingRight: body.style.paddingRight
     };
 
-    restoreFrame = requestAnimationFrame(restore);
+    savedScrollY = targetY;
+    html.style.overflow = "hidden";
+    body.style.position = "fixed";
+    body.style.top = `-${targetY}px`;
+    body.style.left = "0";
+    body.style.right = "0";
+    body.style.width = "100%";
+    if (scrollbarGap) {
+      body.style.paddingRight = `${parseFloat(getComputedStyle(body).paddingRight) + scrollbarGap}px`;
+    }
+    pageLocked = true;
+  };
+
+  const unlockPage = () => {
+    if (!pageLocked || !lockSnapshot) return;
+    const html = document.documentElement;
+    const body = document.body;
+    const targetY = savedScrollY ?? lastPageScrollY;
+
+    html.style.overflow = lockSnapshot.htmlOverflow;
+    body.style.position = lockSnapshot.bodyPosition;
+    body.style.top = lockSnapshot.bodyTop;
+    body.style.left = lockSnapshot.bodyLeft;
+    body.style.right = lockSnapshot.bodyRight;
+    body.style.width = lockSnapshot.bodyWidth;
+    body.style.paddingRight = lockSnapshot.bodyPaddingRight;
+    pageLocked = false;
+    lockSnapshot = null;
+
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      const previousBehavior = html.style.scrollBehavior;
+      html.style.scrollBehavior = "auto";
+      window.scrollTo({ top: targetY, left: 0, behavior: "auto" });
+      html.style.scrollBehavior = previousBehavior;
+      lastPageScrollY = targetY;
+      savedScrollY = null;
+    }));
   };
 
   const syncModalState = () => {
@@ -182,13 +198,14 @@
 
     if (isOpen && !modalWasOpen) {
       modalWasOpen = true;
-      if (savedScrollY === null) savedScrollY = lastUnlockedScrollY;
+      if (savedScrollY === null) savedScrollY = lastPageScrollY;
+      lockPage();
       return;
     }
 
     if (!isOpen && modalWasOpen) {
       modalWasOpen = false;
-      restoreScrollOnceUnlocked();
+      unlockPage();
     }
   };
 
@@ -196,7 +213,7 @@
     const target = event.target instanceof Element ? event.target : null;
     const opener = target?.closest(openerSelector);
     if (!opener || hasOpenModal()) return;
-    if (savedScrollY === null) savedScrollY = lastUnlockedScrollY;
+    if (savedScrollY === null) savedScrollY = lastPageScrollY;
 
     if (event.type === "click" && opener.matches('a[href="#"]')) {
       event.preventDefault();
@@ -204,9 +221,8 @@
   };
 
   window.addEventListener("scroll", () => {
-    const htmlOverflow = getComputedStyle(document.documentElement).overflow;
-    if (!hasOpenModal() && htmlOverflow !== "hidden") {
-      lastUnlockedScrollY = window.scrollY;
+    if (!pageLocked && !hasOpenModal()) {
+      lastPageScrollY = window.scrollY;
     }
   }, { passive: true });
 
@@ -231,7 +247,7 @@
   });
 
   modalWasOpen = hasOpenModal();
-  syncModalState();
+  if (modalWasOpen) lockPage();
 })();
 
 /* Migrated Webflow footer block 4. */
