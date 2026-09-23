@@ -139,6 +139,7 @@
         }
         .py-desktop-floating-cta.is-expanded { pointer-events: auto; }
         .py-desktop-floating-cta .div-block-217 {
+          box-sizing: border-box;
           min-width: 0;
           width: 4rem;
           max-width: min(92vw, var(--py-cta-expanded-width));
@@ -177,7 +178,10 @@
         .py-desktop-floating-cta .div-block-228 { display: none !important; }
         .py-desktop-floating-cta .wrapper-price-yacht-card-request {
           margin: 0;
-          flex: 0 1 auto;
+          width: max-content !important;
+          min-width: 0 !important;
+          max-width: none !important;
+          flex: 0 0 auto;
           white-space: nowrap;
         }
         .py-desktop-floating-cta .wrapper-price-yacht-card-request,
@@ -245,7 +249,25 @@
       cancelAnimationFrame(measureFrame);
       measureFrame = requestAnimationFrame(() => {
         clone.classList.add("is-measuring");
-        const expandedWidth = Math.ceil(clone.getBoundingClientRect().width);
+        const cloneStyle = getComputedStyle(clone);
+        const visibleItems = [
+          clone.querySelector(":scope > .wrapper-price-yacht-card-request"),
+          clone.querySelector(":scope > .btn-make-a-request-yacht")
+        ].filter((element) => element && getComputedStyle(element).display !== "none");
+        const contentWidth = visibleItems.reduce(
+          (total, element) => total + element.getBoundingClientRect().width,
+          0
+        );
+        const gap = Number.parseFloat(cloneStyle.columnGap || cloneStyle.gap) || 0;
+        const horizontalChrome = [
+          cloneStyle.paddingLeft,
+          cloneStyle.paddingRight,
+          cloneStyle.borderLeftWidth,
+          cloneStyle.borderRightWidth
+        ].reduce((total, value) => total + (Number.parseFloat(value) || 0), 0);
+        const expandedWidth = Math.ceil(
+          contentWidth + Math.max(0, visibleItems.length - 1) * gap + horizontalChrome
+        );
         clone.classList.remove("is-measuring");
         if (expandedWidth > 0) {
           floating.style.setProperty("--py-cta-expanded-width", `${Math.max(64, expandedWidth)}px`);
