@@ -126,6 +126,7 @@
   ].join(",");
 
   let savedScrollY = null;
+  let lastUnlockedScrollY = window.scrollY;
   let modalWasOpen = false;
   let restoreFrame = 0;
 
@@ -165,6 +166,7 @@
         html.style.scrollBehavior = previousBehavior;
       }
 
+      lastUnlockedScrollY = targetY;
       savedScrollY = null;
     };
 
@@ -176,7 +178,7 @@
 
     if (isOpen && !modalWasOpen) {
       modalWasOpen = true;
-      if (savedScrollY === null) savedScrollY = window.scrollY;
+      if (savedScrollY === null) savedScrollY = lastUnlockedScrollY;
       return;
     }
 
@@ -190,12 +192,19 @@
     const target = event.target instanceof Element ? event.target : null;
     const opener = target?.closest(openerSelector);
     if (!opener || hasOpenModal()) return;
-    if (savedScrollY === null) savedScrollY = window.scrollY;
+    if (savedScrollY === null) savedScrollY = lastUnlockedScrollY;
 
     if (event.type === "click" && opener.matches('a[href="#"]')) {
       event.preventDefault();
     }
   };
+
+  window.addEventListener("scroll", () => {
+    const htmlOverflow = getComputedStyle(document.documentElement).overflow;
+    if (!hasOpenModal() && htmlOverflow !== "hidden") {
+      lastUnlockedScrollY = window.scrollY;
+    }
+  }, { passive: true });
 
   window.addEventListener("pointerdown", captureOpenerScroll, true);
   document.addEventListener("click", (event) => {
