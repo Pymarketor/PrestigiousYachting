@@ -95,6 +95,144 @@
   setTimeout(applyAll, 1500);
 })();
 
+/* Desktop floating request CTA — compact continuation of .div-block-217. */
+(() => {
+  if (window.PYDesktopFloatingCTA) return;
+  window.PYDesktopFloatingCTA = true;
+
+  const desktopQuery = window.matchMedia("(min-width: 992px)");
+
+  const init = () => {
+    const card = document.querySelector(".form-card-request");
+    const source = card?.querySelector(":scope > .div-block-217");
+    if (!card || !source || document.querySelector(".py-desktop-floating-cta")) return;
+
+    const style = document.createElement("style");
+    style.textContent = `
+      .py-desktop-floating-cta { display: none; }
+      @media (min-width: 992px) {
+        .py-desktop-floating-cta {
+          --py-cta-ease: cubic-bezier(.22, 1, .36, 1);
+          position: fixed;
+          z-index: 7990;
+          left: 50%;
+          bottom: max(1.5rem, env(safe-area-inset-bottom));
+          display: block;
+          opacity: 0;
+          pointer-events: none;
+          transform: translate3d(-50%, calc(100% + 2.5rem), 0) scale(.94);
+          transform-origin: 50% 100%;
+          filter: blur(8px);
+          transition: opacity .28s ease, transform .55s var(--py-cta-ease), filter .4s ease;
+          will-change: transform, opacity, filter;
+        }
+        .py-desktop-floating-cta.is-visible {
+          opacity: 1;
+          pointer-events: auto;
+          transform: translate3d(-50%, 0, 0) scale(1);
+          filter: blur(0);
+        }
+        .py-desktop-floating-cta .div-block-217 {
+          min-width: 0;
+          width: auto;
+          max-width: min(92vw, 42rem);
+          display: flex;
+          flex-flow: row nowrap;
+          align-items: center;
+          justify-content: flex-start;
+          gap: 1rem;
+          padding: .5rem .5rem .5rem 1.25rem;
+          border: 1px solid rgb(255 255 255 / 58%);
+          border-radius: 100rem;
+          background: rgb(247 247 247 / 78%);
+          -webkit-backdrop-filter: saturate(180%) blur(18px);
+          backdrop-filter: saturate(180%) blur(18px);
+          box-shadow: 0 10px 36px rgb(0 0 0 / 14%), inset 0 0 1px rgb(255 255 255 / 90%);
+        }
+        .py-desktop-floating-cta .div-block-228 { display: none !important; }
+        .py-desktop-floating-cta .wrapper-price-yacht-card-request {
+          margin: 0;
+          flex: 0 1 auto;
+          white-space: nowrap;
+        }
+        .py-desktop-floating-cta .btn-make-a-request-yacht {
+          width: auto;
+          min-width: 10.5rem;
+          height: 3rem;
+          margin: 0;
+          padding-inline: 1.5rem;
+          flex: 0 0 auto;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .py-desktop-floating-cta { transition: opacity .15s ease; filter: none; }
+      }
+    `;
+    document.head.appendChild(style);
+
+    const floating = document.createElement("aside");
+    floating.className = "py-desktop-floating-cta";
+    floating.setAttribute("aria-label", "Yacht request shortcut");
+
+    const clone = source.cloneNode(true);
+    clone.querySelectorAll("[id]").forEach((element) => element.removeAttribute("id"));
+    clone.querySelectorAll("[data-w-id]").forEach((element) => element.removeAttribute("data-w-id"));
+    floating.appendChild(clone);
+    document.body.appendChild(floating);
+
+    const sourceButton = source.querySelector(":scope > .btn-make-a-request-yacht");
+    const floatingButton = clone.querySelector(":scope > .btn-make-a-request-yacht");
+    if (floatingButton && sourceButton) {
+      floatingButton.setAttribute("role", "button");
+      floatingButton.setAttribute("tabindex", "0");
+      floatingButton.setAttribute("aria-label", "Open yacht charter request");
+      const activate = (event) => {
+        event?.preventDefault();
+        event?.stopPropagation();
+        sourceButton.click();
+      };
+      floatingButton.addEventListener("click", activate);
+      floatingButton.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          activate();
+        }
+      });
+    }
+
+    const syncContent = () => {
+      const sourcePrice = source.querySelector(".price-1");
+      const clonedPrice = clone.querySelector(".price-1");
+      const sourceModal = source.querySelector('[select-display="modal-1"]');
+      const clonedModal = clone.querySelector('[select-display="modal-1"]');
+      if (sourcePrice && clonedPrice) clonedPrice.textContent = sourcePrice.textContent;
+      if (sourceModal && clonedModal) clonedModal.textContent = sourceModal.textContent;
+    };
+    new MutationObserver(syncContent).observe(source, { subtree: true, childList: true, characterData: true });
+    syncContent();
+
+    const syncVisibility = () => {
+      if (!desktopQuery.matches) {
+        floating.classList.remove("is-visible");
+        return;
+      }
+      const rect = card.getBoundingClientRect();
+      floating.classList.toggle("is-visible", rect.bottom <= 0);
+    };
+
+    window.addEventListener("scroll", syncVisibility, { passive: true });
+    window.addEventListener("resize", syncVisibility, { passive: true });
+    if (typeof desktopQuery.addEventListener === "function") desktopQuery.addEventListener("change", syncVisibility);
+    syncVisibility();
+  };
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init, { once: true });
+  } else {
+    init();
+  }
+})();
+
 /* Migrated Webflow footer block 4. */
 (() => {
   if (window.PYAgenticNavigation) return;
