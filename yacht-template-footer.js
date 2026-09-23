@@ -113,6 +113,7 @@
       @media (min-width: 992px) {
         .py-desktop-floating-cta {
           --py-cta-ease: cubic-bezier(.22, 1, .36, 1);
+          --py-cta-expanded-width: 20.5rem;
           position: fixed;
           z-index: 7990;
           left: 50%;
@@ -120,40 +121,71 @@
           display: block;
           opacity: 0;
           pointer-events: none;
-          transform: translate3d(-50%, calc(100% + 2.5rem), 0) scale(.94);
+          transform: translate3d(-50%, calc(100% + 2.5rem), 0) scale(.82);
           transform-origin: 50% 100%;
           filter: blur(8px);
-          transition: opacity .28s ease, transform .55s var(--py-cta-ease), filter .4s ease;
+          transition: opacity .24s ease, transform .46s var(--py-cta-ease), filter .32s ease;
           will-change: transform, opacity, filter;
         }
-        .py-desktop-floating-cta.is-visible {
+        .py-desktop-floating-cta.is-mounted {
           opacity: 1;
-          pointer-events: auto;
           transform: translate3d(-50%, 0, 0) scale(1);
           filter: blur(0);
         }
+        .py-desktop-floating-cta.is-expanded { pointer-events: auto; }
         .py-desktop-floating-cta .div-block-217 {
           min-width: 0;
-          width: auto;
-          max-width: min(92vw, 42rem);
+          width: 4rem;
+          max-width: min(92vw, var(--py-cta-expanded-width));
+          min-height: 4rem;
           display: flex;
           flex-flow: row nowrap;
           align-items: center;
           justify-content: flex-start;
           gap: 1rem;
-          padding: .5rem .5rem .5rem 1.25rem;
+          padding: .5rem;
+          overflow: hidden;
           border: 1px solid rgb(255 255 255 / 58%);
           border-radius: 100rem;
           background: rgb(247 247 247 / 78%);
           -webkit-backdrop-filter: saturate(180%) blur(18px);
           backdrop-filter: saturate(180%) blur(18px);
           box-shadow: 0 10px 36px rgb(0 0 0 / 14%), inset 0 0 1px rgb(255 255 255 / 90%);
+          transform: scale(.92);
+          transition: width .48s var(--py-cta-ease) .12s, padding .48s var(--py-cta-ease) .12s, transform .38s var(--py-cta-ease);
+          will-change: width, transform;
+        }
+        .py-desktop-floating-cta .div-block-217.is-measuring {
+          position: absolute;
+          width: max-content;
+          max-width: none;
+          padding: .5rem .5rem .5rem 1.25rem;
+          visibility: hidden;
+          transition: none;
+        }
+        .py-desktop-floating-cta.is-mounted .div-block-217 { transform: scale(1); }
+        .py-desktop-floating-cta.is-expanded .div-block-217 {
+          width: var(--py-cta-expanded-width);
+          padding: .5rem .5rem .5rem 1.25rem;
+          transition-delay: 0s;
         }
         .py-desktop-floating-cta .div-block-228 { display: none !important; }
         .py-desktop-floating-cta .wrapper-price-yacht-card-request {
           margin: 0;
           flex: 0 1 auto;
           white-space: nowrap;
+        }
+        .py-desktop-floating-cta .wrapper-price-yacht-card-request,
+        .py-desktop-floating-cta .btn-make-a-request-yacht {
+          opacity: 0;
+          transform: translateY(5px) scale(.94);
+          transition: opacity .16s ease, transform .24s var(--py-cta-ease);
+        }
+        .py-desktop-floating-cta.is-expanded .wrapper-price-yacht-card-request,
+        .py-desktop-floating-cta.is-expanded .btn-make-a-request-yacht {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+          transition-delay: .15s;
         }
         .py-desktop-floating-cta .btn-make-a-request-yacht {
           width: auto;
@@ -165,7 +197,10 @@
         }
       }
       @media (prefers-reduced-motion: reduce) {
-        .py-desktop-floating-cta { transition: opacity .15s ease; filter: none; }
+        .py-desktop-floating-cta,
+        .py-desktop-floating-cta .div-block-217,
+        .py-desktop-floating-cta .wrapper-price-yacht-card-request,
+        .py-desktop-floating-cta .btn-make-a-request-yacht { transition: none; filter: none; }
       }
     `;
     document.head.appendChild(style);
@@ -179,6 +214,11 @@
     clone.querySelectorAll("[data-w-id]").forEach((element) => element.removeAttribute("data-w-id"));
     floating.appendChild(clone);
     document.body.appendChild(floating);
+
+    clone.classList.add("is-measuring");
+    const expandedWidth = Math.ceil(clone.getBoundingClientRect().width);
+    clone.classList.remove("is-measuring");
+    if (expandedWidth > 0) floating.style.setProperty("--py-cta-expanded-width", `${expandedWidth}px`);
 
     const sourceButton = source.querySelector(":scope > .btn-make-a-request-yacht");
     const floatingButton = clone.querySelector(":scope > .btn-make-a-request-yacht");
@@ -211,13 +251,41 @@
     new MutationObserver(syncContent).observe(source, { subtree: true, childList: true, characterData: true });
     syncContent();
 
+    const footer = document.querySelector(".section-footer, footer");
+    let enterTimer = 0;
+    let exitTimer = 0;
+
+    const showFloating = () => {
+      clearTimeout(exitTimer);
+      floating.inert = false;
+      floating.setAttribute("aria-hidden", "false");
+      if (!floating.classList.contains("is-mounted")) {
+        floating.classList.add("is-mounted");
+        clearTimeout(enterTimer);
+        enterTimer = setTimeout(() => floating.classList.add("is-expanded"), 170);
+      } else {
+        floating.classList.add("is-expanded");
+      }
+    };
+
+    const hideFloating = () => {
+      clearTimeout(enterTimer);
+      floating.classList.remove("is-expanded");
+      floating.inert = true;
+      floating.setAttribute("aria-hidden", "true");
+      clearTimeout(exitTimer);
+      exitTimer = setTimeout(() => floating.classList.remove("is-mounted"), 430);
+    };
+
     const syncVisibility = () => {
       if (!desktopQuery.matches) {
-        floating.classList.remove("is-visible");
+        hideFloating();
         return;
       }
       const rect = card.getBoundingClientRect();
-      floating.classList.toggle("is-visible", rect.bottom <= 0);
+      const beforeFooter = !footer || footer.getBoundingClientRect().top > window.innerHeight;
+      if (rect.bottom <= 0 && beforeFooter) showFloating();
+      else hideFloating();
     };
 
     window.addEventListener("scroll", syncVisibility, { passive: true });
