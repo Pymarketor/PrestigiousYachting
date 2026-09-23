@@ -120,7 +120,7 @@
           --py-cta-ease: cubic-bezier(.22, 1, .36, 1);
           --py-cta-expanded-width: 20.5rem;
           position: fixed;
-          z-index: 7990;
+          z-index: 899;
           left: 50%;
           bottom: max(1.5rem, env(safe-area-inset-bottom));
           display: block;
