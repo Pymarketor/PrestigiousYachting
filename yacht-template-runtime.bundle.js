@@ -129,7 +129,7 @@
           transform: translate3d(-50%, calc(100% + 2.5rem), 0) scale(.82);
           transform-origin: 50% 100%;
           filter: blur(8px);
-          transition: opacity .24s ease, transform .46s var(--py-cta-ease), filter .32s ease;
+          transition: opacity .16s ease, transform .3s var(--py-cta-ease), filter .2s ease;
           will-change: transform, opacity, filter;
         }
         .py-desktop-floating-cta.is-mounted {
@@ -152,12 +152,12 @@
           overflow: hidden;
           border: 1px solid rgb(255 255 255 / 58%);
           border-radius: 100rem;
-          background: rgb(247 247 247 / 78%);
-          -webkit-backdrop-filter: saturate(180%) blur(18px);
-          backdrop-filter: saturate(180%) blur(18px);
+          background: rgb(247 247 247 / 68%);
+          -webkit-backdrop-filter: saturate(190%) blur(30px);
+          backdrop-filter: saturate(190%) blur(30px);
           box-shadow: 0 10px 36px rgb(0 0 0 / 14%), inset 0 0 1px rgb(255 255 255 / 90%);
           transform: scale(.92);
-          transition: width .48s var(--py-cta-ease) .12s, padding .48s var(--py-cta-ease) .12s, transform .38s var(--py-cta-ease);
+          transition: width .3s var(--py-cta-ease) .05s, padding .3s var(--py-cta-ease) .05s, transform .24s var(--py-cta-ease);
           will-change: width, transform;
         }
         .py-desktop-floating-cta .div-block-217.is-measuring {
@@ -184,13 +184,13 @@
         .py-desktop-floating-cta .btn-make-a-request-yacht {
           opacity: 0;
           transform: translateY(5px) scale(.94);
-          transition: opacity .16s ease, transform .24s var(--py-cta-ease);
+          transition: opacity .1s ease, transform .17s var(--py-cta-ease);
         }
         .py-desktop-floating-cta.is-expanded .wrapper-price-yacht-card-request,
         .py-desktop-floating-cta.is-expanded .btn-make-a-request-yacht {
           opacity: 1;
           transform: translateY(0) scale(1);
-          transition-delay: .15s;
+          transition-delay: .08s;
         }
         .py-desktop-floating-cta .btn-make-a-request-yacht {
           width: auto;
@@ -269,7 +269,7 @@
       if (!floating.classList.contains("is-mounted")) {
         floating.classList.add("is-mounted");
         clearTimeout(enterTimer);
-        enterTimer = setTimeout(() => floating.classList.add("is-expanded"), 170);
+        enterTimer = setTimeout(() => floating.classList.add("is-expanded"), 90);
       } else {
         floating.classList.add("is-expanded");
       }
@@ -281,7 +281,7 @@
       floating.inert = true;
       floating.setAttribute("aria-hidden", "true");
       clearTimeout(exitTimer);
-      exitTimer = setTimeout(() => floating.classList.remove("is-mounted"), 430);
+      exitTimer = setTimeout(() => floating.classList.remove("is-mounted"), 260);
     };
 
     const syncVisibility = () => {
