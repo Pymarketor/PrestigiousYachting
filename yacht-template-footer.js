@@ -185,14 +185,14 @@
     const target = event.target instanceof Element ? event.target : null;
     const opener = target?.closest(openerSelector);
     if (!opener || hasOpenModal()) return;
-    savedScrollY = window.scrollY;
+    if (savedScrollY === null) savedScrollY = window.scrollY;
 
     if (event.type === "click" && opener.matches('a[href="#"]')) {
       event.preventDefault();
     }
   };
 
-  document.addEventListener("pointerdown", captureOpenerScroll, true);
+  window.addEventListener("pointerdown", captureOpenerScroll, true);
   document.addEventListener("click", (event) => {
     captureOpenerScroll(event);
 
