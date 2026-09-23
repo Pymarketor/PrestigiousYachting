@@ -253,17 +253,21 @@
       const clonedPrice = clone.querySelector(".price-1");
       const sourceModal = source.querySelector('[select-display="modal-1"]');
       const clonedModal = clone.querySelector('[select-display="modal-1"]');
-      if (sourcePrice && clonedPrice) clonedPrice.textContent = sourcePrice.textContent;
-      if (sourceModal && clonedModal) clonedModal.textContent = sourceModal.textContent;
-      if (sourceButton && floatingButton) floatingButton.textContent = sourceButton.textContent;
+      if (sourcePrice && clonedPrice && clonedPrice.textContent !== sourcePrice.textContent) {
+        clonedPrice.textContent = sourcePrice.textContent;
+      }
+      if (sourceModal && clonedModal && clonedModal.textContent !== sourceModal.textContent) {
+        clonedModal.textContent = sourceModal.textContent;
+      }
+      if (sourceButton && floatingButton && floatingButton.textContent !== sourceButton.textContent) {
+        floatingButton.textContent = sourceButton.textContent;
+      }
       measureExpandedWidth();
     };
     new MutationObserver(syncContent).observe(source, {
       subtree: true,
       childList: true,
-      characterData: true,
-      attributes: true,
-      attributeFilter: ["class", "style", "aria-label"]
+      characterData: true
     });
     syncContent();
 
