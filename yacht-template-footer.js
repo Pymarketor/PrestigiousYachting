@@ -125,14 +125,12 @@
           pointer-events: none;
           transform: translate3d(-50%, calc(100% + 1.5rem), 0) scale(.86);
           transform-origin: 50% 100%;
-          filter: blur(7px);
-          transition: width .3s var(--py-cta-ease), opacity .22s ease-out, transform .28s var(--py-cta-ease), filter .2s ease-out;
-          will-change: width, transform, opacity, filter;
+          transition: width .3s var(--py-cta-ease), opacity .22s ease-out, transform .28s var(--py-cta-ease);
+          will-change: width, transform, opacity;
         }
         .py-desktop-floating-cta.is-mounted {
           opacity: 1;
           transform: translate3d(-50%, 0, 0) scale(1);
-          filter: blur(0);
         }
         .py-desktop-floating-cta.is-expanded {
           width: min(92vw, var(--py-cta-expanded-width));
@@ -154,8 +152,8 @@
           border: 1px solid rgb(255 255 255 / 58%);
           border-radius: 100rem;
           background: rgb(247 247 247 / 62%);
-          -webkit-backdrop-filter: saturate(210%) blur(38px);
-          backdrop-filter: saturate(210%) blur(38px);
+          -webkit-backdrop-filter: blur(38px) saturate(210%);
+          backdrop-filter: blur(38px) saturate(210%);
           box-shadow: 0 10px 36px rgb(0 0 0 / 14%), inset 0 0 1px rgb(255 255 255 / 90%);
           transform: scale(.92);
           transition: padding .3s var(--py-cta-ease), transform .24s var(--py-cta-ease);
