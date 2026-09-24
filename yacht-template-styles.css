@@ -25,8 +25,8 @@ body::-webkit-scrollbar,
   display: none;
 }
 
-/* Keep closed accordions collapsed from their first rendered frame. */
-.fs_accordion-1_header[aria-expanded="false"] + .fs_accordion-1_content {
+/* Keep closed accordions collapsed only during their first rendered frame. */
+html.cls-lock-accordions .fs_accordion-1_header[aria-expanded="false"] + .fs_accordion-1_content {
   display: none !important;
   height: 0 !important;
   min-height: 0 !important;
