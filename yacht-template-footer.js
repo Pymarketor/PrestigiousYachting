@@ -253,10 +253,11 @@
           clone.querySelector(":scope > .wrapper-price-yacht-card-request"),
           clone.querySelector(":scope > .btn-make-a-request-yacht")
         ].filter((element) => element && getComputedStyle(element).display !== "none");
-        const contentWidth = visibleItems.reduce(
-          (total, element) => total + element.getBoundingClientRect().width,
-          0
-        );
+        const contentWidth = visibleItems.reduce((total, element) => {
+          const visibleWidth = element.getBoundingClientRect().width;
+          const intrinsicWidth = element.scrollWidth;
+          return total + Math.max(visibleWidth, intrinsicWidth);
+        }, 0);
         const gap = Number.parseFloat(cloneStyle.columnGap || cloneStyle.gap) || 0;
         const horizontalChrome = [
           cloneStyle.paddingLeft,
@@ -265,7 +266,7 @@
           cloneStyle.borderRightWidth
         ].reduce((total, value) => total + (Number.parseFloat(value) || 0), 0);
         const expandedWidth = Math.ceil(
-          contentWidth + Math.max(0, visibleItems.length - 1) * gap + horizontalChrome
+          contentWidth + Math.max(0, visibleItems.length - 1) * gap + horizontalChrome + 2
         );
         clone.classList.remove("is-measuring");
         if (expandedWidth > 0) {
