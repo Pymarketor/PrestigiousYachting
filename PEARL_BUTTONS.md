@@ -23,6 +23,8 @@ navy-tinted oval reflection so the layered wrapper remains visible against a whi
 Use `button-mode="dark"` for a navy `#0f2a49` background and white text/star.
 Without a mode, dark is the default. Keep both attributes on the placement wrapper;
 an explicit mode on the native link itself takes priority over an inherited wrapper mode.
+Add `without-icon="true"` (or a blank `without-icon` attribute) on either the wrapper or
+the native link to hide the decorative sparkle without changing the label.
 Keyboard focus remains visible; reduced-motion preferences disable movement.
 
 Duplicate the native wrapper to add another Pearl button, change its label and destination
