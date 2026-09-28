@@ -14,7 +14,7 @@
     style.id = STYLE_ID;
     style.textContent = `
       ${ROOT_SELECTOR}[data-py-coverflow-ready="true"] {
-        --py-cf-card: clamp(280px, 60vw, 720px);
+        --py-cf-card: clamp(320px, 38vw, 500px);
         --py-cf-control: 2.875rem;
         position: relative;
         width: 100%;
