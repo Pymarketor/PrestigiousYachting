@@ -81,6 +81,34 @@
   --pearl-focus: #fff;
 }
 
+/* Blue accent variant based on the requested #06c. */
+[button="pearl"][button-mode="blue"],
+[button="pearl"] > :is(a, button)[button-mode="blue"] {
+  --pearl-bg: #06c;
+  --pearl-text: rgb(255 255 255 / 92%);
+  --pearl-highlight: .20;
+  --pearl-edge: .42;
+  --pearl-lower-edge: rgb(255 255 255 / 42%);
+  --pearl-hover-lower-edge: rgb(255 255 255 / 62%);
+  --pearl-active-lower-edge: rgb(255 255 255 / 34%);
+  --pearl-label-mask: linear-gradient(to bottom, white 40%, transparent);
+  --pearl-gloss: .10;
+  --pearl-reflection: rgb(255 255 255 / 10%);
+  --pearl-top-shine: .20;
+  --pearl-wrapper-bg: transparent;
+  --pearl-wrapper-edge: transparent;
+  --pearl-border: rgb(255 255 255 / 18%);
+  --pearl-shade: rgb(0 35 94 / 70%);
+  --pearl-hover-edge: .62;
+  --pearl-hover-highlight: .30;
+  --pearl-active-highlight: .40;
+  --pearl-active-shade: rgb(0 35 94 / 80%);
+  --pearl-active-edge: .36;
+  --pearl-outer-shadow: rgb(0 51 102 / 32%);
+  --pearl-contact-shadow: rgb(0 35 80 / 82%);
+  --pearl-focus: #06c;
+}
+
 /* Preserve the placement wrapper's native display, width, margins and padding. */
 [button="pearl"]:not(a):not(button):not(input) {
   background: var(--pearl-wrapper-bg);
