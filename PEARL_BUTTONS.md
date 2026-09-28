@@ -13,9 +13,9 @@ Placement wrapper — button="pearl"
 
 The existing `bg-button` wrapper stays available for placement, alignment and spacing.
 Its previous pale background is suppressed only when tagged Pearl. The native font family
-is inherited. Original proportions are restored: 25px text, 32px vertical / 45px horizontal
-padding, 100px radius, five-layer shadow, 25% oval reflection boundary, 12% upper highlight,
-and the reference's masked label treatment. Original hover and 4px press travel are retained.
+is inherited. Compact defaults follow the site's CTA scale: 14px text, 12px vertical / 28px
+horizontal padding, 44px target height, 100px radius, five-layer pearl shadow, oval reflection,
+upper highlight and masked label. Hover and press states scale with the smaller surface.
 Optional wrapper CSS variables: `--pearl-font-size`, `--pearl-padding-y`, `--pearl-padding-x`.
 Use `button-mode="light"` for a whitesmoke `#f5f5f5` background and navy `#0f2a49` text/star.
 Light mode has a whitesmoke placement wrapper with a subtle inner edge, plus a gently
