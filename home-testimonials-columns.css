@@ -1,7 +1,4 @@
-/* CMS Google reviews: progressive enhancement, scoped to the home section. */
-#Testimonials { padding-block: 48px; }
-#Testimonials .h2-testimonials,
-#Testimonials .slider-padding-start { display: none; }
+/* CMS Google reviews: only the carousel; surrounding headings/layout stay native. */
 #Testimonials [testimonial-wrapper] { overflow: visible; opacity: 1; transform: none; }
 #Testimonials [testimonial-track] {
   display: grid;
@@ -48,7 +45,6 @@
 #Testimonials [testimonial-card] .code-embed-43 { width: 24px; height: 24px; flex: none; }
 #Testimonials [testimonial-card] .f-testimonial-star-wrapper { margin: 0; gap: 3px; }
 #Testimonials [testimonial-card] .image-24 { width: 16px; height: 16px; }
-#Testimonials [testimonial-card] .div-block-174 { display: none; }
 #Testimonials [testimonial-card] .f-margin-bottom-40 { margin: 0; }
 #Testimonials [testimonial-card] p {
   margin: 0;
@@ -64,7 +60,7 @@
 }
 #Testimonials [testimonial-card] .f-testimonial-author { margin: 0; }
 #Testimonials [testimonial-card] .italic { color: #777c85; font-size: 12px; font-style: normal; }
-#Testimonials .f-testimonial-background { display: none; }
+#Testimonials [testimonial-wrapper] .f-testimonial-background { display: none; }
 #Testimonials .py-reviews-viewport {
   height: 740px;
   overflow: hidden;
@@ -106,7 +102,6 @@
   #Testimonials [testimonial-track] { grid-template-columns: repeat(2, minmax(0, 320px)); }
 }
 @media (max-width: 767px) {
-  #Testimonials { padding-block: 32px; }
   #Testimonials [testimonial-track] { grid-template-columns: minmax(0, 320px); padding-inline: 16px; }
   #Testimonials .py-reviews-viewport { height: 620px; }
   #Testimonials .py-reviews-static { height: auto; max-height: 620px; }
