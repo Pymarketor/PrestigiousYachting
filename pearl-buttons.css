@@ -6,6 +6,9 @@
   --pearl-highlight: .30;
   --pearl-edge: .50;
   --pearl-gloss: .12;
+  --pearl-reflection: rgb(255 255 255 / 12%);
+  --pearl-wrapper-bg: transparent;
+  --pearl-wrapper-edge: transparent;
   --pearl-border: rgb(255 255 255 / 14%);
   --pearl-shade: rgb(3 19 34 / 70%);
   --pearl-hover-edge: .70;
@@ -20,11 +23,14 @@
 
 [button="pearl"][button-mode="light"],
 [button="pearl"] > :is(a, button)[button-mode="light"] {
-  --pearl-bg: #f4f7fb;
+  --pearl-bg: #f5f5f5;
   --pearl-text: rgb(15 42 73 / 85%);
   --pearl-highlight: .85;
   --pearl-edge: .75;
   --pearl-gloss: .30;
+  --pearl-reflection: rgb(15 42 73 / 7%);
+  --pearl-wrapper-bg: #f5f5f5;
+  --pearl-wrapper-edge: rgb(15 42 73 / 9%);
   --pearl-border: rgb(15 42 73 / 14%);
   --pearl-shade: rgb(15 42 73 / 16%);
   --pearl-hover-edge: .95;
@@ -45,6 +51,9 @@
   --pearl-highlight: .30;
   --pearl-edge: .50;
   --pearl-gloss: .12;
+  --pearl-reflection: rgb(255 255 255 / 12%);
+  --pearl-wrapper-bg: transparent;
+  --pearl-wrapper-edge: transparent;
   --pearl-border: rgb(255 255 255 / 14%);
   --pearl-shade: rgb(3 19 34 / 70%);
   --pearl-hover-edge: .70;
@@ -59,9 +68,10 @@
 
 /* Preserve the placement wrapper's native display, width, margins and padding. */
 [button="pearl"]:not(a):not(button):not(input) {
-  background: transparent;
+  background: var(--pearl-wrapper-bg);
   border-color: transparent;
-  box-shadow: none;
+  box-shadow: inset 0 0 0 1px var(--pearl-wrapper-edge);
+  border-radius: 100px;
 }
 
 :is(a, button)[button="pearl"],
@@ -111,7 +121,7 @@
 [button="pearl"] > :is(a, button)::before {
   inset: -100% -15% 25%;
   border-radius: 50%;
-  background: rgb(255 255 255 / var(--pearl-gloss));
+  background: var(--pearl-reflection);
 }
 
 :is(a, button)[button="pearl"]::after,
