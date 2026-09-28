@@ -4,7 +4,7 @@
   "use strict";
 
   const ROOT_SELECTOR = "[data-yacht-coverflow]";
-  const CARD_SELECTOR = ".cms_list-item.home.w-dyn-item";
+  const CARD_SELECTOR = ".cms_list-item.home.w-dyn-item, .cms_list-item.last-item-cta";
   const STYLE_ID = "py-home-formula-coverflow-style";
   const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
 
@@ -83,7 +83,7 @@
         transform-style: preserve-3d !important;
       }
 
-      ${ROOT_SELECTOR}[data-py-coverflow-ready="true"] .cms_list-item.home.w-dyn-item {
+      ${ROOT_SELECTOR}[data-py-coverflow-ready="true"] :is(.cms_list-item.home.w-dyn-item, .cms_list-item.last-item-cta) {
         position: absolute !important;
         top: 0 !important;
         left: 50% !important;
@@ -166,6 +166,80 @@
 
       ${ROOT_SELECTOR}[data-py-coverflow-ready="true"] .cms_list-item.home.w-dyn-item > .description-yacht-card {
         display: none !important;
+      }
+
+      ${ROOT_SELECTOR}[data-py-coverflow-ready="true"] .cms_list-item.last-item-cta {
+        display: grid !important;
+        place-items: center;
+        padding: 1rem;
+        background: #fff !important;
+      }
+
+      ${ROOT_SELECTOR} .py-cf-cta-source {
+        display: none !important;
+      }
+
+      .py-cf-cta-original {
+        display: none !important;
+      }
+
+      ${ROOT_SELECTOR}[data-py-coverflow-ready="true"] .cms_list-item.last-item-cta > .div-block-219 {
+        box-sizing: border-box;
+        display: flex;
+        width: 100%;
+        height: 100%;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: .5rem;
+        padding: 1.25rem;
+        border-radius: 1.25rem;
+        background: #f4f4f6;
+        text-align: center;
+      }
+
+      ${ROOT_SELECTOR}[data-py-coverflow-ready="true"] .last-item-cta .text-block-155 {
+        color: #24282f;
+        font-size: clamp(1rem, 2.5vw, 1.25rem);
+        font-weight: 600;
+        line-height: 1.25;
+      }
+
+      ${ROOT_SELECTOR}[data-py-coverflow-ready="true"] .last-item-cta .alt-text-cta-card {
+        color: rgba(36, 40, 47, .82);
+        font-size: .9375rem;
+        line-height: 1.4;
+      }
+
+      ${ROOT_SELECTOR}[data-py-coverflow-ready="true"] .last-item-cta ._2nd-cta-formula-card {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: .35rem;
+        max-width: 100%;
+        margin-top: .5rem;
+        padding: .7rem 1rem;
+        border-radius: 999px;
+        color: #fff;
+        background: #1678d3;
+        font-size: .9375rem;
+        font-weight: 600;
+        line-height: 1.2;
+        text-decoration: none;
+      }
+
+      ${ROOT_SELECTOR}[data-py-coverflow-ready="true"] .last-item-cta .open-arrow-link {
+        display: inline-flex;
+        width: 1rem;
+        height: 1rem;
+      }
+
+      ${ROOT_SELECTOR} .py-cf-caption.is-cta {
+        visibility: hidden;
+        height: 0;
+        min-height: 0;
+        padding: 0;
+        overflow: hidden;
       }
 
       ${ROOT_SELECTOR}[data-py-coverflow-ready="true"] .card-favorite-yacht-image > .open-tab-picto {
@@ -379,6 +453,32 @@
     const previousControl = root.querySelector(".arrow-scroll-left-card-other");
     const nextControl = root.querySelector(".arrow-scroll-right-card-other");
     if (!(track instanceof HTMLElement)) return;
+    const ctaSource = root.parentElement?.querySelector(
+      ":scope > .div-block-219, :scope > .cms_list-item.last-item-cta > .div-block-219"
+    );
+    const mountCtaCards = () => {
+      if (!(ctaSource instanceof HTMLElement)) return;
+      ctaSource.classList.add("py-cf-cta-source");
+      ctaSource.closest(".cms_list-item.last-item-cta")?.classList.add("py-cf-cta-original");
+      const createCtaCard = (edge) => {
+        const card = document.createElement("div");
+        card.className = "cms_list-item last-item-cta v2 py-cf-cta-card";
+        card.dataset.pyFormulaCta = edge;
+        card.setAttribute("data-slider-slide", "");
+        card.setAttribute("role", "listitem");
+        const content = ctaSource.cloneNode(true);
+        content.classList.remove("py-cf-cta-source");
+        card.appendChild(content);
+        return card;
+      };
+      if (!track.querySelector('[data-py-formula-cta="start"]')) {
+        track.prepend(createCtaCard("start"));
+      }
+      if (!track.querySelector('[data-py-formula-cta="end"]')) {
+        track.appendChild(createCtaCard("end"));
+      }
+    };
+    mountCtaCards();
     [[previousControl, "Previous yacht"], [nextControl, "Next yacht"]].forEach(([control, label]) => {
       if (!(control instanceof HTMLElement)) return;
       control.setAttribute("role", "button");
@@ -463,6 +563,13 @@
     const renderCaption = (index) => {
       const card = cards[index];
       if (!card) return;
+      if (card.classList.contains("last-item-cta")) {
+        caption.classList.remove("is-visible");
+        caption.classList.add("is-cta");
+        caption.replaceChildren();
+        return;
+      }
+      caption.classList.remove("is-cta");
       const title = cleanText(
         card.querySelector(".model-yacht-card > [fs-list-field='Model']")?.textContent ||
         card.querySelector(".model-yacht-card")?.firstElementChild?.textContent
@@ -706,6 +813,7 @@
       if (syncFrame !== null) cancelAnimationFrame(syncFrame);
       syncFrame = requestAnimationFrame(() => {
         syncFrame = null;
+        mountCtaCards();
         cards = Array.from(track.children).filter((element) => element.matches?.(CARD_SELECTOR));
         root.dataset.pyCoverflowCount = String(cards.length);
         Array.from(track.children).filter((child) => !cards.includes(child)).forEach((child) => child.setAttribute("role", "presentation"));
