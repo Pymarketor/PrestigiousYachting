@@ -1,0 +1,143 @@
+/* Native Webflow Pearl buttons. No JavaScript, React or generated label. */
+/* button="pearl" belongs on the editable placement wrapper. */
+[button="pearl"]:not(a):not(button):not(input) {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+:is(a, button)[button="pearl"],
+[button="pearl"] > :is(a, button) {
+  --pearl-bg: #0f2a49;
+  --pearl-radius: 100px;
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-sizing: border-box;
+  min-height: 44px;
+  height: auto;
+  padding: 12px 32px;
+  border: 0;
+  border-radius: var(--pearl-radius);
+  background: var(--pearl-bg);
+  color: #fff;
+  text-decoration: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  box-shadow:
+    inset 0 .3rem .9rem rgb(255 255 255 / 30%),
+    inset 0 -.1rem .3rem rgb(15 42 73 / 70%),
+    inset 0 -.4rem .9rem rgb(255 255 255 / 50%),
+    0 1.5rem 1.5rem rgb(15 42 73 / 16%),
+    0 .6rem .8rem -.4rem rgb(15 42 73 / 65%);
+  transition: box-shadow .2s ease, transform .2s ease;
+}
+
+:is(a, button)[button="pearl"]::before,
+:is(a, button)[button="pearl"]::after,
+[button="pearl"] > :is(a, button)::before,
+[button="pearl"] > :is(a, button)::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  z-index: 0;
+  transition: transform .3s ease, opacity .3s ease;
+}
+
+:is(a, button)[button="pearl"]::before,
+[button="pearl"] > :is(a, button)::before {
+  inset: -100% -15% 25%;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 12%);
+}
+
+:is(a, button)[button="pearl"]::after,
+[button="pearl"] > :is(a, button)::after {
+  inset: 12% 6% 40%;
+  border-radius: 22px 22px 0 0;
+  box-shadow: inset 0 10px 8px -10px rgb(255 255 255 / 80%);
+  background: linear-gradient(180deg, rgb(255 255 255 / 30%), transparent 50%);
+}
+
+/* This stays a native, double-click-editable Webflow text block. */
+:is(a, button)[button="pearl"] > :first-child,
+[button="pearl"] > :is(a, button) > :first-child {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: inherit;
+  transform: translateY(2%);
+  transition: transform .2s ease;
+}
+
+/* Empty CSS decorations do not add characters to the accessible name. */
+:is(a, button)[button="pearl"] > :first-child::before,
+[button="pearl"] > :is(a, button) > :first-child::before {
+  content: "";
+  flex: 0 0 1em;
+  width: 1em;
+  height: 1em;
+  background: center / contain no-repeat url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='1.5'%3E%3Cpath d='M12 2 15 9 22 12 15 15 12 22 9 15 2 12 9 9Z'/%3E%3C/svg%3E");
+}
+
+@media (hover: hover) {
+  :is(a, button)[button="pearl"]:hover,
+  [button="pearl"] > :is(a, button):hover {
+    box-shadow:
+      inset 0 .3rem .5rem rgb(255 255 255 / 40%),
+      inset 0 -.1rem .3rem rgb(15 42 73 / 70%),
+      inset 0 -.4rem .9rem rgb(255 255 255 / 70%),
+      0 1.5rem 1.5rem rgb(15 42 73 / 16%),
+      0 .6rem .8rem -.4rem rgb(15 42 73 / 65%);
+  }
+
+  :is(a, button)[button="pearl"]:hover::before,
+  [button="pearl"] > :is(a, button):hover::before { transform: translateY(-5%); }
+
+  :is(a, button)[button="pearl"]:hover::after,
+  [button="pearl"] > :is(a, button):hover::after { opacity: .4; transform: translateY(5%); }
+
+  :is(a, button)[button="pearl"]:hover > :first-child,
+  [button="pearl"] > :is(a, button):hover > :first-child { transform: translateY(-4%); }
+
+  :is(a, button)[button="pearl"]:hover > :first-child::before,
+  [button="pearl"] > :is(a, button):hover > :first-child::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M12 2 15 9 22 12 15 15 12 22 9 15 2 12 9 9Z'/%3E%3C/svg%3E");
+  }
+}
+
+:is(a, button)[button="pearl"]:active,
+[button="pearl"] > :is(a, button):active {
+  transform: translateY(4px);
+  box-shadow:
+    inset 0 .3rem .5rem rgb(255 255 255 / 50%),
+    inset 0 -.1rem .3rem rgb(15 42 73 / 80%),
+    inset 0 -.4rem .9rem rgb(255 255 255 / 40%),
+    0 .5rem .8rem rgb(15 42 73 / 20%);
+}
+
+:is(a, button)[button="pearl"]:focus-visible,
+[button="pearl"] > :is(a, button):focus-visible {
+  outline: 2px solid #0f2a49;
+  outline-offset: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :is(a, button)[button="pearl"],
+  :is(a, button)[button="pearl"] *,
+  :is(a, button)[button="pearl"]::before,
+  :is(a, button)[button="pearl"]::after,
+  [button="pearl"] > :is(a, button),
+  [button="pearl"] > :is(a, button) *,
+  [button="pearl"] > :is(a, button)::before,
+  [button="pearl"] > :is(a, button)::after {
+    transition: none !important;
+    transform: none !important;
+  }
+}
