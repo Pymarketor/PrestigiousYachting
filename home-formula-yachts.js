@@ -453,8 +453,10 @@
     const previousControl = root.querySelector(".arrow-scroll-left-card-other");
     const nextControl = root.querySelector(".arrow-scroll-right-card-other");
     if (!(track instanceof HTMLElement)) return;
+    const formula = root.dataset.yachtCoverflow || "";
+    const ctaSelector = `[data-yacht-coverflow-cta="${formula}"]`;
     const ctaSource = root.parentElement?.querySelector(
-      ":scope > .div-block-219, :scope > .cms_list-item.last-item-cta > .div-block-219"
+      `:scope > ${ctaSelector}, :scope > .cms_list-item.last-item-cta > ${ctaSelector}`
     );
     const mountCtaCards = () => {
       if (!(ctaSource instanceof HTMLElement)) return;
