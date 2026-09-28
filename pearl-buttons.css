@@ -146,7 +146,7 @@
   width: .8em;
   height: 1em;
   background: currentColor;
-  --pearl-star: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='1.5'%3E%3Cpath d='M12 2 15 9 22 12 15 15 12 22 9 15 2 12 9 9Z'/%3E%3C/svg%3E");
+  --pearl-star: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='1.5'%3E%3Cpath d='M12 2Q14 10 22 12Q14 14 12 22Q10 14 2 12Q10 10 12 2Z'/%3E%3C/svg%3E");
   -webkit-mask: var(--pearl-star) center / contain no-repeat;
   mask: var(--pearl-star) center / contain no-repeat;
 }
@@ -173,7 +173,7 @@
 
   :is(a, button)[button="pearl"]:hover > :first-child::before,
   [button="pearl"] > :is(a, button):hover > :first-child::before {
-    --pearl-star: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M12 2 15 9 22 12 15 15 12 22 9 15 2 12 9 9Z'/%3E%3C/svg%3E");
+    --pearl-star: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M12 2Q14 10 22 12Q14 14 12 22Q10 14 2 12Q10 10 12 2Z'/%3E%3C/svg%3E");
   }
 }
 
