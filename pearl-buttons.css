@@ -11,6 +11,7 @@
   --pearl-label-mask: linear-gradient(to bottom, white 40%, transparent);
   --pearl-gloss: .12;
   --pearl-reflection: rgb(255 255 255 / 12%);
+  --pearl-top-shine: .30;
   --pearl-wrapper-bg: transparent;
   --pearl-wrapper-edge: transparent;
   --pearl-border: rgb(255 255 255 / 14%);
@@ -37,6 +38,7 @@
   --pearl-label-mask: linear-gradient(to bottom, white 40%, rgb(255 255 255 / 76%));
   --pearl-gloss: .30;
   --pearl-reflection: rgb(15 42 73 / 7%);
+  --pearl-top-shine: .30;
   --pearl-wrapper-bg: #f5f5f5;
   --pearl-wrapper-edge: rgb(15 42 73 / 9%);
   --pearl-border: rgb(15 42 73 / 14%);
@@ -55,26 +57,27 @@
 [button="pearl"][button-mode="dark"],
 [button="pearl"] > :is(a, button)[button-mode="dark"] {
   --pearl-bg: #0f2a49;
-  --pearl-text: rgb(255 255 255 / 70%);
-  --pearl-highlight: .30;
-  --pearl-edge: .50;
+  --pearl-text: rgb(255 255 255 / 88%);
+  --pearl-highlight: .10;
+  --pearl-edge: .36;
   --pearl-lower-edge: rgb(255 255 255 / 50%);
   --pearl-hover-lower-edge: rgb(255 255 255 / 70%);
   --pearl-active-lower-edge: rgb(255 255 255 / 40%);
   --pearl-label-mask: linear-gradient(to bottom, white 40%, transparent);
-  --pearl-gloss: .12;
-  --pearl-reflection: rgb(255 255 255 / 12%);
+  --pearl-gloss: .04;
+  --pearl-reflection: rgb(255 255 255 / 4%);
+  --pearl-top-shine: .10;
   --pearl-wrapper-bg: transparent;
   --pearl-wrapper-edge: transparent;
   --pearl-border: rgb(255 255 255 / 14%);
   --pearl-shade: rgb(3 19 34 / 70%);
-  --pearl-hover-edge: .70;
-  --pearl-hover-highlight: .40;
+  --pearl-hover-edge: .50;
+  --pearl-hover-highlight: .16;
   --pearl-active-highlight: .50;
   --pearl-active-shade: rgb(3 19 34 / 80%);
   --pearl-active-edge: .40;
-  --pearl-outer-shadow: rgb(15 42 73 / 30%);
-  --pearl-contact-shadow: rgb(3 19 34 / 80%);
+  --pearl-outer-shadow: rgb(3 19 34 / 55%);
+  --pearl-contact-shadow: rgb(3 19 34 / 90%);
   --pearl-focus: #fff;
 }
 
@@ -141,7 +144,7 @@
   inset: 12% 6% 40%;
   border-radius: 22px 22px 0 0;
   box-shadow: inset 0 10px 8px -10px rgb(255 255 255 / 80%);
-  background: linear-gradient(180deg, rgb(255 255 255 / 30%), transparent 50%);
+  background: linear-gradient(180deg, rgb(255 255 255 / var(--pearl-top-shine)), transparent 50%);
 }
 
 /* Original masked label treatment; text remains native and editable. */
@@ -171,6 +174,14 @@
   --pearl-star: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='1.5'%3E%3Cpath d='M12 2Q14 10 22 12Q14 14 12 22Q10 14 2 12Q10 10 12 2Z'/%3E%3C/svg%3E");
   -webkit-mask: var(--pearl-star) center / contain no-repeat;
   mask: var(--pearl-star) center / contain no-repeat;
+}
+
+/* Add without-icon="true" (or a blank without-icon attribute) to the wrapper or link. */
+[button="pearl"][without-icon] > :is(a, button) > :first-child::before,
+[button="pearl"] > :is(a, button)[without-icon] > :first-child::before,
+:is(a, button)[button="pearl"][without-icon] > :first-child::before {
+  content: none;
+  display: none;
 }
 
 @media (hover: hover) {
