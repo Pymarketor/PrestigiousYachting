@@ -17,7 +17,9 @@ is inherited. Original proportions are restored: 25px text, 32px vertical / 45px
 padding, 100px radius, five-layer shadow, 25% oval reflection boundary, 12% upper highlight,
 and the reference's masked label treatment. Original hover and 4px press travel are retained.
 Optional wrapper CSS variables: `--pearl-font-size`, `--pearl-padding-y`, `--pearl-padding-x`.
-Use `button-mode="light"` for a pearl-white background and navy `#0f2a49` text/star.
+Use `button-mode="light"` for a whitesmoke `#f5f5f5` background and navy `#0f2a49` text/star.
+Light mode has a whitesmoke placement wrapper with a subtle inner edge, plus a gently
+navy-tinted oval reflection so the layered wrapper remains visible against a white page.
 Use `button-mode="dark"` for a navy `#0f2a49` background and white text/star.
 Without a mode, dark is the default. Keep both attributes on the placement wrapper;
 an explicit mode on the native link itself takes priority over an inherited wrapper mode.
