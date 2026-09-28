@@ -256,7 +256,7 @@
         align-items: center;
         width: 100%;
         min-height: 10rem;
-        padding: .125rem 1.5rem 0;
+        padding: .875rem 1.5rem 0;
         text-align: center;
         opacity: 0;
         transform: translateY(5px);
@@ -271,7 +271,7 @@
       ${ROOT_SELECTOR} .py-cf-caption__title {
         margin: 0;
         color: #24282f;
-        font-size: .9375rem;
+        font-size: 1.25rem;
         font-weight: 600;
         line-height: 1.2;
       }
@@ -350,8 +350,13 @@
 
         ${ROOT_SELECTOR} .py-cf-caption {
           min-height: 9.5rem;
+          padding-top: .625rem;
           padding-right: 1rem;
           padding-left: 1rem;
+        }
+
+        ${ROOT_SELECTOR} .py-cf-caption__title {
+          font-size: 1.125rem;
         }
       }
 
