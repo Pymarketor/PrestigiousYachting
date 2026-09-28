@@ -21,20 +21,10 @@
     let visible = false;
     let paused = false;
     let focused = false;
-    const controls = document.createElement('div');
-    controls.className = 'py-reviews-controls';
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.className = 'py-reviews-toggle';
-    controls.append(button);
-    viewport.after(controls);
     const sync = () => {
       const staticMode = reduced.matches || paused;
       viewport.classList.toggle('py-reviews-static', staticMode);
       viewport.classList.toggle('py-reviews-running', !staticMode && visible && !document.hidden && !focused);
-      button.textContent = paused ? 'Resume scrolling' : 'Pause scrolling';
-      button.setAttribute('aria-pressed', String(paused));
-      controls.hidden = reduced.matches || cards.length < 2;
     };
     const rebuild = () => {
       // Repartition ALL reviews at each breakpoint, rather than hiding two thirds on mobile.
@@ -70,7 +60,6 @@
       list.replaceChildren(...columns.map(({ column }) => column));
       sync();
     };
-    button.addEventListener('click', () => { paused = !paused; sync(); });
     viewport.addEventListener('focusin', () => { focused = true; sync(); });
     viewport.addEventListener('focusout', event => {
       focused = viewport.contains(event.relatedTarget);
