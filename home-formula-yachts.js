@@ -33,7 +33,7 @@
         height: auto !important;
         min-height: 0 !important;
         margin: 0 !important;
-        padding: 3rem 0 2.5rem;
+        padding: 3rem 0 1rem;
         gap: 0 !important;
         background: transparent !important;
         overflow: clip;
@@ -256,7 +256,7 @@
         align-items: center;
         width: 100%;
         min-height: 10rem;
-        padding: 1rem 1.5rem 0;
+        padding: 2.125rem 1.125rem 0;
         text-align: center;
         opacity: 0;
         transform: translateY(5px);
@@ -277,9 +277,9 @@
       }
 
       ${ROOT_SELECTOR} .py-cf-caption__subtitle {
-        margin: .35rem 0 0;
+        margin: .5rem 0 0;
         color: rgba(36, 40, 47, .58);
-        font-size: .8125rem;
+        font-size: 1rem;
         line-height: 1.3;
       }
 
@@ -336,10 +336,6 @@
           --py-cf-control: 2.75rem;
         }
 
-        ${ROOT_SELECTOR}[data-py-coverflow-ready="true"] {
-          padding: 2.25rem 0 2rem;
-        }
-
         ${ROOT_SELECTOR} .arrow-scroll-left-card-other {
           left: .625rem !important;
         }
@@ -350,9 +346,6 @@
 
         ${ROOT_SELECTOR} .py-cf-caption {
           min-height: 9.5rem;
-          padding-top: .75rem;
-          padding-right: 1rem;
-          padding-left: 1rem;
         }
 
         ${ROOT_SELECTOR} .py-cf-caption__title {
