@@ -99,7 +99,7 @@
         scroll-snap-align: none !important;
         overflow: hidden !important;
         border: 0 !important;
-        border-radius: 1rem !important;
+        border-radius: 1.5rem !important;
         background: #f1f2f4 !important;
         box-shadow: 0 18px 42px rgba(18, 32, 50, .18) !important;
         opacity: 0;
@@ -125,7 +125,7 @@
         max-height: none !important;
         margin: 0 !important;
         overflow: hidden !important;
-        border-radius: 1rem !important;
+        border-radius: 1.5rem !important;
         box-shadow: none !important;
         aspect-ratio: 3 / 2 !important;
       }
@@ -141,7 +141,7 @@
         min-height: 100% !important;
         max-height: none !important;
         margin: 0 !important;
-        border-radius: 1rem !important;
+        border-radius: 1.5rem !important;
         object-fit: cover !important;
         object-position: center !important;
         aspect-ratio: 3 / 2 !important;
