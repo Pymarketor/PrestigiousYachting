@@ -14,7 +14,11 @@ Placement wrapper — button="pearl"
 The existing `bg-button` wrapper stays available for placement, alignment and spacing.
 Its previous pale background is suppressed only when tagged Pearl. Existing site typography
 is inherited, with a 44px minimum target instead of the oversized React demo dimensions.
-Navy `#0f2a49`, white reflections, outlined/filled decorative star, hover and press states.
+Soft pearl reflections, outlined/filled decorative star, hover and press states.
+Use `button-mode="light"` for a pearl-white background and navy `#0f2a49` text/star.
+Use `button-mode="dark"` for a navy `#0f2a49` background and white text/star.
+Without a mode, dark is the default. Keep both attributes on the placement wrapper;
+an explicit mode on the native link itself takes priority over an inherited wrapper mode.
 Keyboard focus remains visible; reduced-motion preferences disable movement.
 
 Duplicate the native wrapper to add another Pearl button, change its label and destination
