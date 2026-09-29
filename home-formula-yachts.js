@@ -24,6 +24,10 @@
         isolation: isolate;
       }
 
+      [data-py-coverflow-empty="true"] {
+        display: none !important;
+      }
+
       ${ROOT_SELECTOR}[data-py-coverflow-ready="true"] {
         position: relative;
         display: block;
@@ -223,10 +227,6 @@
 
       ${ROOT_SELECTOR} .py-cf-caption.is-cta {
         visibility: hidden;
-        height: 0;
-        min-height: 0;
-        padding: 0;
-        overflow: hidden;
       }
 
       ${ROOT_SELECTOR}[data-py-coverflow-ready="true"] .card-favorite-yacht-image > [data-yacht-open-tab="true"] {
@@ -449,6 +449,9 @@
       if (!(ctaSource instanceof HTMLElement)) return;
       ctaSource.classList.add("py-cf-cta-source");
       ctaSource.closest(".cms_list-item.last-item-cta")?.classList.add("py-cf-cta-original");
+      root.parentElement.querySelectorAll(".div-block-219.md-hidden").forEach((duplicate) => {
+        duplicate.classList.add("py-cf-cta-original");
+      });
       const createCtaCard = (edge) => {
         const card = document.createElement("div");
         card.className = "cms_list-item last-item-cta v2 py-cf-cta-card";
@@ -801,6 +804,13 @@
         syncFrame = null;
         mountCtaCards();
         cards = Array.from(track.children).filter((element) => element.matches?.(CARD_SELECTOR));
+        const yachtCount = Array.from(track.children)
+          .filter((element) => element.matches?.(".cms_list-item.home.w-dyn-item")).length;
+        const section = root.closest("section") || root.parentElement;
+        if (section instanceof HTMLElement) {
+          if (yachtCount === 0) section.dataset.pyCoverflowEmpty = "true";
+          else delete section.dataset.pyCoverflowEmpty;
+        }
         root.dataset.pyCoverflowCount = String(cards.length);
         Array.from(track.children).filter((child) => !cards.includes(child)).forEach((child) => child.setAttribute("role", "presentation"));
 
