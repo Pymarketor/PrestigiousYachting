@@ -1,18 +1,50 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const elements = document.querySelectorAll("[scroll-animate]");
-  elements.forEach((el) => el.classList.add("will-animate"));
-  const observer = new IntersectionObserver((entries, observer) => {
+// Prestigious Yachting — shared scroll reveal for [scroll-animate] elements.
+(() => {
+  "use strict";
+
+  if (window.__pyScrollAnimateInitialized) return;
+  window.__pyScrollAnimateInitialized = true;
+
+  const SELECTOR = "[scroll-animate]";
+  const observed = new WeakSet();
+
+  const revealObserver = new IntersectionObserver((entries, observer) => {
     entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        const el = entry.target;
-        el.classList.add("in-view");
-        observer.unobserve(el);
-        setTimeout(() => {
-          el.classList.remove("in-view");
-          el.classList.remove("will-animate");
-        }, 700);
-      }
+      if (!entry.isIntersecting) return;
+      const element = entry.target;
+      element.classList.add("in-view");
+      observer.unobserve(element);
+      setTimeout(() => {
+        element.classList.remove("in-view", "will-animate");
+      }, 700);
     });
   }, { threshold: 0.4 });
-  elements.forEach((el) => observer.observe(el));
-});
+
+  const observeElement = (element) => {
+    if (!(element instanceof Element) || !element.matches(SELECTOR) || observed.has(element)) return;
+    observed.add(element);
+    element.classList.add("will-animate");
+    revealObserver.observe(element);
+  };
+
+  const observeTree = (node) => {
+    if (!(node instanceof Element)) return;
+    observeElement(node);
+    node.querySelectorAll(SELECTOR).forEach(observeElement);
+  };
+
+  const boot = () => {
+    observeTree(document.documentElement);
+    new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        mutation.addedNodes.forEach(observeTree);
+      });
+    }).observe(document.documentElement, { childList: true, subtree: true });
+  };
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", boot, { once: true });
+  } else {
+    boot();
+  }
+})();
