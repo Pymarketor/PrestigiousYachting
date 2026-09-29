@@ -151,19 +151,6 @@
         -webkit-user-drag: none;
       }
 
-      ${ROOT_SELECTOR}[data-py-coverflow-ready="true"] .card-favorite-yacht-image > .forrward-link {
-        position: absolute !important;
-        inset: 0 !important;
-        z-index: 5 !important;
-        display: block !important;
-        width: 100% !important;
-        height: 100% !important;
-        opacity: 0 !important;
-        cursor: grab !important;
-        pointer-events: auto !important;
-        -webkit-user-drag: none;
-      }
-
       ${ROOT_SELECTOR}[data-py-coverflow-ready="true"] .cms_list-item.home.w-dyn-item > .description-yacht-card {
         display: none !important;
       }
@@ -242,7 +229,7 @@
         overflow: hidden;
       }
 
-      ${ROOT_SELECTOR}[data-py-coverflow-ready="true"] .card-favorite-yacht-image > .open-tab-picto {
+      ${ROOT_SELECTOR}[data-py-coverflow-ready="true"] .card-favorite-yacht-image > [data-yacht-open-tab="true"] {
         z-index: 12 !important;
         display: flex !important;
         visibility: visible !important;
@@ -617,10 +604,8 @@
       cards.forEach((card, index) => {
         card.setAttribute("aria-current", String(index === current));
         card.setAttribute("aria-label", (index + 1) + " of " + cards.length);
-        const imageLink = card.querySelector(".forrward-link[href]");
-        const arrowLink = card.querySelector(".open-tab-picto[href]");
-        if (imageLink instanceof HTMLElement) imageLink.tabIndex = index === current ? 0 : -1;
-        if (arrowLink instanceof HTMLElement) arrowLink.tabIndex = index === current ? 0 : -1;
+        const openTabLink = card.querySelector('[data-yacht-open-tab="true"][href]');
+        if (openTabLink instanceof HTMLElement) openTabLink.tabIndex = index === current ? 0 : -1;
       });
       root.dataset.pyCoverflowIndex = String(current);
       if (current !== selected) {
@@ -737,7 +722,7 @@
 
     frame.addEventListener("pointerdown", (event) => {
       if (!cards.length || event.button > 0) return;
-      if (event.target instanceof Element && event.target.closest(".arrow-scroll-left-card-other, .arrow-scroll-right-card-other, .open-tab-picto")) return;
+      if (event.target instanceof Element && event.target.closest(".arrow-scroll-left-card-other, .arrow-scroll-right-card-other, [data-yacht-open-tab="true"]")) return;
       if (animationFrame !== null) cancelAnimationFrame(animationFrame);
       animationFrame = null;
       target = position;
@@ -799,7 +784,7 @@
         return;
       }
       const itemLink = event.target instanceof Element
-        ? event.target.closest(".card-favorite-yacht-image > .forrward-link[href], .card-favorite-yacht-image > .open-tab-picto[href]")
+        ? event.target.closest(".card-favorite-yacht-image > [data-yacht-open-tab="true"][href]")
         : null;
       const index = cards.indexOf(card);
       if (itemLink instanceof HTMLAnchorElement && index === indexAt(position)) return;
