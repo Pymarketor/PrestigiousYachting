@@ -722,7 +722,7 @@
 
     frame.addEventListener("pointerdown", (event) => {
       if (!cards.length || event.button > 0) return;
-      if (event.target instanceof Element && event.target.closest(".arrow-scroll-left-card-other, .arrow-scroll-right-card-other, [data-yacht-open-tab="true"]")) return;
+      if (event.target instanceof Element && event.target.closest('.arrow-scroll-left-card-other, .arrow-scroll-right-card-other, [data-yacht-open-tab="true"]')) return;
       if (animationFrame !== null) cancelAnimationFrame(animationFrame);
       animationFrame = null;
       target = position;
@@ -784,7 +784,7 @@
         return;
       }
       const itemLink = event.target instanceof Element
-        ? event.target.closest(".card-favorite-yacht-image > [data-yacht-open-tab="true"][href]")
+        ? event.target.closest('.card-favorite-yacht-image > [data-yacht-open-tab="true"][href]')
         : null;
       const index = cards.indexOf(card);
       if (itemLink instanceof HTMLAnchorElement && index === indexAt(position)) return;
