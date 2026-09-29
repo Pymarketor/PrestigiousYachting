@@ -20,7 +20,7 @@
         width: 100%;
         max-width: none !important;
         background: transparent !important;
-        overflow: clip;
+        overflow: visible;
         isolation: isolate;
       }
 
@@ -40,7 +40,7 @@
         padding: 3rem 0 1rem;
         gap: 0 !important;
         background: transparent !important;
-        overflow: clip;
+        overflow: visible;
         outline: none;
         cursor: grab;
         touch-action: pan-y;
