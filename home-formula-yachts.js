@@ -473,11 +473,10 @@
         card.appendChild(content);
         return card;
       };
-      if (!track.querySelector('[data-py-formula-cta="start"]')) {
-        track.prepend(createCtaCard("start"));
-      }
-      if (!track.querySelector('[data-py-formula-cta="end"]')) {
-        track.appendChild(createCtaCard("end"));
+      if (!track.querySelector('[data-py-formula-cta="position-2"]')) {
+        const firstBoat = Array.from(track.children).find((item) => item.matches?.(".cms_list-item.home.w-dyn-item"));
+        const ctaCard = createCtaCard("position-2");
+        track.insertBefore(ctaCard, firstBoat?.nextSibling || null);
       }
     };
     mountCtaCards();
