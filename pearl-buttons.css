@@ -1,0 +1,270 @@
+/* Native Webflow Pearl buttons. CSS only; labels and links stay editable. */
+/* Put button="pearl" and button-mode="light|dark" on the placement wrapper. */
+[button="pearl"] {
+  --pearl-bg: #0f2a49;
+  --pearl-text: rgb(255 255 255 / 70%);
+  --pearl-highlight: .30;
+  --pearl-edge: .50;
+  --pearl-lower-edge: rgb(255 255 255 / 50%);
+  --pearl-hover-lower-edge: rgb(255 255 255 / 70%);
+  --pearl-active-lower-edge: rgb(255 255 255 / 40%);
+  --pearl-label-mask: linear-gradient(to bottom, white 40%, transparent);
+  --pearl-gloss: .12;
+  --pearl-reflection: rgb(255 255 255 / 12%);
+  --pearl-top-shine: .30;
+  --pearl-wrapper-bg: transparent;
+  --pearl-wrapper-edge: transparent;
+  --pearl-border: rgb(255 255 255 / 14%);
+  --pearl-shade: rgb(3 19 34 / 70%);
+  --pearl-hover-edge: .70;
+  --pearl-hover-highlight: .40;
+  --pearl-active-highlight: .50;
+  --pearl-active-shade: rgb(3 19 34 / 80%);
+  --pearl-active-edge: .40;
+  --pearl-outer-shadow: rgb(15 42 73 / 30%);
+  --pearl-contact-shadow: rgb(3 19 34 / 80%);
+  --pearl-focus: #0f2a49;
+}
+
+[button="pearl"][button-mode="light"],
+[button="pearl"] > :is(a, button)[button-mode="light"] {
+  --pearl-bg: #f5f5f5;
+  --pearl-text: rgb(15 42 73 / 85%);
+  --pearl-highlight: .85;
+  --pearl-edge: .75;
+  --pearl-lower-edge: rgb(15 42 73 / 38%);
+  --pearl-hover-lower-edge: rgb(15 42 73 / 54%);
+  --pearl-active-lower-edge: rgb(15 42 73 / 30%);
+  --pearl-label-mask: linear-gradient(to bottom, white 40%, rgb(255 255 255 / 76%));
+  --pearl-gloss: .30;
+  --pearl-reflection: rgb(15 42 73 / 7%);
+  --pearl-top-shine: .30;
+  --pearl-wrapper-bg: #f5f5f5;
+  --pearl-wrapper-edge: rgb(15 42 73 / 9%);
+  --pearl-border: rgb(15 42 73 / 14%);
+  --pearl-shade: rgb(15 42 73 / 16%);
+  --pearl-hover-edge: .95;
+  --pearl-hover-highlight: .95;
+  --pearl-active-highlight: .70;
+  --pearl-active-shade: rgb(15 42 73 / 24%);
+  --pearl-active-edge: .60;
+  --pearl-outer-shadow: rgb(15 42 73 / 18%);
+  --pearl-contact-shadow: rgb(15 42 73 / 30%);
+  --pearl-focus: #0f2a49;
+}
+
+/* Explicit dark mode also works when placed on the native link itself. */
+[button="pearl"][button-mode="dark"],
+[button="pearl"] > :is(a, button)[button-mode="dark"] {
+  --pearl-bg: #0f2a49;
+  --pearl-text: rgb(255 255 255 / 88%);
+  --pearl-highlight: .10;
+  --pearl-edge: .36;
+  --pearl-lower-edge: rgb(255 255 255 / 50%);
+  --pearl-hover-lower-edge: rgb(255 255 255 / 70%);
+  --pearl-active-lower-edge: rgb(255 255 255 / 40%);
+  --pearl-label-mask: linear-gradient(to bottom, white 40%, transparent);
+  --pearl-gloss: .04;
+  --pearl-reflection: rgb(255 255 255 / 4%);
+  --pearl-top-shine: .10;
+  --pearl-wrapper-bg: transparent;
+  --pearl-wrapper-edge: transparent;
+  --pearl-border: rgb(255 255 255 / 14%);
+  --pearl-shade: rgb(3 19 34 / 70%);
+  --pearl-hover-edge: .50;
+  --pearl-hover-highlight: .16;
+  --pearl-active-highlight: .50;
+  --pearl-active-shade: rgb(3 19 34 / 80%);
+  --pearl-active-edge: .40;
+  --pearl-outer-shadow: rgb(3 19 34 / 55%);
+  --pearl-contact-shadow: rgb(3 19 34 / 90%);
+  --pearl-focus: #fff;
+}
+
+/* Blue accent variant based on the requested #06c. */
+[button="pearl"][button-mode="blue"],
+[button="pearl"] > :is(a, button)[button-mode="blue"] {
+  --pearl-bg: #06c;
+  --pearl-text: rgb(255 255 255 / 92%);
+  --pearl-highlight: .20;
+  --pearl-edge: .42;
+  --pearl-lower-edge: rgb(255 255 255 / 42%);
+  --pearl-hover-lower-edge: rgb(255 255 255 / 62%);
+  --pearl-active-lower-edge: rgb(255 255 255 / 34%);
+  --pearl-label-mask: linear-gradient(to bottom, white 40%, transparent);
+  --pearl-gloss: .10;
+  --pearl-reflection: rgb(255 255 255 / 10%);
+  --pearl-top-shine: .20;
+  --pearl-wrapper-bg: transparent;
+  --pearl-wrapper-edge: transparent;
+  --pearl-border: rgb(255 255 255 / 18%);
+  --pearl-shade: rgb(0 35 94 / 70%);
+  --pearl-hover-edge: .62;
+  --pearl-hover-highlight: .30;
+  --pearl-active-highlight: .40;
+  --pearl-active-shade: rgb(0 35 94 / 80%);
+  --pearl-active-edge: .36;
+  --pearl-outer-shadow: rgb(0 51 102 / 32%);
+  --pearl-contact-shadow: rgb(0 35 80 / 82%);
+  --pearl-focus: #06c;
+}
+
+/* Preserve the placement wrapper's native display, width, margins and padding. */
+[button="pearl"]:not(a):not(button):not(input) {
+  background: var(--pearl-wrapper-bg);
+  border-color: transparent;
+  box-shadow: inset 0 0 0 1px var(--pearl-wrapper-edge);
+  border-radius: 100px;
+}
+
+:is(a, button)[button="pearl"],
+[button="pearl"] > :is(a, button) {
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-sizing: border-box;
+  min-height: 44px;
+  max-width: 100%;
+  height: auto;
+  padding: var(--pearl-padding-y, 12px) var(--pearl-padding-x, 28px);
+  font-size: var(--pearl-font-size, 14px);
+  font-weight: 500;
+  line-height: 1.4;
+  border: 0;
+  border-radius: 100px;
+  background: var(--pearl-bg);
+  color: var(--pearl-text);
+  text-decoration: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  box-shadow:
+    inset 0 .18rem .55rem rgb(255 255 255 / var(--pearl-highlight)),
+    inset 0 -.08rem .22rem var(--pearl-shade),
+    inset 0 -.2rem .5rem var(--pearl-lower-edge),
+    0 1.25rem 1.5rem var(--pearl-outer-shadow),
+    0 .45rem .55rem -.3rem var(--pearl-contact-shadow);
+  transition: box-shadow .2s ease, transform .2s ease;
+}
+
+:is(a, button)[button="pearl"]::before,
+:is(a, button)[button="pearl"]::after,
+[button="pearl"] > :is(a, button)::before,
+[button="pearl"] > :is(a, button)::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  z-index: 0;
+  transition: transform .3s ease, opacity .3s ease;
+}
+
+:is(a, button)[button="pearl"]::before,
+[button="pearl"] > :is(a, button)::before {
+  inset: -100% -15% 25%;
+  border-radius: 50%;
+  background: var(--pearl-reflection);
+}
+
+:is(a, button)[button="pearl"]::after,
+[button="pearl"] > :is(a, button)::after {
+  inset: 12% 6% 40%;
+  border-radius: 22px 22px 0 0;
+  box-shadow: inset 0 10px 8px -10px rgb(255 255 255 / 80%);
+  background: linear-gradient(180deg, rgb(255 255 255 / var(--pearl-top-shine)), transparent 50%);
+}
+
+/* Original masked label treatment; text remains native and editable. */
+:is(a, button)[button="pearl"] > :first-child,
+[button="pearl"] > :is(a, button) > :first-child {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: inherit;
+  transform: translateY(2%);
+  -webkit-mask-image: var(--pearl-label-mask);
+  mask-image: var(--pearl-label-mask);
+  transition: transform .2s ease;
+}
+
+/* Masked SVG inherits the mode colour, without changing the accessible name. */
+:is(a, button)[button="pearl"] > :first-child::before,
+[button="pearl"] > :is(a, button) > :first-child::before {
+  content: "";
+  flex: 0 0 .8em;
+  width: .8em;
+  height: 1em;
+  background: currentColor;
+  --pearl-star: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='1.5'%3E%3Cpath d='M12 2Q14 10 22 12Q14 14 12 22Q10 14 2 12Q10 10 12 2Z'/%3E%3C/svg%3E");
+  -webkit-mask: var(--pearl-star) center / contain no-repeat;
+  mask: var(--pearl-star) center / contain no-repeat;
+}
+
+/* Add without-icon="true" (or a blank without-icon attribute) to the wrapper or link. */
+[button="pearl"][without-icon] > :is(a, button) > :first-child::before,
+[button="pearl"] > :is(a, button)[without-icon] > :first-child::before,
+:is(a, button)[button="pearl"][without-icon] > :first-child::before {
+  content: none;
+  display: none;
+}
+
+@media (hover: hover) {
+  :is(a, button)[button="pearl"]:hover,
+  [button="pearl"] > :is(a, button):hover {
+    box-shadow:
+      inset 0 .18rem .4rem rgb(255 255 255 / var(--pearl-hover-highlight)),
+      inset 0 -.08rem .22rem var(--pearl-shade),
+      inset 0 -.2rem .5rem var(--pearl-hover-lower-edge),
+      0 1.25rem 1.5rem var(--pearl-outer-shadow),
+      0 .45rem .55rem -.3rem var(--pearl-contact-shadow);
+  }
+
+  :is(a, button)[button="pearl"]:hover::before,
+  [button="pearl"] > :is(a, button):hover::before { transform: translateY(-5%); }
+
+  :is(a, button)[button="pearl"]:hover::after,
+  [button="pearl"] > :is(a, button):hover::after { opacity: .4; transform: translateY(5%); }
+
+  :is(a, button)[button="pearl"]:hover > :first-child,
+  [button="pearl"] > :is(a, button):hover > :first-child { transform: translateY(-4%); }
+
+  :is(a, button)[button="pearl"]:hover > :first-child::before,
+  [button="pearl"] > :is(a, button):hover > :first-child::before {
+    --pearl-star: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M12 2Q14 10 22 12Q14 14 12 22Q10 14 2 12Q10 10 12 2Z'/%3E%3C/svg%3E");
+  }
+}
+
+:is(a, button)[button="pearl"]:active,
+[button="pearl"] > :is(a, button):active {
+  transform: translateY(4px);
+  box-shadow:
+    inset 0 .18rem .4rem rgb(255 255 255 / var(--pearl-active-highlight)),
+    inset 0 -.08rem .22rem var(--pearl-active-shade),
+    inset 0 -.2rem .5rem var(--pearl-active-lower-edge),
+    0 1.25rem 1.5rem var(--pearl-outer-shadow),
+    0 .45rem .55rem -.3rem var(--pearl-contact-shadow);
+}
+
+:is(a, button)[button="pearl"]:focus-visible,
+[button="pearl"] > :is(a, button):focus-visible {
+  outline: 2px solid var(--pearl-focus);
+  outline-offset: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :is(a, button)[button="pearl"],
+  :is(a, button)[button="pearl"] *,
+  :is(a, button)[button="pearl"]::before,
+  :is(a, button)[button="pearl"]::after,
+  [button="pearl"] > :is(a, button),
+  [button="pearl"] > :is(a, button) *,
+  [button="pearl"] > :is(a, button)::before,
+  [button="pearl"] > :is(a, button)::after {
+    transition: none !important;
+    transform: none !important;
+  }
+}
